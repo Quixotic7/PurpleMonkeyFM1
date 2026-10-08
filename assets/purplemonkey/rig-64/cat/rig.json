@@ -1,0 +1,235 @@
+{
+  "note": "64px variant with separate wrist children. Hands include held instruments. Wrist cutouts share one pixel of source art; conservative wrist motion.",
+  "feet": 57,
+  "parts": [
+    {
+      "name": "body",
+      "file": "body.png",
+      "pivot": [
+        20,
+        35
+      ],
+      "parent": null,
+      "at": null
+    },
+    {
+      "name": "tail",
+      "file": "tail.png",
+      "pivot": [
+        23,
+        36
+      ],
+      "parent": "body",
+      "at": [
+        34,
+        45
+      ]
+    },
+    {
+      "name": "leg_l",
+      "file": "leg_l.png",
+      "pivot": [
+        12,
+        5
+      ],
+      "parent": "body",
+      "at": [
+        12,
+        49
+      ]
+    },
+    {
+      "name": "leg_r",
+      "file": "leg_r.png",
+      "pivot": [
+        12,
+        5
+      ],
+      "parent": "body",
+      "at": [
+        29,
+        49
+      ]
+    },
+    {
+      "name": "arm_l",
+      "file": "arm_l.png",
+      "pivot": [
+        5,
+        4
+      ],
+      "parent": "body",
+      "at": [
+        7,
+        14
+      ]
+    },
+    {
+      "name": "head",
+      "file": "head.png",
+      "pivot": [
+        32,
+        45
+      ],
+      "parent": "body",
+      "at": [
+        20,
+        7
+      ]
+    },
+    {
+      "name": "arm_r",
+      "file": "arm_r.png",
+      "pivot": [
+        7,
+        4
+      ],
+      "parent": "body",
+      "at": [
+        34,
+        14
+      ]
+    },
+    {
+      "name": "xylophone",
+      "file": "xylophone.png",
+      "pivot": [
+        32,
+        8
+      ],
+      "parent": "body",
+      "at": [
+        20,
+        39
+      ]
+    },
+    {
+      "name": "hand_l",
+      "file": "hand_l.png",
+      "parent": "arm_l",
+      "at": [
+        5,
+        24
+      ],
+      "pivot": [
+        7,
+        1
+      ]
+    },
+    {
+      "name": "hand_r",
+      "file": "hand_r.png",
+      "parent": "arm_r",
+      "at": [
+        7,
+        24
+      ],
+      "pivot": [
+        5,
+        1
+      ]
+    }
+  ],
+  "order": [
+    "tail",
+    "leg_l",
+    "leg_r",
+    "arm_l",
+    "hand_l",
+    "body",
+    "head",
+    "xylophone",
+    "arm_r",
+    "hand_r"
+  ],
+  "anims": {
+    "idle": [
+      {
+        "ms": 1200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "head": -2,
+          "tail": -3
+        }
+      },
+      {
+        "ms": 1200,
+        "root": [
+          0,
+          1
+        ],
+        "a": {
+          "head": 2,
+          "tail": 3
+        }
+      }
+    ],
+    "play": [
+      {
+        "ms": 200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "arm_l": 35,
+          "arm_r": -10,
+          "head": -3,
+          "hand_l": -8,
+          "hand_r": 8
+        }
+      },
+      {
+        "ms": 200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "arm_l": 10,
+          "arm_r": -35,
+          "head": 3,
+          "hand_l": 8,
+          "hand_r": -8
+        }
+      }
+    ],
+    "dance": [
+      {
+        "ms": 250,
+        "root": [
+          -1,
+          -2
+        ],
+        "a": {
+          "body": -5,
+          "arm_l": 45,
+          "arm_r": -30,
+          "head": 4,
+          "tail": 12,
+          "hand_l": -8,
+          "hand_r": 8
+        }
+      },
+      {
+        "ms": 250,
+        "root": [
+          1,
+          0
+        ],
+        "a": {
+          "body": 5,
+          "arm_l": 30,
+          "arm_r": -45,
+          "head": -4,
+          "tail": -12,
+          "hand_l": 8,
+          "hand_r": -8
+        }
+      }
+    ]
+  }
+}

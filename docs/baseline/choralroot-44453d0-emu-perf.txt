@@ -1,0 +1,68 @@
+built build/host/emu
+== (a) MAJ + 6 + M7 + 9 held, D4: a 6-note chord (D6/9maj7) held 6 s on the power-on sound
+   audio: 2775 blocks of 128 frames (budget 2902 us each): render avg 12.4 us, max 213.7 us (after the first second 101.8 us); over half the budget 0, over budget 0 (after the first second 0)
+   ui: 538 frames, one every 15.0 ms; ui_input+ui_leds+ui_draw avg 30 us, max 505 us
+   cpu: host instructions per 128-frame block avg 148219, max 292802 -> device estimate avg 571 us, max 1129 us of 2902 (20 % / 39 %); blocks over the device budget 0, over 80 % 0
+   cpu: host instructions per UI frame avg 203045, max 2234454 -> device estimate avg 783 us, max 8614 us
+   voices: given up 0 (budget fades + overload sheds 0), own voices taken for a new note 0
+   flash erases with the audio stalled 0 (0 blocks of silence, 45 ms each erase)
+   wavclicks: perf_a.wav: 8.05 s, peak 0.393: 0 jumps > 0.5 FS, 0 silent holes mid-sound, 1 clicks (x12 over the neighbourhood, floor 0.0020)
+== (b) the same 6-note chord held 6 s on FM PAD (PRESETS: FM6 05), the bank's heaviest FM6 sound
+   audio: 2878 blocks of 128 frames (budget 2902 us each): render avg 16.9 us, max 382.5 us (after the first second 334.4 us); over half the budget 0, over budget 0 (after the first second 0)
+   ui: 558 frames, one every 15.0 ms; ui_input+ui_leds+ui_draw avg 26 us, max 806 us
+   cpu: host instructions per 128-frame block avg 190555, max 231987 -> device estimate avg 735 us, max 894 us of 2902 (25 % / 31 %); blocks over the device budget 0, over 80 % 0
+   cpu: host instructions per UI frame avg 97372, max 2437501 -> device estimate avg 375 us, max 9397 us
+   voices: given up 0 (budget fades + overload sheds 0), own voices taken for a new note 0
+   flash erases with the audio stalled 0 (0 blocks of silence, 45 ms each erase)
+   wavclicks: perf_b.wav: 8.35 s, peak 0.262: 0 jumps > 0.5 FS, 0 silent holes mid-sound, 0 clicks (x12 over the neighbourhood, floor 0.0020)
+== (c) FM PAD, 200 BPM (SELECT +80), the bass on (ALGORITHM 9, SUB BASS: ANALOG 08), a free 1-bar loop of two
+   audio: 4284 blocks of 128 frames (budget 2902 us each): render avg 21.0 us, max 2467.6 us (after the first second 2467.6 us); over half the budget 2, over budget 0 (after the first second 0)
+   ui: 830 frames, one every 15.0 ms; ui_input+ui_leds+ui_draw avg 95 us, max 996 us
+   cpu: host instructions per 128-frame block avg 225714, max 315991 -> device estimate avg 870 us, max 1218 us of 2902 (30 % / 42 %); blocks over the device budget 0, over 80 % 0
+   cpu: host instructions per UI frame avg 726437, max 4072857 -> device estimate avg 2800 us, max 15701 us
+   voices: given up 0 (budget fades + overload sheds 0), own voices taken for a new note 0
+   flash erases with the audio stalled 0 (0 blocks of silence, 45 ms each erase)
+   wavclicks: perf_c.wav: 12.43 s, peak 0.377: 0 jumps > 0.5 FS, 0 silent holes mid-sound, 0 clicks (x12 over the neighbourhood, floor 0.0020)
+== (d) (c) on the SCOPE view (HOME tapped four times first: a full redraw every frame)
+   audio: 4663 blocks of 128 frames (budget 2902 us each): render avg 38.2 us, max 11800.1 us (after the first second 11800.1 us); over half the budget 10, over budget 5 (after the first second 5)
+   ui: 903 frames, one every 15.0 ms; ui_input+ui_leds+ui_draw avg 238 us, max 12302 us
+   cpu: host instructions per 128-frame block avg 212465, max 356914 -> device estimate avg 819 us, max 1376 us of 2902 (28 % / 47 %); blocks over the device budget 0, over 80 % 0
+   cpu: host instructions per UI frame avg 1075367, max 4103993 -> device estimate avg 4146 us, max 15821 us
+   voices: given up 0 (budget fades + overload sheds 0), own voices taken for a new note 0
+   flash erases with the audio stalled 0 (0 blocks of silence, 45 ms each erase)
+   wavclicks: perf_d.wav: 13.53 s, peak 0.350: 0 jumps > 0.5 FS, 0 silent holes mid-sound, 0 clicks (x12 over the neighbourhood, floor 0.0020)
+== (e) (c), then EDIT (the sound's pages, SELECT +1: its EDIT 1 page) and KNOB 1..4 turned one detent every 30 ms for 6 s
+   audio: 4525 blocks of 128 frames (budget 2902 us each): render avg 18.9 us, max 180.0 us (after the first second 180.0 us); over half the budget 0, over budget 0 (after the first second 0)
+   ui: 876 frames, one every 15.0 ms; ui_input+ui_leds+ui_draw avg 47 us, max 491 us
+   cpu: host instructions per 128-frame block avg 244770, max 298871 -> device estimate avg 944 us, max 1152 us of 2902 (33 % / 40 %); blocks over the device budget 0, over 80 % 0
+   cpu: host instructions per UI frame avg 447186, max 3994985 -> device estimate avg 1724 us, max 15401 us
+   voices: given up 0 (budget fades + overload sheds 0), own voices taken for a new note 0
+   flash erases with the audio stalled 0 (0 blocks of silence, 45 ms each erase)
+   wavclicks: perf_e.wav: 13.13 s, peak 0.377: 0 jumps > 0.5 FS, 0 silent holes mid-sound, 0 clicks (x12 over the neighbourhood, floor 0.0020)
+== (f) a 6-note VA chord (ENSEMBLE STR, four saws; MORPH PAD, WIDE STRINGS: docs/VA.md) + the VA bass (PUNCH BASS) held 3 s, a chord change, 3 s more, released
+   audio: 3739 blocks of 128 frames (budget 2902 us each): render avg 13.9 us, max 229.9 us (after the first second 229.9 us); over half the budget 0, over budget 0 (after the first second 0)
+   ui: 724 frames, one every 15.0 ms; ui_input+ui_leds+ui_draw avg 35 us, max 490 us
+   cpu: host instructions per 128-frame block avg 188910, max 298809 -> device estimate avg 728 us, max 1152 us of 2902 (25 % / 40 %); blocks over the device budget 0, over 80 % 0
+   cpu: host instructions per UI frame avg 294609, max 4450702 -> device estimate avg 1136 us, max 17158 us
+   voices: given up 2 (budget fades + overload sheds 0), own voices taken for a new note 1
+   flash erases with the audio stalled 0 (0 blocks of silence, 45 ms each erase)
+   wavclicks: perf_f.wav: 10.85 s, peak 0.461: 0 jumps > 0.5 FS, 0 silent holes mid-sound, 2 clicks (x12 over the neighbourhood, floor 0.0020)
+== (g) a 6-note CZ-1 chord (CZ STRINGS 2, Casio's A-5: both lines) + the CZ-1 bass (CZ BASS) held 3 s, a chord change, 3 s more, released (docs/CZ1.md)
+   audio: 3739 blocks of 128 frames (budget 2902 us each): render avg 67.8 us, max 33226.1 us (after the first second 33226.1 us); over half the budget 17, over budget 12 (after the first second 12)
+   ui: 724 frames, one every 15.0 ms; ui_input+ui_leds+ui_draw avg 84 us, max 7342 us
+   cpu: host instructions per 128-frame block avg 212043, max 370027 -> device estimate avg 817 us, max 1426 us of 2902 (28 % / 49 %); blocks over the device budget 0, over 80 % 0
+   cpu: host instructions per UI frame avg 258838, max 3669979 -> device estimate avg 998 us, max 14148 us
+   voices: given up 2 (budget fades + overload sheds 0), own voices taken for a new note 1
+   flash erases with the audio stalled 0 (0 blocks of silence, 45 ms each erase)
+   wavclicks: perf_g.wav: 10.85 s, peak 0.587: 0 jumps > 0.5 FS, 0 silent holes mid-sound, 5 clicks (x12 over the neighbourhood, floor 0.0020)
+== (h) the FX layer (FX held, locked open) with a D major chord held, KNOB 1..4 turned one detent every 30 ms
+   audio: 2248 blocks of 128 frames (budget 2902 us each): render avg 8.5 us, max 59.1 us (after the first second 51.8 us); over half the budget 0, over budget 0 (after the first second 0)
+   ui: 436 frames, one every 15.0 ms; ui_input+ui_leds+ui_draw avg 76 us, max 465 us
+   cpu: host instructions per 128-frame block avg 113975, max 154256 -> device estimate avg 439 us, max 595 us of 2902 (15 % / 20 %); blocks over the device budget 0, over 80 % 0
+   cpu: host instructions per UI frame avg 745452, max 3012248 -> device estimate avg 2874 us, max 11613 us
+   voices: given up 0 (budget fades + overload sheds 0), own voices taken for a new note 0
+   flash erases with the audio stalled 0 (0 blocks of silence, 45 ms each erase)
+   wavclicks: perf_h.wav: 6.52 s, peak 0.250: 0 jumps > 0.5 FS, 0 silent holes mid-sound, 0 clicks (x12 over the neighbourhood, floor 0.0020)
+== (u) USB audio recording (estimate: the emulator has no USB)
+   usb audio: host instructions per 128-frame half: audio ISR 5355, TIMER5 packets 2646 -> device estimate 21 us + 10 us = 31 us of 2902 (1.1 %), SIE register access not included
+done

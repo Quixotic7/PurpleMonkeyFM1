@@ -1,0 +1,313 @@
+{
+  "cell_size": [
+    64,
+    64
+  ],
+  "sheet": "spritesheet-64.png",
+  "frames": {
+    "head": {
+      "cell": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        0,
+        6,
+        64,
+        52
+      ],
+      "file": "head.png",
+      "pivot_in_cell": [
+        32,
+        51
+      ]
+    },
+    "body": {
+      "cell": [
+        64,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        75,
+        2,
+        42,
+        59
+      ],
+      "file": "body.png",
+      "pivot_in_cell": [
+        31,
+        37
+      ]
+    },
+    "arm_l": {
+      "cell": [
+        128,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        154,
+        19,
+        12,
+        25
+      ],
+      "file": "arm_l.png",
+      "pivot_in_cell": [
+        31,
+        23
+      ]
+    },
+    "arm_r": {
+      "cell": [
+        192,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        217,
+        19,
+        13,
+        25
+      ],
+      "file": "arm_r.png",
+      "pivot_in_cell": [
+        32,
+        23
+      ]
+    },
+    "leg_l": {
+      "cell": [
+        0,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        19,
+        72,
+        26,
+        47
+      ],
+      "file": "leg_l.png",
+      "pivot_in_cell": [
+        31,
+        13
+      ]
+    },
+    "leg_r": {
+      "cell": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        83,
+        72,
+        26,
+        48
+      ],
+      "file": "leg_r.png",
+      "pivot_in_cell": [
+        31,
+        13
+      ]
+    },
+    "tail": {
+      "cell": [
+        128,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        145,
+        74,
+        29,
+        43
+      ],
+      "file": "tail.png",
+      "pivot_in_cell": [
+        40,
+        46
+      ]
+    },
+    "xylophone": {
+      "cell": [
+        192,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        192,
+        78,
+        64,
+        35
+      ],
+      "file": "xylophone.png",
+      "pivot_in_cell": [
+        32,
+        22
+      ]
+    },
+    "hand_l": {
+      "cell": [
+        0,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        26,
+        146,
+        12,
+        27
+      ],
+      "file": "hand_l.png",
+      "pivot_in_cell": [
+        33,
+        19
+      ]
+    },
+    "hand_r": {
+      "cell": [
+        64,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        90,
+        146,
+        12,
+        27
+      ],
+      "file": "hand_r.png",
+      "pivot_in_cell": [
+        31,
+        19
+      ]
+    },
+    "head_neutral": {
+      "cell": [
+        128,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        128,
+        134,
+        64,
+        52
+      ],
+      "file": "head_neutral.png",
+      "pivot_in_cell": [
+        32,
+        51
+      ]
+    },
+    "head_blink": {
+      "cell": [
+        192,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        192,
+        134,
+        64,
+        52
+      ],
+      "file": "head_blink.png",
+      "pivot_in_cell": [
+        32,
+        51
+      ]
+    },
+    "head_happy": {
+      "cell": [
+        0,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        0,
+        198,
+        64,
+        52
+      ],
+      "file": "head_happy.png",
+      "pivot_in_cell": [
+        32,
+        51
+      ]
+    },
+    "head_sing": {
+      "cell": [
+        64,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        64,
+        198,
+        64,
+        52
+      ],
+      "file": "head_sing.png",
+      "pivot_in_cell": [
+        32,
+        51
+      ]
+    },
+    "head_surprised": {
+      "cell": [
+        128,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        128,
+        198,
+        64,
+        52
+      ],
+      "file": "head_surprised.png",
+      "pivot_in_cell": [
+        32,
+        51
+      ]
+    },
+    "head_sleepy": {
+      "cell": [
+        192,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        192,
+        198,
+        64,
+        52
+      ],
+      "file": "head_sleepy.png",
+      "pivot_in_cell": [
+        32,
+        51
+      ]
+    }
+  }
+}

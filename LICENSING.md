@@ -1,3 +1,32 @@
+# PurpleMonkey FM-1 licensing
+
+PurpleMonkey FM-1 is free software under the GNU General Public License, version 3 only (`GPL-3.0-only`, full text
+in `LICENSE`). It is a derived work of ChoralRoot FM-1 (itself a fork of Felucca), and everything in "Felucca
+licensing" below applies to it unchanged: that section is ChoralRoot's `LICENSING.md` as imported, and lists every
+bundled or ported part and its licence.
+
+What PurpleMonkey adds:
+
+| What | Licence | Where |
+| --- | --- | --- |
+| PurpleMonkey's own code, tools, tests and documents | GPL-3.0-only | `firmware/src/purplemonkey.c`, `firmware/src/pm_engine.c`, `pm_engine.h`, `pm_out.c`, `pm_sound.c`, `pm_ui.c`, `pm_shim.c`, `tools/gen_pm_patches.py`, `tools/gen_pm_sprites.py`, `tools/pm_contact.py`, `tools/gen.sh`, `tools/emu/pm_*`, `tests/pm_engine_test.c`, `tests/run_pm_tests.sh`, `docs/PURPLEMONKEY.md`, `docs/UPSTREAM.md` |
+| SLOOP (<https://github.com/isod89/sloop-fm1>, a fork of Felucca), revision `a1c5d68` (2.4.1): its synthesised drum models and the kits' generator, with the changes listed in `docs/UPSTREAM.md` | GPL-3.0-only | `firmware/src/pm_drum_synth.c`, `tools/gen_drumkits.py`, `tools/drumkit_levels.json` |
+| The four FM6 voices | GPL-3.0-only; PurpleMonkey's own, written for it (no factory ROM data of any instrument) | `tools/gen_pm_patches.py` |
+| Concept artwork: two generated sheets and their notes, supplied by the project's owner; the firmware's sprites are cut from one of them at build time | the project owner's; provenance in `assets/purplemonkey/README.md` | `assets/purplemonkey/concept/`, `docs/img/` |
+
+SLOOP's licensing note says its *code* is GPL-3.0-only and that some Felucca *assets* (an icon atlas, a panel
+image, the Hügelton Sample Pack) are not; none of those assets is used or present here: the drum sounds are
+synthesised by the code above.
+
+The package `./build.sh` makes carries the three JieLi SDK files described below (Apache-2.0), as ChoralRoot's does.
+No PurpleMonkey package has been released or distributed.
+
+One thing for the project's owner to settle before any distribution: the licence the concept artwork (and so the
+sprites built into the image) is offered under. A GPL firmware image that embeds them needs them to be
+GPL-compatible or covered by an explicit additional permission, as Felucca does for its own assets.
+
+---
+
 # Felucca licensing
 
 Felucca is free software, licensed under the GNU General Public License, version 3 only

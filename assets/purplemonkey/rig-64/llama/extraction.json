@@ -1,0 +1,169 @@
+{
+  "source": "parts-source-alpha-v2.png",
+  "source_sha256": "b0c5f17da790bba36b137ac984a17b4494a615738163832678691e23ceaa5b3b",
+  "common_scale": 0.1445221445221445,
+  "parts": {
+    "head": {
+      "source_box": [
+        35,
+        35,
+        315,
+        420
+      ],
+      "trim_box": [
+        23,
+        30,
+        264,
+        378
+      ],
+      "source_size": [
+        241,
+        348
+      ]
+    },
+    "body": {
+      "source_box": [
+        320,
+        130,
+        780,
+        475
+      ],
+      "trim_box": [
+        12,
+        23,
+        434,
+        319
+      ],
+      "source_size": [
+        422,
+        296
+      ]
+    },
+    "neck": {
+      "source_box": [
+        785,
+        45,
+        990,
+        515
+      ],
+      "trim_box": [
+        16,
+        31,
+        180,
+        460
+      ],
+      "source_size": [
+        164,
+        429
+      ]
+    },
+    "tail": {
+      "source_box": [
+        85,
+        430,
+        315,
+        615
+      ],
+      "trim_box": [
+        52,
+        11,
+        215,
+        170
+      ],
+      "source_size": [
+        163,
+        159
+      ]
+    },
+    "collar": {
+      "source_box": [
+        420,
+        480,
+        715,
+        630
+      ],
+      "trim_box": [
+        14,
+        24,
+        265,
+        132
+      ],
+      "source_size": [
+        251,
+        108
+      ]
+    },
+    "leg_far_l": {
+      "source_box": [
+        110,
+        620,
+        270,
+        985
+      ],
+      "trim_box": [
+        23,
+        12,
+        139,
+        342
+      ],
+      "source_size": [
+        116,
+        330
+      ]
+    },
+    "leg_far_r": {
+      "source_box": [
+        300,
+        620,
+        465,
+        985
+      ],
+      "trim_box": [
+        23,
+        12,
+        142,
+        343
+      ],
+      "source_size": [
+        119,
+        331
+      ]
+    },
+    "leg_near_l": {
+      "source_box": [
+        535,
+        620,
+        690,
+        985
+      ],
+      "trim_box": [
+        27,
+        13,
+        139,
+        344
+      ],
+      "source_size": [
+        112,
+        331
+      ]
+    },
+    "leg_near_r": {
+      "source_box": [
+        735,
+        620,
+        905,
+        985
+      ],
+      "trim_box": [
+        9,
+        14,
+        149,
+        343
+      ],
+      "source_size": [
+        140,
+        329
+      ]
+    }
+  }
+}

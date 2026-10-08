@@ -1,0 +1,343 @@
+{
+  "head_shape": {
+    "file": "head_shape.png",
+    "canvas": [
+      54,
+      46
+    ],
+    "pivot": [
+      27,
+      40
+    ]
+  },
+  "layers": {
+    "eyes": {
+      "canvas": [
+        54,
+        46
+      ],
+      "pivot": [
+        27,
+        40
+      ],
+      "frames": {
+        "open": "eyes_open.png",
+        "blink": "eyes_blink.png",
+        "happy": "eyes_happy.png",
+        "surprised": "eyes_surprised.png"
+      },
+      "default": "open",
+      "registration": {
+        "open": {
+          "source_cell": 5,
+          "offset": [
+            8,
+            15,
+            47,
+            27
+          ],
+          "scale": 0.11360230547550433
+        },
+        "blink": {
+          "source_cell": 10,
+          "offset": [
+            10,
+            18,
+            43,
+            24
+          ],
+          "scale": 0.11360230547550433
+        },
+        "happy": {
+          "source_cell": 11,
+          "offset": [
+            12,
+            17,
+            42,
+            25
+          ],
+          "scale": 0.11360230547550433
+        },
+        "surprised": {
+          "source_cell": 12,
+          "offset": [
+            12,
+            15,
+            43,
+            27
+          ],
+          "scale": 0.11360230547550433
+        }
+      }
+    },
+    "nose": {
+      "canvas": [
+        54,
+        46
+      ],
+      "pivot": [
+        27,
+        40
+      ],
+      "frames": {
+        "neutral": "nose_neutral.png",
+        "scrunch": "nose_scrunch.png",
+        "tilt": "nose_tilt.png"
+      },
+      "default": "neutral",
+      "registration": {
+        "neutral": {
+          "source_cell": 13,
+          "offset": [
+            24,
+            26,
+            32,
+            33
+          ],
+          "scale": 0.07999999999999999
+        },
+        "scrunch": {
+          "source_cell": 14,
+          "offset": [
+            21,
+            27,
+            34,
+            32
+          ],
+          "scale": 0.07999999999999999
+        },
+        "tilt": {
+          "source_cell": 15,
+          "offset": [
+            24,
+            26,
+            31,
+            33
+          ],
+          "scale": 0.07999999999999999
+        }
+      }
+    },
+    "mouth": {
+      "canvas": [
+        54,
+        46
+      ],
+      "pivot": [
+        27,
+        40
+      ],
+      "frames": {
+        "smile": "mouth_smile.png",
+        "sing": "mouth_sing.png",
+        "happy": "mouth_happy.png",
+        "sleepy": "mouth_sleepy.png"
+      },
+      "default": "smile",
+      "registration": {
+        "smile": {
+          "source_cell": 16,
+          "offset": [
+            19,
+            34,
+            37,
+            39
+          ],
+          "scale": 0.10686868686868686
+        },
+        "sing": {
+          "source_cell": 17,
+          "offset": [
+            18,
+            31,
+            37,
+            42
+          ],
+          "scale": 0.10686868686868686
+        },
+        "happy": {
+          "source_cell": 18,
+          "offset": [
+            17,
+            32,
+            38,
+            41
+          ],
+          "scale": 0.10686868686868686
+        },
+        "sleepy": {
+          "source_cell": 19,
+          "offset": [
+            21,
+            35,
+            35,
+            39
+          ],
+          "scale": 0.10686868686868686
+        }
+      }
+    },
+    "ear_l": {
+      "canvas": [
+        64,
+        64
+      ],
+      "pivot": [
+        32,
+        36
+      ],
+      "frames": {
+        "relaxed": "ear_l_relaxed.png",
+        "perk": "ear_l_perk.png",
+        "droop": "ear_l_droop.png",
+        "flick": "ear_l_flick.png"
+      },
+      "default": "relaxed",
+      "registration": {
+        "relaxed": {
+          "source_cell": 1,
+          "offset": [
+            22,
+            18,
+            43,
+            40
+          ],
+          "scale": 0.12807881773399016
+        },
+        "perk": {
+          "source_cell": 3,
+          "offset": [
+            24,
+            11,
+            42,
+            41
+          ],
+          "scale": 0.12807881773399016
+        },
+        "droop": {
+          "source_cell": 6,
+          "offset": [
+            20,
+            21,
+            46,
+            40
+          ],
+          "scale": 0.12807881773399016
+        },
+        "flick": {
+          "source_cell": 8,
+          "offset": [
+            22,
+            20,
+            43,
+            40
+          ],
+          "scale": 0.12807881773399016
+        }
+      }
+    },
+    "ear_r": {
+      "canvas": [
+        64,
+        64
+      ],
+      "pivot": [
+        32,
+        36
+      ],
+      "frames": {
+        "relaxed": "ear_r_relaxed.png",
+        "perk": "ear_r_perk.png",
+        "droop": "ear_r_droop.png",
+        "flick": "ear_r_flick.png"
+      },
+      "default": "relaxed",
+      "registration": {
+        "relaxed": {
+          "source_cell": 2,
+          "offset": [
+            22,
+            18,
+            43,
+            40
+          ],
+          "scale": 0.12807881773399016
+        },
+        "perk": {
+          "source_cell": 4,
+          "offset": [
+            23,
+            13,
+            42,
+            41
+          ],
+          "scale": 0.12807881773399016
+        },
+        "droop": {
+          "source_cell": 7,
+          "offset": [
+            20,
+            21,
+            44,
+            40
+          ],
+          "scale": 0.12807881773399016
+        },
+        "flick": {
+          "source_cell": 9,
+          "offset": [
+            20,
+            21,
+            45,
+            40
+          ],
+          "scale": 0.12807881773399016
+        }
+      }
+    }
+  },
+  "expressions": {
+    "neutral": {
+      "eyes": "open",
+      "mouth": "smile",
+      "nose": "neutral",
+      "ear_l": "relaxed",
+      "ear_r": "relaxed"
+    },
+    "blink": {
+      "eyes": "blink",
+      "mouth": "smile",
+      "nose": "neutral",
+      "ear_l": "relaxed",
+      "ear_r": "relaxed"
+    },
+    "happy": {
+      "eyes": "happy",
+      "mouth": "happy",
+      "nose": "scrunch",
+      "ear_l": "perk",
+      "ear_r": "perk"
+    },
+    "sing": {
+      "eyes": "open",
+      "mouth": "sing",
+      "nose": "neutral",
+      "ear_l": "flick",
+      "ear_r": "flick"
+    },
+    "surprised": {
+      "eyes": "surprised",
+      "mouth": "sing",
+      "nose": "tilt",
+      "ear_l": "perk",
+      "ear_r": "perk"
+    },
+    "sleepy": {
+      "eyes": "blink",
+      "mouth": "sleepy",
+      "nose": "neutral",
+      "ear_l": "droop",
+      "ear_r": "droop"
+    }
+  }
+}

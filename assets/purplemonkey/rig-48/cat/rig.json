@@ -1,0 +1,199 @@
+{
+  "note": "48px extracted variant; l/r denote viewer-left/right. Angles relative to neutral. Conservative QA motions; see expressions.json for head swaps.",
+  "feet": 43,
+  "parts": [
+    {
+      "name": "body",
+      "file": "body.png",
+      "pivot": [
+        16,
+        26
+      ],
+      "parent": null,
+      "at": null
+    },
+    {
+      "name": "tail",
+      "file": "tail.png",
+      "pivot": [
+        17,
+        26
+      ],
+      "parent": "body",
+      "at": [
+        26,
+        34
+      ]
+    },
+    {
+      "name": "leg_l",
+      "file": "leg_l.png",
+      "pivot": [
+        10,
+        4
+      ],
+      "parent": "body",
+      "at": [
+        9,
+        37
+      ]
+    },
+    {
+      "name": "leg_r",
+      "file": "leg_r.png",
+      "pivot": [
+        10,
+        4
+      ],
+      "parent": "body",
+      "at": [
+        22,
+        37
+      ]
+    },
+    {
+      "name": "arm_l",
+      "file": "arm_l.png",
+      "pivot": [
+        6,
+        3
+      ],
+      "parent": "body",
+      "at": [
+        6,
+        11
+      ]
+    },
+    {
+      "name": "head",
+      "file": "head.png",
+      "pivot": [
+        24,
+        33
+      ],
+      "parent": "body",
+      "at": [
+        16,
+        5
+      ]
+    },
+    {
+      "name": "arm_r",
+      "file": "arm_r.png",
+      "pivot": [
+        6,
+        3
+      ],
+      "parent": "body",
+      "at": [
+        25,
+        11
+      ]
+    },
+    {
+      "name": "xylophone",
+      "file": "xylophone.png",
+      "pivot": [
+        24,
+        6
+      ],
+      "parent": "body",
+      "at": [
+        16,
+        30
+      ]
+    }
+  ],
+  "order": [
+    "tail",
+    "leg_l",
+    "leg_r",
+    "arm_l",
+    "body",
+    "head",
+    "xylophone",
+    "arm_r"
+  ],
+  "anims": {
+    "idle": [
+      {
+        "ms": 1200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "head": -2,
+          "tail": -3
+        }
+      },
+      {
+        "ms": 1200,
+        "root": [
+          0,
+          1
+        ],
+        "a": {
+          "head": 2,
+          "tail": 3
+        }
+      }
+    ],
+    "play": [
+      {
+        "ms": 200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "arm_l": 35,
+          "arm_r": -10,
+          "head": -3
+        }
+      },
+      {
+        "ms": 200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "arm_l": 10,
+          "arm_r": -35,
+          "head": 3
+        }
+      }
+    ],
+    "dance": [
+      {
+        "ms": 250,
+        "root": [
+          -1,
+          -2
+        ],
+        "a": {
+          "body": -5,
+          "arm_l": 45,
+          "arm_r": -30,
+          "head": 4,
+          "tail": 12
+        }
+      },
+      {
+        "ms": 250,
+        "root": [
+          1,
+          0
+        ],
+        "a": {
+          "body": 5,
+          "arm_l": 30,
+          "arm_r": -45,
+          "head": -4,
+          "tail": -12
+        }
+      }
+    ]
+  }
+}

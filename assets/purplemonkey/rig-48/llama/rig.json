@@ -1,0 +1,211 @@
+{
+  "note": "48px extracted variant; l/r denote viewer-left/right. Angles relative to neutral. Conservative QA motions; see expressions.json for head swaps.",
+  "feet": 39,
+  "parts": [
+    {
+      "name": "body",
+      "file": "body.png",
+      "pivot": [
+        23,
+        20
+      ],
+      "parent": null,
+      "at": null
+    },
+    {
+      "name": "tail",
+      "file": "tail.png",
+      "pivot": [
+        14,
+        14
+      ],
+      "parent": "body",
+      "at": [
+        5,
+        9
+      ]
+    },
+    {
+      "name": "leg_far_l",
+      "file": "leg_far_l.png",
+      "pivot": [
+        6,
+        4
+      ],
+      "parent": "body",
+      "at": [
+        10,
+        26
+      ]
+    },
+    {
+      "name": "leg_far_r",
+      "file": "leg_far_r.png",
+      "pivot": [
+        7,
+        4
+      ],
+      "parent": "body",
+      "at": [
+        35,
+        26
+      ]
+    },
+    {
+      "name": "leg_near_l",
+      "file": "leg_near_l.png",
+      "pivot": [
+        6,
+        4
+      ],
+      "parent": "body",
+      "at": [
+        6,
+        26
+      ]
+    },
+    {
+      "name": "leg_near_r",
+      "file": "leg_near_r.png",
+      "pivot": [
+        8,
+        4
+      ],
+      "parent": "body",
+      "at": [
+        40,
+        26
+      ]
+    },
+    {
+      "name": "neck",
+      "file": "neck.png",
+      "pivot": [
+        10,
+        41
+      ],
+      "parent": "body",
+      "at": [
+        37,
+        10
+      ]
+    },
+    {
+      "name": "head",
+      "file": "head.png",
+      "pivot": [
+        11,
+        33
+      ],
+      "parent": "neck",
+      "at": [
+        10,
+        6
+      ]
+    },
+    {
+      "name": "collar",
+      "file": "collar.png",
+      "pivot": [
+        14,
+        3
+      ],
+      "parent": "neck",
+      "at": [
+        10,
+        38
+      ]
+    }
+  ],
+  "order": [
+    "tail",
+    "leg_far_l",
+    "leg_far_r",
+    "body",
+    "leg_near_l",
+    "leg_near_r",
+    "neck",
+    "head",
+    "collar"
+  ],
+  "anims": {
+    "idle": [
+      {
+        "ms": 1200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "head": -2,
+          "tail": -3
+        }
+      },
+      {
+        "ms": 1200,
+        "root": [
+          0,
+          1
+        ],
+        "a": {
+          "head": 2,
+          "tail": 3
+        }
+      }
+    ],
+    "play": [
+      {
+        "ms": 250,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "neck": -4,
+          "head": 5,
+          "tail": 8
+        }
+      },
+      {
+        "ms": 250,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "neck": 4,
+          "head": -5,
+          "tail": -8
+        }
+      }
+    ],
+    "dance": [
+      {
+        "ms": 250,
+        "root": [
+          -1,
+          -2
+        ],
+        "a": {
+          "neck": -7,
+          "head": 7,
+          "leg_near_l": 10,
+          "leg_far_r": -8
+        }
+      },
+      {
+        "ms": 250,
+        "root": [
+          1,
+          0
+        ],
+        "a": {
+          "neck": 7,
+          "head": -7,
+          "leg_near_r": -10,
+          "leg_far_l": 8
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "part": "head",
+  "canvas": [
+    64,
+    46
+  ],
+  "pivot": [
+    32,
+    40
+  ],
+  "palette": "palette.json",
+  "frames": {
+    "neutral": "head_neutral.png",
+    "blink": "head_blink.png",
+    "happy": "head_happy.png",
+    "sing": "head_sing.png",
+    "surprised": "head_surprised.png",
+    "sleepy": "head_sleepy.png"
+  },
+  "registration": [
+    {
+      "name": "neutral",
+      "cell_bbox": [
+        16,
+        55,
+        512,
+        477
+      ],
+      "scale": 0.10426540284360189,
+      "offset": [
+        6,
+        1
+      ],
+      "canvas": [
+        64,
+        46
+      ],
+      "registration": "bottom-centre neck/chin; common scale, translation only"
+    },
+    {
+      "name": "blink",
+      "cell_bbox": [
+        0,
+        55,
+        510,
+        477
+      ],
+      "scale": 0.10426540284360189,
+      "offset": [
+        5,
+        1
+      ],
+      "canvas": [
+        64,
+        46
+      ],
+      "registration": "bottom-centre neck/chin; common scale, translation only"
+    },
+    {
+      "name": "happy",
+      "cell_bbox": [
+        6,
+        55,
+        502,
+        477
+      ],
+      "scale": 0.10426540284360189,
+      "offset": [
+        6,
+        1
+      ],
+      "canvas": [
+        64,
+        46
+      ],
+      "registration": "bottom-centre neck/chin; common scale, translation only"
+    },
+    {
+      "name": "sing",
+      "cell_bbox": [
+        16,
+        20,
+        512,
+        442
+      ],
+      "scale": 0.10426540284360189,
+      "offset": [
+        6,
+        1
+      ],
+      "canvas": [
+        64,
+        46
+      ],
+      "registration": "bottom-centre neck/chin; common scale, translation only"
+    },
+    {
+      "name": "surprised",
+      "cell_bbox": [
+        0,
+        20,
+        511,
+        442
+      ],
+      "scale": 0.10426540284360189,
+      "offset": [
+        5,
+        1
+      ],
+      "canvas": [
+        64,
+        46
+      ],
+      "registration": "bottom-centre neck/chin; common scale, translation only"
+    },
+    {
+      "name": "sleepy",
+      "cell_bbox": [
+        4,
+        20,
+        503,
+        442
+      ],
+      "scale": 0.10426540284360189,
+      "offset": [
+        6,
+        1
+      ],
+      "canvas": [
+        64,
+        46
+      ],
+      "registration": "bottom-centre neck/chin; common scale, translation only"
+    }
+  ],
+  "integration": "Aligned texture variants for current rig export/runtime; verify runtime selection and timing on hardware."
+}

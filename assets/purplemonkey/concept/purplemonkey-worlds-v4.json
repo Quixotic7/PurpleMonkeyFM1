@@ -1,0 +1,992 @@
+{
+  "format": "fm1-panel-design",
+  "version": 1,
+  "device": "M-VAVE FM-1",
+  "name": "PurpleMonkey \u2022 musical worlds / v4",
+  "palette": "VIOLET",
+  "labels": {
+    "buttons": {
+      "FX": "DRUMS",
+      "SEL": "SYNTH",
+      "ENV": "\u2014",
+      "LFO": "\u2014",
+      "EDIT": "\u2014",
+      "GLO": "\u2014",
+      "HOME": "HOME",
+      "SAVE": "\u2014",
+      "ARP": "\u2014",
+      "SEQ": "\u2014",
+      "PLAY": "BEAT",
+      "REC": "\u2014",
+      "OCT-": "\u2014",
+      "OCT+": "\u2014"
+    },
+    "encoders": {
+      "MASTER": "VOLUME",
+      "SELECT": "PET",
+      "PRESETS": "BRIGHT",
+      "ALGORITHM": "LENGTH",
+      "KNOB1": "SPEED",
+      "KNOB2": "BUSY",
+      "KNOB3": "BOUNCE",
+      "KNOB4": "SQUISH"
+    }
+  },
+  "notes": "Static character and LED storyboard. SELECT chooses pet, independent of DRUMS/SYNTH and BEAT. Pet name appears briefly with proposed spoken cue; keyboard and music remain active. White key LEDs only; warm colored PLAY indicator. Artwork is fitted from the concept sheet to the square display, not production pixel art. Open in purplemonkey-preview.html for artwork; original Designer displays wireframe fallback. No firmware/audio changes.",
+  "states": [
+    {
+      "state": 1,
+      "name": "01 \u2022 Choose CAT / voice cue",
+      "export": true,
+      "notes": "SELECT settles on CAT. Name pops in once for about 1 second; proposed voice says Cat! after 250 ms without another turn. No audio file in this mockup. Mode and backing beat remain unchanged.",
+      "keys": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "keyLabels": {
+        "0": "C",
+        "1": "D",
+        "2": "E",
+        "3": "G",
+        "4": "A",
+        "5": "C",
+        "6": "D",
+        "7": "E",
+        "8": "G",
+        "9": "A",
+        "10": "C",
+        "11": "D",
+        "12": "E",
+        "13": "G",
+        "14": "A",
+        "15": "C",
+        "16": "D",
+        "17": "E",
+        "18": "G",
+        "19": "A",
+        "20": "C",
+        "21": "D",
+        "22": "E",
+        "23": "G",
+        "24": "A",
+        "25": "C",
+        "26": "D"
+      },
+      "buttons": {
+        "FX": 1,
+        "SEL": 2,
+        "ENV": 0,
+        "LFO": 0,
+        "EDIT": 0,
+        "GLO": 0,
+        "HOME": 1,
+        "SAVE": 0,
+        "ARP": 0,
+        "SEQ": 0,
+        "PLAY": 2,
+        "REC": 0,
+        "OCT-": 0,
+        "OCT+": 0
+      },
+      "playGreen": 1,
+      "encoders": {
+        "MASTER": {
+          "note": "VOLUME",
+          "value": "quiet"
+        },
+        "SELECT": {
+          "note": "PET",
+          "value": "CAT"
+        },
+        "PRESETS": {
+          "note": "BRIGHT",
+          "value": "soft"
+        },
+        "ALGORITHM": {
+          "note": "LENGTH",
+          "value": "short"
+        },
+        "KNOB1": {
+          "note": "SPEED",
+          "value": "100"
+        },
+        "KNOB2": {
+          "note": "BUSY",
+          "value": "35%"
+        },
+        "KNOB3": {
+          "note": "BOUNCE",
+          "value": "gentle"
+        },
+        "KNOB4": {
+          "note": "SQUISH",
+          "value": "round"
+        }
+      },
+      "screen": {
+        "header": {
+          "icon": "play",
+          "bpm": "",
+          "mid": "SYNTH",
+          "right": "",
+          "batt": 3
+        },
+        "cards": null,
+        "footer": {
+          "text": "Voice: Cat!"
+        },
+        "panel": {
+          "kind": "big",
+          "value": "CAT",
+          "label": "SAY HELLO",
+          "col": "#fff2cf"
+        },
+        "note": "Illustrated static concept, fitted to 240\u00d7240. SELECT settles on CAT. Name pops in once for about 1 second; proposed voice says Cat! after 250 ms without another turn. No audio file in this mockup. Mode and backing beat remain unchanged.",
+        "art": {
+          "src": "docs/purplemonkey-v1/musical-worlds-v4.png",
+          "crop": [
+            16,
+            182,
+            401,
+            450
+          ]
+        }
+      },
+      "buttonNotes": {
+        "FX": "Select DRUMS; does not start/stop beat.",
+        "SEL": "Select SYNTH; does not start/stop beat.",
+        "PLAY": "Start/stop backing pattern; keyboard remains playable."
+      }
+    },
+    {
+      "state": 2,
+      "name": "02 \u2022 Tap / color bubble",
+      "export": true,
+      "notes": "Cat in SYNTH. Immediate FM6 note; rising golden bubble and teal hue. Bright white key LED indicates held input.",
+      "keys": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "keyLabels": {
+        "0": "C",
+        "1": "D",
+        "2": "E",
+        "3": "G",
+        "4": "A",
+        "5": "C",
+        "6": "D",
+        "7": "E",
+        "8": "G",
+        "9": "A",
+        "10": "C",
+        "11": "D",
+        "12": "E",
+        "13": "G",
+        "14": "A",
+        "15": "C",
+        "16": "D",
+        "17": "E",
+        "18": "G",
+        "19": "A",
+        "20": "C",
+        "21": "D",
+        "22": "E",
+        "23": "G",
+        "24": "A",
+        "25": "C",
+        "26": "D"
+      },
+      "buttons": {
+        "FX": 1,
+        "SEL": 2,
+        "ENV": 0,
+        "LFO": 0,
+        "EDIT": 0,
+        "GLO": 0,
+        "HOME": 1,
+        "SAVE": 0,
+        "ARP": 0,
+        "SEQ": 0,
+        "PLAY": 2,
+        "REC": 0,
+        "OCT-": 0,
+        "OCT+": 0
+      },
+      "playGreen": 1,
+      "encoders": {
+        "MASTER": {
+          "note": "VOLUME",
+          "value": "quiet"
+        },
+        "SELECT": {
+          "note": "PET",
+          "value": "CAT"
+        },
+        "PRESETS": {
+          "note": "BRIGHT",
+          "value": "soft"
+        },
+        "ALGORITHM": {
+          "note": "LENGTH",
+          "value": "short"
+        },
+        "KNOB1": {
+          "note": "SPEED",
+          "value": "100"
+        },
+        "KNOB2": {
+          "note": "BUSY",
+          "value": "72%"
+        },
+        "KNOB3": {
+          "note": "BOUNCE",
+          "value": "gentle"
+        },
+        "KNOB4": {
+          "note": "SQUISH",
+          "value": "round"
+        }
+      },
+      "screen": {
+        "header": {
+          "icon": "play",
+          "bpm": "",
+          "mid": "SYNTH",
+          "right": "",
+          "batt": 3
+        },
+        "cards": null,
+        "footer": {
+          "text": "Cat plays a note",
+          "steps": {
+            "n": 4,
+            "on": 1,
+            "filled": 1
+          }
+        },
+        "panel": {
+          "kind": "roundel",
+          "rings": [
+            "#442b65",
+            "#7350a2",
+            "#b994e8"
+          ],
+          "title": "PLINK",
+          "titleSize": 32,
+          "titleCol": "#ffffff",
+          "bandCol": "#241735",
+          "sub": "",
+          "r": 76,
+          "cx": 120,
+          "cy": 115
+        },
+        "note": "Illustrated static concept, fitted to 240\u00d7240. Cat in SYNTH. Immediate FM6 note; rising golden bubble and teal hue. Bright white key LED indicates held input.",
+        "art": {
+          "src": "docs/purplemonkey-v1/musical-worlds-v4.png",
+          "crop": [
+            432,
+            182,
+            390,
+            450
+          ]
+        }
+      },
+      "buttonNotes": {
+        "FX": "Select DRUMS; does not start/stop beat.",
+        "SEL": "Select SYNTH; does not start/stop beat.",
+        "PLAY": "Start/stop backing pattern; keyboard remains playable."
+      }
+    },
+    {
+      "state": 3,
+      "name": "03 \u2022 Hold / garden grows",
+      "export": true,
+      "notes": "Hold multiple keys: cat and llama, flowers and ribbons grow. Stable loudness and bounded voices; brighter LEDs are held keys, dim LEDs are idle.",
+      "keys": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        2,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "keyLabels": {
+        "0": "C",
+        "1": "D",
+        "2": "E",
+        "3": "G",
+        "4": "A",
+        "5": "C",
+        "6": "D",
+        "7": "E",
+        "8": "G",
+        "9": "A",
+        "10": "C",
+        "11": "D",
+        "12": "E",
+        "13": "G",
+        "14": "A",
+        "15": "C",
+        "16": "D",
+        "17": "E",
+        "18": "G",
+        "19": "A",
+        "20": "C",
+        "21": "D",
+        "22": "E",
+        "23": "G",
+        "24": "A",
+        "25": "C",
+        "26": "D"
+      },
+      "buttons": {
+        "FX": 1,
+        "SEL": 2,
+        "ENV": 0,
+        "LFO": 0,
+        "EDIT": 0,
+        "GLO": 0,
+        "HOME": 1,
+        "SAVE": 0,
+        "ARP": 0,
+        "SEQ": 0,
+        "PLAY": 2,
+        "REC": 0,
+        "OCT-": 0,
+        "OCT+": 0
+      },
+      "playGreen": 1,
+      "encoders": {
+        "MASTER": {
+          "note": "VOLUME",
+          "value": "quiet"
+        },
+        "SELECT": {
+          "note": "PET",
+          "value": "CAT"
+        },
+        "PRESETS": {
+          "note": "BRIGHT",
+          "value": "soft"
+        },
+        "ALGORITHM": {
+          "note": "LENGTH",
+          "value": "short"
+        },
+        "KNOB1": {
+          "note": "SPEED",
+          "value": "100"
+        },
+        "KNOB2": {
+          "note": "BUSY",
+          "value": "72%"
+        },
+        "KNOB3": {
+          "note": "BOUNCE",
+          "value": "gentle"
+        },
+        "KNOB4": {
+          "note": "SQUISH",
+          "value": "round"
+        }
+      },
+      "screen": {
+        "header": {
+          "icon": "play",
+          "bpm": "",
+          "mid": "SYNTH",
+          "right": "",
+          "batt": 3
+        },
+        "cards": null,
+        "footer": {
+          "text": "The band joins in",
+          "steps": {
+            "n": 4,
+            "on": 2,
+            "filled": 1
+          }
+        },
+        "panel": {
+          "kind": "roundel",
+          "rings": [
+            "#442b65",
+            "#7350a2",
+            "#b994e8"
+          ],
+          "title": "TOGETHER",
+          "titleSize": 24,
+          "titleCol": "#ffffff",
+          "bandCol": "#241735",
+          "sub": "",
+          "r": 76,
+          "cx": 120,
+          "cy": 115
+        },
+        "note": "Illustrated static concept, fitted to 240\u00d7240. Hold multiple keys: cat and llama, flowers and ribbons grow. Stable loudness and bounded voices; brighter LEDs are held keys, dim LEDs are idle.",
+        "art": {
+          "src": "docs/purplemonkey-v1/musical-worlds-v4.png",
+          "crop": [
+            837,
+            182,
+            404,
+            450
+          ]
+        }
+      },
+      "buttonNotes": {
+        "FX": "Select DRUMS; does not start/stop beat.",
+        "SEL": "Select SYNTH; does not start/stop beat.",
+        "PLAY": "Start/stop backing pattern; keyboard remains playable."
+      }
+    },
+    {
+      "state": 4,
+      "name": "04 \u2022 Choose DOG / voice cue",
+      "export": true,
+      "notes": "SELECT settles on DOG. Brief DOG title and proposed Dog! voice cue. Still SYNTH; pet switching never switches keyboard mode. Cancel earlier pending cue during rapid selection.",
+      "keys": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "keyLabels": {
+        "0": "C",
+        "1": "D",
+        "2": "E",
+        "3": "G",
+        "4": "A",
+        "5": "C",
+        "6": "D",
+        "7": "E",
+        "8": "G",
+        "9": "A",
+        "10": "C",
+        "11": "D",
+        "12": "E",
+        "13": "G",
+        "14": "A",
+        "15": "C",
+        "16": "D",
+        "17": "E",
+        "18": "G",
+        "19": "A",
+        "20": "C",
+        "21": "D",
+        "22": "E",
+        "23": "G",
+        "24": "A",
+        "25": "C",
+        "26": "D"
+      },
+      "buttons": {
+        "FX": 1,
+        "SEL": 2,
+        "ENV": 0,
+        "LFO": 0,
+        "EDIT": 0,
+        "GLO": 0,
+        "HOME": 1,
+        "SAVE": 0,
+        "ARP": 0,
+        "SEQ": 0,
+        "PLAY": 2,
+        "REC": 0,
+        "OCT-": 0,
+        "OCT+": 0
+      },
+      "playGreen": 1,
+      "encoders": {
+        "MASTER": {
+          "note": "VOLUME",
+          "value": "quiet"
+        },
+        "SELECT": {
+          "note": "PET",
+          "value": "DOG"
+        },
+        "PRESETS": {
+          "note": "BRIGHT",
+          "value": "soft"
+        },
+        "ALGORITHM": {
+          "note": "LENGTH",
+          "value": "short"
+        },
+        "KNOB1": {
+          "note": "SPEED",
+          "value": "100"
+        },
+        "KNOB2": {
+          "note": "BUSY",
+          "value": "72%"
+        },
+        "KNOB3": {
+          "note": "BOUNCE",
+          "value": "gentle"
+        },
+        "KNOB4": {
+          "note": "SQUISH",
+          "value": "round"
+        }
+      },
+      "screen": {
+        "header": {
+          "icon": "play",
+          "bpm": "",
+          "mid": "SYNTH",
+          "right": "",
+          "batt": 3
+        },
+        "cards": null,
+        "footer": {
+          "text": "Voice: Dog!"
+        },
+        "panel": {
+          "kind": "big",
+          "value": "DOG",
+          "label": "SAY HELLO",
+          "col": "#fff2cf"
+        },
+        "note": "Illustrated static concept, fitted to 240\u00d7240. SELECT settles on DOG. Brief DOG title and proposed Dog! voice cue. Still SYNTH; pet switching never switches keyboard mode. Cancel earlier pending cue during rapid selection.",
+        "art": {
+          "src": "docs/purplemonkey-v1/musical-worlds-v4.png",
+          "crop": [
+            16,
+            699,
+            401,
+            481
+          ]
+        }
+      },
+      "buttonNotes": {
+        "FX": "Select DRUMS; does not start/stop beat.",
+        "SEL": "Select SYNTH; does not start/stop beat.",
+        "PLAY": "Start/stop backing pattern; keyboard remains playable."
+      }
+    },
+    {
+      "state": 5,
+      "name": "05 \u2022 Drum hold / beat ripples",
+      "export": true,
+      "notes": "DRUMS selected. Dog and monkey perform; held keys produce complementary repeats. Localized kick ripple and bouncing hills. Backing beat remains on.",
+      "keys": [
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "keyLabels": {
+        "0": "KICK",
+        "1": "KICK",
+        "2": "SNARE",
+        "3": "SNARE",
+        "4": "TOM",
+        "5": "TOM",
+        "6": "HAT",
+        "7": "HAT",
+        "8": "CLAP",
+        "9": "KICK",
+        "10": "KICK",
+        "11": "SNARE",
+        "12": "SNARE",
+        "13": "TOM",
+        "14": "TOM",
+        "15": "HAT",
+        "16": "HAT",
+        "17": "CLAP",
+        "18": "KICK",
+        "19": "KICK",
+        "20": "SNARE",
+        "21": "SNARE",
+        "22": "TOM",
+        "23": "TOM",
+        "24": "HAT",
+        "25": "HAT",
+        "26": "CLAP"
+      },
+      "buttons": {
+        "FX": 2,
+        "SEL": 1,
+        "ENV": 0,
+        "LFO": 0,
+        "EDIT": 0,
+        "GLO": 0,
+        "HOME": 1,
+        "SAVE": 0,
+        "ARP": 0,
+        "SEQ": 0,
+        "PLAY": 2,
+        "REC": 0,
+        "OCT-": 0,
+        "OCT+": 0
+      },
+      "playGreen": 1,
+      "encoders": {
+        "MASTER": {
+          "note": "VOLUME",
+          "value": "quiet"
+        },
+        "SELECT": {
+          "note": "PET",
+          "value": "DOG"
+        },
+        "PRESETS": {
+          "note": "BRIGHT",
+          "value": "soft"
+        },
+        "ALGORITHM": {
+          "note": "LENGTH",
+          "value": "short"
+        },
+        "KNOB1": {
+          "note": "SPEED",
+          "value": "100"
+        },
+        "KNOB2": {
+          "note": "BUSY",
+          "value": "35%"
+        },
+        "KNOB3": {
+          "note": "BOUNCE",
+          "value": "gentle"
+        },
+        "KNOB4": {
+          "note": "SQUISH",
+          "value": "round"
+        }
+      },
+      "screen": {
+        "header": {
+          "icon": "play",
+          "bpm": "",
+          "mid": "DRUMS",
+          "right": "",
+          "batt": 3
+        },
+        "cards": null,
+        "footer": {
+          "text": "Kick / hat / tom",
+          "steps": {
+            "n": 4,
+            "on": 3,
+            "filled": 1
+          }
+        },
+        "panel": {
+          "kind": "roundel",
+          "rings": [
+            "#442b65",
+            "#7350a2",
+            "#b994e8"
+          ],
+          "title": "TOGETHER",
+          "titleSize": 24,
+          "titleCol": "#ffffff",
+          "bandCol": "#241735",
+          "sub": "",
+          "r": 76,
+          "cx": 120,
+          "cy": 115
+        },
+        "note": "Illustrated static concept, fitted to 240\u00d7240. DRUMS selected. Dog and monkey perform; held keys produce complementary repeats. Localized kick ripple and bouncing hills. Backing beat remains on.",
+        "art": {
+          "src": "docs/purplemonkey-v1/musical-worlds-v4.png",
+          "crop": [
+            432,
+            699,
+            390,
+            481
+          ]
+        }
+      },
+      "buttonNotes": {
+        "FX": "Select DRUMS; does not start/stop beat.",
+        "SEL": "Select SYNTH; does not start/stop beat.",
+        "PLAY": "Start/stop backing pattern; keyboard remains playable."
+      }
+    },
+    {
+      "state": 6,
+      "name": "06 \u2022 Handful / full band",
+      "export": true,
+      "notes": "SYNTH selected. Sustained handful brings all four animals into a rich purple garden. Keys remain immediate. Beat clock continues through mode changes.",
+      "keys": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        2,
+        1,
+        1,
+        2,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "keyLabels": {
+        "0": "C",
+        "1": "D",
+        "2": "E",
+        "3": "G",
+        "4": "A",
+        "5": "C",
+        "6": "D",
+        "7": "E",
+        "8": "G",
+        "9": "A",
+        "10": "C",
+        "11": "D",
+        "12": "E",
+        "13": "G",
+        "14": "A",
+        "15": "C",
+        "16": "D",
+        "17": "E",
+        "18": "G",
+        "19": "A",
+        "20": "C",
+        "21": "D",
+        "22": "E",
+        "23": "G",
+        "24": "A",
+        "25": "C",
+        "26": "D"
+      },
+      "buttons": {
+        "FX": 1,
+        "SEL": 2,
+        "ENV": 0,
+        "LFO": 0,
+        "EDIT": 0,
+        "GLO": 0,
+        "HOME": 1,
+        "SAVE": 0,
+        "ARP": 0,
+        "SEQ": 0,
+        "PLAY": 2,
+        "REC": 0,
+        "OCT-": 0,
+        "OCT+": 0
+      },
+      "playGreen": 1,
+      "encoders": {
+        "MASTER": {
+          "note": "VOLUME",
+          "value": "quiet"
+        },
+        "SELECT": {
+          "note": "PET",
+          "value": "CAT"
+        },
+        "PRESETS": {
+          "note": "BRIGHT",
+          "value": "soft"
+        },
+        "ALGORITHM": {
+          "note": "LENGTH",
+          "value": "short"
+        },
+        "KNOB1": {
+          "note": "SPEED",
+          "value": "100"
+        },
+        "KNOB2": {
+          "note": "BUSY",
+          "value": "72%"
+        },
+        "KNOB3": {
+          "note": "BOUNCE",
+          "value": "gentle"
+        },
+        "KNOB4": {
+          "note": "SQUISH",
+          "value": "round"
+        }
+      },
+      "screen": {
+        "header": {
+          "icon": "play",
+          "bpm": "",
+          "mid": "SYNTH",
+          "right": "",
+          "batt": 3
+        },
+        "cards": null,
+        "footer": {
+          "text": "The band joins in",
+          "steps": {
+            "n": 4,
+            "on": 2,
+            "filled": 1
+          }
+        },
+        "panel": {
+          "kind": "roundel",
+          "rings": [
+            "#442b65",
+            "#7350a2",
+            "#b994e8"
+          ],
+          "title": "TOGETHER",
+          "titleSize": 24,
+          "titleCol": "#ffffff",
+          "bandCol": "#241735",
+          "sub": "",
+          "r": 76,
+          "cx": 120,
+          "cy": 115
+        },
+        "note": "Illustrated static concept, fitted to 240\u00d7240. SYNTH selected. Sustained handful brings all four animals into a rich purple garden. Keys remain immediate. Beat clock continues through mode changes.",
+        "art": {
+          "src": "docs/purplemonkey-v1/musical-worlds-v4.png",
+          "crop": [
+            837,
+            699,
+            404,
+            481
+          ]
+        }
+      },
+      "buttonNotes": {
+        "FX": "Select DRUMS; does not start/stop beat.",
+        "SEL": "Select SYNTH; does not start/stop beat.",
+        "PLAY": "Start/stop backing pattern; keyboard remains playable."
+      }
+    }
+  ]
+}

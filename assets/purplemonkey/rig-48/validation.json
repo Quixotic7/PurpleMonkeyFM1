@@ -1,0 +1,34 @@
+{
+  "monkey": {
+    "parts": 8,
+    "expressions": 6,
+    "max_dimension": 48,
+    "opaque_colors": 31,
+    "body_pixel_bytes": 7554,
+    "extra_face_pixel_bytes": 8400
+  },
+  "cat": {
+    "parts": 8,
+    "expressions": 6,
+    "max_dimension": 48,
+    "opaque_colors": 31,
+    "body_pixel_bytes": 7640,
+    "extra_face_pixel_bytes": 9360
+  },
+  "dog": {
+    "parts": 9,
+    "expressions": 6,
+    "max_dimension": 48,
+    "opaque_colors": 19,
+    "body_pixel_bytes": 10852,
+    "extra_face_pixel_bytes": 7955
+  },
+  "llama": {
+    "parts": 9,
+    "expressions": 6,
+    "max_dimension": 48,
+    "opaque_colors": 26,
+    "body_pixel_bytes": 6637,
+    "extra_face_pixel_bytes": 5460
+  }
+}

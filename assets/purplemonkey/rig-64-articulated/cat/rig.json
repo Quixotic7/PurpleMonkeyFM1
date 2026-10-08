@@ -1,0 +1,341 @@
+{
+  "parts": [
+    {
+      "name": "body",
+      "file": "body.png",
+      "parent": null,
+      "at": null,
+      "pivot": [
+        20,
+        35
+      ]
+    },
+    {
+      "name": "head",
+      "file": "head.png",
+      "parent": "body",
+      "at": [
+        20,
+        7
+      ],
+      "pivot": [
+        32,
+        45
+      ]
+    },
+    {
+      "name": "tail",
+      "file": "tail.png",
+      "parent": "body",
+      "at": [
+        34,
+        45
+      ],
+      "pivot": [
+        23,
+        36
+      ]
+    },
+    {
+      "name": "xylophone",
+      "file": "xylophone.png",
+      "parent": "body",
+      "at": [
+        20,
+        39
+      ],
+      "pivot": [
+        32,
+        8
+      ]
+    },
+    {
+      "name": "upper_arm_l",
+      "file": "upper_arm_l.png",
+      "parent": "body",
+      "at": [
+        7,
+        14
+      ],
+      "pivot": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "upper_leg_l",
+      "file": "upper_leg_l.png",
+      "parent": "body",
+      "at": [
+        12,
+        49
+      ],
+      "pivot": [
+        7,
+        6
+      ]
+    },
+    {
+      "name": "upper_arm_r",
+      "file": "upper_arm_r.png",
+      "parent": "body",
+      "at": [
+        34,
+        14
+      ],
+      "pivot": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "upper_leg_r",
+      "file": "upper_leg_r.png",
+      "parent": "body",
+      "at": [
+        29,
+        49
+      ],
+      "pivot": [
+        7,
+        6
+      ]
+    },
+    {
+      "name": "forearm_l",
+      "file": "forearm_l.png",
+      "parent": "upper_arm_l",
+      "at": [
+        6,
+        22
+      ],
+      "pivot": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "lower_leg_l",
+      "file": "lower_leg_l.png",
+      "parent": "upper_leg_l",
+      "at": [
+        7,
+        23
+      ],
+      "pivot": [
+        5,
+        6
+      ]
+    },
+    {
+      "name": "forearm_r",
+      "file": "forearm_r.png",
+      "parent": "upper_arm_r",
+      "at": [
+        6,
+        22
+      ],
+      "pivot": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "lower_leg_r",
+      "file": "lower_leg_r.png",
+      "parent": "upper_leg_r",
+      "at": [
+        7,
+        23
+      ],
+      "pivot": [
+        5,
+        6
+      ]
+    },
+    {
+      "name": "hand_l",
+      "file": "hand_l.png",
+      "parent": "forearm_l",
+      "at": [
+        6,
+        22
+      ],
+      "pivot": [
+        5,
+        4
+      ]
+    },
+    {
+      "name": "foot_l",
+      "file": "foot_l.png",
+      "parent": "lower_leg_l",
+      "at": [
+        5,
+        22
+      ],
+      "pivot": [
+        13,
+        4
+      ]
+    },
+    {
+      "name": "hand_r",
+      "file": "hand_r.png",
+      "parent": "forearm_r",
+      "at": [
+        6,
+        22
+      ],
+      "pivot": [
+        5,
+        4
+      ]
+    },
+    {
+      "name": "foot_r",
+      "file": "foot_r.png",
+      "parent": "lower_leg_r",
+      "at": [
+        5,
+        22
+      ],
+      "pivot": [
+        5,
+        4
+      ]
+    }
+  ],
+  "order": [
+    "tail",
+    "upper_leg_l",
+    "lower_leg_l",
+    "foot_l",
+    "upper_leg_r",
+    "lower_leg_r",
+    "foot_r",
+    "upper_arm_l",
+    "forearm_l",
+    "hand_l",
+    "body",
+    "head",
+    "xylophone",
+    "upper_arm_r",
+    "forearm_r",
+    "hand_r"
+  ],
+  "feet": 62,
+  "anims": {
+    "idle": [
+      {
+        "ms": 1200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "head": -2
+        }
+      },
+      {
+        "ms": 1200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "head": 2
+        }
+      }
+    ],
+    "play": [
+      {
+        "ms": 350,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "upper_arm_l": -12,
+          "forearm_l": 45,
+          "hand_l": -12,
+          "upper_leg_l": 8,
+          "lower_leg_l": -28,
+          "foot_l": 15,
+          "upper_arm_r": 12,
+          "forearm_r": -45,
+          "hand_r": 12,
+          "upper_leg_r": -8,
+          "lower_leg_r": 28,
+          "foot_r": -15
+        }
+      },
+      {
+        "ms": 350,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "upper_arm_l": -8,
+          "forearm_l": 15,
+          "hand_l": -6,
+          "upper_leg_l": -8,
+          "lower_leg_l": 12,
+          "foot_l": -6,
+          "upper_arm_r": 8,
+          "forearm_r": -15,
+          "hand_r": 6,
+          "upper_leg_r": 8,
+          "lower_leg_r": -12,
+          "foot_r": 6
+        }
+      }
+    ],
+    "dance": [
+      {
+        "ms": 500,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "upper_arm_l": -12,
+          "forearm_l": 45,
+          "hand_l": -12,
+          "upper_leg_l": 8,
+          "lower_leg_l": -28,
+          "foot_l": 15,
+          "upper_arm_r": 12,
+          "forearm_r": -45,
+          "hand_r": 12,
+          "upper_leg_r": -8,
+          "lower_leg_r": 28,
+          "foot_r": -15
+        }
+      },
+      {
+        "ms": 500,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "upper_arm_l": -8,
+          "forearm_l": 15,
+          "hand_l": -6,
+          "upper_leg_l": -8,
+          "lower_leg_l": 12,
+          "foot_l": -6,
+          "upper_arm_r": 8,
+          "forearm_r": -15,
+          "hand_r": 6,
+          "upper_leg_r": 8,
+          "lower_leg_r": -12,
+          "foot_r": 6
+        }
+      }
+    ]
+  },
+  "note": "Articulated 64px option. Round-ended generated limbs; forearms and shins overlap at elbows/knees. Requires part capacity >=17. l/r mean viewer sides."
+}

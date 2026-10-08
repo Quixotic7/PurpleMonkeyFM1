@@ -1,0 +1,693 @@
+{
+  "cell_size": [
+    64,
+    64
+  ],
+  "sheet": "spritesheet-64.png",
+  "frames": {
+    "body": {
+      "cell": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        0,
+        9,
+        63,
+        45
+      ],
+      "file": "body.png",
+      "pivot_in_cell": [
+        31,
+        35
+      ]
+    },
+    "tail": {
+      "cell": [
+        64,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        83,
+        19,
+        26,
+        25
+      ],
+      "file": "tail.png",
+      "pivot_in_cell": [
+        39,
+        37
+      ]
+    },
+    "neck": {
+      "cell": [
+        128,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        147,
+        0,
+        26,
+        64
+      ],
+      "file": "neck.png",
+      "pivot_in_cell": [
+        31,
+        55
+      ]
+    },
+    "upper_leg_far_l": {
+      "cell": [
+        192,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        215,
+        17,
+        18,
+        29
+      ],
+      "file": "upper_leg_far_l.png",
+      "pivot_in_cell": [
+        31,
+        23
+      ]
+    },
+    "upper_leg_far_r": {
+      "cell": [
+        256,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        281,
+        17,
+        14,
+        29
+      ],
+      "file": "upper_leg_far_r.png",
+      "pivot_in_cell": [
+        31,
+        23
+      ]
+    },
+    "upper_leg_near_l": {
+      "cell": [
+        320,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        343,
+        17,
+        18,
+        29
+      ],
+      "file": "upper_leg_near_l.png",
+      "pivot_in_cell": [
+        31,
+        23
+      ]
+    },
+    "upper_leg_near_r": {
+      "cell": [
+        0,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        25,
+        81,
+        14,
+        29
+      ],
+      "file": "upper_leg_near_r.png",
+      "pivot_in_cell": [
+        31,
+        23
+      ]
+    },
+    "collar": {
+      "cell": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        77,
+        87,
+        38,
+        18
+      ],
+      "file": "collar.png",
+      "pivot_in_cell": [
+        31,
+        27
+      ]
+    },
+    "lower_leg_far_l": {
+      "cell": [
+        128,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        153,
+        81,
+        13,
+        29
+      ],
+      "file": "lower_leg_far_l.png",
+      "pivot_in_cell": [
+        31,
+        23
+      ]
+    },
+    "lower_leg_far_r": {
+      "cell": [
+        192,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        217,
+        81,
+        13,
+        29
+      ],
+      "file": "lower_leg_far_r.png",
+      "pivot_in_cell": [
+        31,
+        23
+      ]
+    },
+    "lower_leg_near_l": {
+      "cell": [
+        256,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        281,
+        81,
+        13,
+        29
+      ],
+      "file": "lower_leg_near_l.png",
+      "pivot_in_cell": [
+        31,
+        23
+      ]
+    },
+    "lower_leg_near_r": {
+      "cell": [
+        320,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        345,
+        81,
+        13,
+        29
+      ],
+      "file": "lower_leg_near_r.png",
+      "pivot_in_cell": [
+        31,
+        23
+      ]
+    },
+    "foot_far_l": {
+      "cell": [
+        0,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        23,
+        148,
+        17,
+        24
+      ],
+      "file": "foot_far_l.png",
+      "pivot_in_cell": [
+        35,
+        25
+      ]
+    },
+    "foot_far_r": {
+      "cell": [
+        64,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        88,
+        147,
+        15,
+        25
+      ],
+      "file": "foot_far_r.png",
+      "pivot_in_cell": [
+        34,
+        24
+      ]
+    },
+    "foot_near_l": {
+      "cell": [
+        128,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        151,
+        148,
+        17,
+        24
+      ],
+      "file": "foot_near_l.png",
+      "pivot_in_cell": [
+        35,
+        25
+      ]
+    },
+    "foot_near_r": {
+      "cell": [
+        192,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        216,
+        147,
+        15,
+        25
+      ],
+      "file": "foot_near_r.png",
+      "pivot_in_cell": [
+        34,
+        24
+      ]
+    },
+    "head_shape": {
+      "cell": [
+        256,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        271,
+        140,
+        34,
+        39
+      ],
+      "file": "head_shape.png",
+      "pivot_in_cell": [
+        31,
+        45
+      ]
+    },
+    "eyes_open": {
+      "cell": [
+        320,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        335,
+        140,
+        34,
+        39
+      ],
+      "file": "eyes_open.png",
+      "pivot_in_cell": [
+        31,
+        45
+      ]
+    },
+    "eyes_blink": {
+      "cell": [
+        0,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        15,
+        204,
+        34,
+        39
+      ],
+      "file": "eyes_blink.png",
+      "pivot_in_cell": [
+        31,
+        45
+      ]
+    },
+    "eyes_happy": {
+      "cell": [
+        64,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        79,
+        204,
+        34,
+        39
+      ],
+      "file": "eyes_happy.png",
+      "pivot_in_cell": [
+        31,
+        45
+      ]
+    },
+    "eyes_surprised": {
+      "cell": [
+        128,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        143,
+        204,
+        34,
+        39
+      ],
+      "file": "eyes_surprised.png",
+      "pivot_in_cell": [
+        31,
+        45
+      ]
+    },
+    "nose_neutral": {
+      "cell": [
+        192,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        207,
+        204,
+        34,
+        39
+      ],
+      "file": "nose_neutral.png",
+      "pivot_in_cell": [
+        31,
+        45
+      ]
+    },
+    "nose_scrunch": {
+      "cell": [
+        256,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        271,
+        204,
+        34,
+        39
+      ],
+      "file": "nose_scrunch.png",
+      "pivot_in_cell": [
+        31,
+        45
+      ]
+    },
+    "nose_tilt": {
+      "cell": [
+        320,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        335,
+        204,
+        34,
+        39
+      ],
+      "file": "nose_tilt.png",
+      "pivot_in_cell": [
+        31,
+        45
+      ]
+    },
+    "mouth_smile": {
+      "cell": [
+        0,
+        256,
+        64,
+        64
+      ],
+      "content": [
+        15,
+        268,
+        34,
+        39
+      ],
+      "file": "mouth_smile.png",
+      "pivot_in_cell": [
+        31,
+        45
+      ]
+    },
+    "mouth_sing": {
+      "cell": [
+        64,
+        256,
+        64,
+        64
+      ],
+      "content": [
+        79,
+        268,
+        34,
+        39
+      ],
+      "file": "mouth_sing.png",
+      "pivot_in_cell": [
+        31,
+        45
+      ]
+    },
+    "mouth_happy": {
+      "cell": [
+        128,
+        256,
+        64,
+        64
+      ],
+      "content": [
+        143,
+        268,
+        34,
+        39
+      ],
+      "file": "mouth_happy.png",
+      "pivot_in_cell": [
+        31,
+        45
+      ]
+    },
+    "mouth_sleepy": {
+      "cell": [
+        192,
+        256,
+        64,
+        64
+      ],
+      "content": [
+        207,
+        268,
+        34,
+        39
+      ],
+      "file": "mouth_sleepy.png",
+      "pivot_in_cell": [
+        31,
+        45
+      ]
+    },
+    "ear_l_relaxed": {
+      "cell": [
+        256,
+        256,
+        64,
+        64
+      ],
+      "content": [
+        256,
+        256,
+        64,
+        64
+      ],
+      "file": "ear_l_relaxed.png",
+      "pivot_in_cell": [
+        32,
+        36
+      ]
+    },
+    "ear_l_perk": {
+      "cell": [
+        320,
+        256,
+        64,
+        64
+      ],
+      "content": [
+        320,
+        256,
+        64,
+        64
+      ],
+      "file": "ear_l_perk.png",
+      "pivot_in_cell": [
+        32,
+        36
+      ]
+    },
+    "ear_l_droop": {
+      "cell": [
+        0,
+        320,
+        64,
+        64
+      ],
+      "content": [
+        0,
+        320,
+        64,
+        64
+      ],
+      "file": "ear_l_droop.png",
+      "pivot_in_cell": [
+        32,
+        36
+      ]
+    },
+    "ear_l_flick": {
+      "cell": [
+        64,
+        320,
+        64,
+        64
+      ],
+      "content": [
+        64,
+        320,
+        64,
+        64
+      ],
+      "file": "ear_l_flick.png",
+      "pivot_in_cell": [
+        32,
+        36
+      ]
+    },
+    "ear_r_relaxed": {
+      "cell": [
+        128,
+        320,
+        64,
+        64
+      ],
+      "content": [
+        128,
+        320,
+        64,
+        64
+      ],
+      "file": "ear_r_relaxed.png",
+      "pivot_in_cell": [
+        32,
+        36
+      ]
+    },
+    "ear_r_perk": {
+      "cell": [
+        192,
+        320,
+        64,
+        64
+      ],
+      "content": [
+        192,
+        320,
+        64,
+        64
+      ],
+      "file": "ear_r_perk.png",
+      "pivot_in_cell": [
+        32,
+        36
+      ]
+    },
+    "ear_r_droop": {
+      "cell": [
+        256,
+        320,
+        64,
+        64
+      ],
+      "content": [
+        256,
+        320,
+        64,
+        64
+      ],
+      "file": "ear_r_droop.png",
+      "pivot_in_cell": [
+        32,
+        36
+      ]
+    },
+    "ear_r_flick": {
+      "cell": [
+        320,
+        320,
+        64,
+        64
+      ],
+      "content": [
+        320,
+        320,
+        64,
+        64
+      ],
+      "file": "ear_r_flick.png",
+      "pivot_in_cell": [
+        32,
+        36
+      ]
+    }
+  }
+}

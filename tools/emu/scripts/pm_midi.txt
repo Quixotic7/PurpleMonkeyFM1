@@ -1,0 +1,11 @@
+# PurpleMonkey: MIDI in, with the emulator's PM_EMU_MIDI=1 keyboard (tools/emu/pm_emu_fw.c emu_fw_tick):
+# C4 + E4 on channel 1 at 1.0 s, off at 1.5 s; a GM kick and hat on channel 10 at 2.0 s; G4 on at 2.5 s, CC 123 at 3.0 s
+wait 900
+expect silence
+wait 400
+expect sound                          # the two notes
+expect led C4 dim                     # a MIDI note is not a panel key
+wait 850
+expect sound                          # the drums
+wait 6000
+dump

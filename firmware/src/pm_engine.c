@@ -1,0 +1,399 @@
+/* SPDX-License-Identifier: GPL-3.0-only
+ * Copyright (C) 2026 PurpleMonkey FM-1 contributors */
+/* PurpleMonkey FM-1: the musical engine (pm_engine.h has the rules). */
+#include "pm_engine.h"
+
+#define PM_STEP_UNITS (PM_FS * 15u)                    /* a straight sixteenth, in samples x BPM */
+#define PM_MS(ms) ((ms) * (PM_FS / 100u) / 10u)        /* ms -> samples */
+#define PM_AGE_MAX 0x40000000u
+
+/* SPEED: 72 .. 136 BPM around 104. BUSY: the pattern's level 1 .. 7. BOUNCE: straight .. a 2 : 1 shuffle.
+ * SQUISH, BRIGHT, LENGTH: the sounds' (pm_out.c, pm_drum_synth.c), kept here so HOME and the UI have one place */
+const pm_knob_t PM_KNOB[PM_NKNOB] = {{-8, 8, 0}, {0, 6, 2}, {0, 8, 0}, {-8, 8, 0}, {-8, 8, 0}, {-8, 8, 0}};
+
+/* ------------------------------------------------------------ the keys --- */
+/* a key's white-key number (F3 = 0 .. G5 = 15); a black key: the white key left of it */
+static uint32_t pm_white(uint32_t k)
+{
+    static const int8_t W[12] = {0, -1, 1, -1, 2, -1, 3, 4, -1, 5, -1, 6};   /* from F */
+    int32_t i = W[k % 12u];
+    if (i < 0)
+        i = W[(k - 1u) % 12u];
+    return (k / 12u) * 7u + (uint32_t)i;
+}
+/* SYNTH: the white keys climb C major pentatonic from C3 (16 of them: C3 .. C6, three octaves) */
+uint32_t pm_key_note(const pm_t *pm, uint32_t key)
+{
+    static const uint8_t PENT[5] = {0, 2, 4, 7, 9};
+    uint32_t d = pm_white(key % PM_NKEY);
+    (void)pm;
+    return 48u + 12u * (d / 5u) + PENT[d % 5u];
+}
+/* DRUMS: nine sounds, three times over; the tuned ones a little higher each time */
+static const struct { uint8_t lane; int8_t semi; } PM_DRUM_KEY[PM_NKEY] = {
+    {PM_L_KICK, 0}, {PM_L_CHH, 0}, {PM_L_SNARE, 0}, {PM_L_TOMLO, 0}, {PM_L_RIM, 0}, {PM_L_TOMHI, 0},
+    {PM_L_CONGA, 0}, {PM_L_SHAKER, 0}, {PM_L_COWBELL, 0},
+    {PM_L_KICK2, 0}, {PM_L_CHH, 0}, {PM_L_SNARE2, 0}, {PM_L_TOMLO, 4}, {PM_L_CLAVE, 0}, {PM_L_TOMHI, 4},
+    {PM_L_CONGA, 5}, {PM_L_OHH, 0}, {PM_L_COWBELL, 5},
+    {PM_L_KICK, 0}, {PM_L_CHH, 0}, {PM_L_CLAP, 0}, {PM_L_TOMLO, 7}, {PM_L_RIM, 0}, {PM_L_TOMHI, 7},
+    {PM_L_CONGA, 9}, {PM_L_SHAKER, 0}, {PM_L_RIDE, 0},
+};
+uint32_t pm_key_lane(uint32_t key, int32_t *semi)
+{
+    key %= PM_NKEY;
+    if (semi)
+        *semi = PM_DRUM_KEY[key].semi;
+    return PM_DRUM_KEY[key].lane;
+}
+/* a held drum key repeats on these steps of the bar (bit s: sixteenth s) and at this velocity */
+static const struct { uint16_t steps; uint8_t vel; } PM_REPEAT[PM_NLANE] = {
+    [PM_L_KICK] = {0x1111, 96}, [PM_L_KICK2] = {0x1111, 96},          /* the beats */
+    [PM_L_SNARE] = {0x1010, 88}, [PM_L_SNARE2] = {0x1010, 84}, [PM_L_CLAP] = {0x1010, 84},   /* 2 and 4 */
+    [PM_L_CHH] = {0x4444, 70}, [PM_L_OHH] = {0x0404, 62},             /* the off-beats */
+    [PM_L_TOMLO] = {0x4848, 84}, [PM_L_TOMHI] = {0x8480, 80},
+    [PM_L_CONGA] = {0x2488, 78}, [PM_L_SHAKER] = {0xFFFF, 52},
+    [PM_L_RIM] = {0x1449, 76}, [PM_L_CLAVE] = {0x1449, 76},           /* son clave */
+    [PM_L_COWBELL] = {0x4141, 70}, [PM_L_RIDE] = {0x5151, 62}, [PM_L_CRASH] = {0x0001, 60},
+};
+
+/* ------------------------------------------------------- the patterns --- */
+/* a pet's backing groove: two bars of sixteenths per sound; a digit is the BUSY level (1 .. 7) from which that
+ * hit plays, '.' never. Level 1 is the anchor every level keeps; an open hat comes after the closed one */
+typedef struct { uint8_t lane, vel; const char *steps; } pm_row_t;
+#define PM_ROWS 6u
+static const pm_row_t PM_PATTERN[PM_NPET][PM_ROWS] = {
+    [PM_MONKEY] = {
+        {PM_L_KICK,    100, "1.....4.1.....4.1.....4.1...6.4."},
+        {PM_L_SNARE,    88, "....1.......1.......1.......1..7"},
+        {PM_L_CLAVE,    70, "2..2..2...2.2...2..2..2...2.2..."},
+        {PM_L_CHH,      60, "..3...3...3...3...3...3...3...3."},
+        {PM_L_CONGA,    74, "...5.5...5.5..5....5.5...5.5.6.6"},
+        {PM_L_COWBELL,  56, "7.......7.......7.......7...7..."},
+    },
+    [PM_CAT] = {
+        {PM_L_KICK,    100, "1.......1.4.....1.......1.4...6."},
+        {PM_L_SNARE,    90, "....1.......1.......1.......1..7"},
+        {PM_L_CHH,      62, "3.2.3.2.3.2.3.2.3.2.3.2.3.2.3.2."},
+        {PM_L_SHAKER,   44, ".5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5"},
+        {PM_L_CONGA,    72, "......6..6........6...6..6.6...."},
+        {PM_L_OHH,      58, "..............7...............7."},
+    },
+    [PM_DOG] = {
+        {PM_L_KICK,    100, "1.......1..4....1.......1..4..6."},
+        {PM_L_CLAP,     84, "....1.......1.......1.......1..."},
+        {PM_L_SHAKER,   50, "2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2."},
+        {PM_L_SHAKER,   40, ".4.4.4.4.4.4.4.4.4.4.4.4.4.4.4.4"},
+        {PM_L_CHH,      60, "..3...3...3...3...3...3...3...3."},
+        {PM_L_TOMLO,    76, "..........5..5............5.6.7."},
+    },
+    [PM_LLAMA] = {
+        {PM_L_KICK,     92, "1.......1.......1.......1.....5."},
+        {PM_L_RIM,      70, "....1.......1.......1.......1..."},
+        {PM_L_RIDE,     58, "2...2..32...2..32...2..32...2..3"},
+        {PM_L_CHH,      52, "....4.......4.......4.......4..."},
+        {PM_L_COWBELL,  50, "......6.......6.......6.......6."},
+        {PM_L_TOMHI,    66, ".............7.7.............7.7"},
+    },
+};
+
+/* ------------------------------------------------------------- output --- */
+static void pm_note_on(pm_t *pm, uint32_t note, uint32_t vel)   /* always sounds (a second owner retriggers it) */
+{
+    note &= 127u;
+    if (pm->cnt[note] < 255u)
+        pm->cnt[note]++;
+    pm->n_note_on++;
+    pm->last_note = (uint8_t)note;
+    pm->out->note_on(pm->ud, (uint8_t)note, (uint8_t)vel);
+}
+static void pm_note_off(pm_t *pm, uint32_t note)                /* off when its last owner lets go */
+{
+    note &= 127u;
+    if (!pm->cnt[note] || --pm->cnt[note])
+        return;
+    pm->n_note_off++;
+    pm->out->note_off(pm->ud, (uint8_t)note);
+}
+static void pm_hit(pm_t *pm, uint32_t lane, int32_t semi, uint32_t vel, uint32_t src)
+{
+    pm->n_drum++;
+    pm->lane_hits[lane % PM_NLANE]++;
+    pm->out->drum(pm->ud, (uint8_t)lane, (int8_t)semi, (uint8_t)vel, (uint8_t)src);
+}
+static uint32_t pm_count(uint32_t m)
+{
+    uint32_t n = 0;
+    for (; m; m &= m - 1u)
+        n++;
+    return n;
+}
+static void pm_phrase_off1(pm_t *pm, uint32_t i)
+{
+    if (pm->ph_note[i])
+        pm_note_off(pm, pm->ph_note[i]);
+    pm->ph_note[i] = 0;
+    pm->ph_left[i] = 0;
+}
+static void pm_bass_off(pm_t *pm)
+{
+    if (pm->ph_bass)
+        pm_note_off(pm, pm->ph_bass);
+    pm->ph_bass = 0;
+}
+static void pm_phrase_off(pm_t *pm)               /* the bloom ends: its phrase notes and its bass */
+{
+    pm_phrase_off1(pm, 0);
+    pm_phrase_off1(pm, 1);
+    pm_bass_off(pm);
+}
+
+/* ------------------------------------------------------------ the keys --- */
+static void pm_order_drop(pm_t *pm, uint32_t key)
+{
+    uint32_t i, k = 0;
+    for (i = 0; i < pm->norder; i++)
+        if (pm->order[i] != key)
+            pm->order[k++] = pm->order[i];
+    pm->norder = (uint8_t)k;
+}
+static void pm_release_keys(pm_t *pm)                 /* every key's note off, every key forgotten */
+{
+    uint32_t k;
+    for (k = 0; k < PM_NKEY; k++)
+        if ((pm->voiced >> k) & 1u)
+            pm_note_off(pm, pm_key_note(pm, k));
+    pm_phrase_off(pm);
+    pm->held = pm->voiced = 0;
+    pm->norder = 0;
+    pm->multi_age = 0;
+}
+
+void pm_key(pm_t *pm, uint32_t key, int down)
+{
+    uint32_t bit;
+    if (key >= PM_NKEY)
+        return;
+    bit = 1u << key;
+    if (!down) {
+        if (!(pm->held & bit))
+            return;                                   /* (a key from before the mode change, or never seen) */
+        pm->held &= ~bit;
+        pm_order_drop(pm, key);
+        if (pm->voiced & bit) {
+            pm->voiced &= ~bit;
+            pm_note_off(pm, pm_key_note(pm, key));
+        }
+        return;
+    }
+    if (pm->held & bit) {                             /* down twice (a lost release): as a new press */
+        pm_key(pm, key, 0);
+    }
+    pm->held |= bit;
+    pm->age[key] = 0;
+    pm->order[pm->norder++] = (uint8_t)key;
+    if (pm->mode == PM_DRUMS) {
+        int32_t semi;
+        uint32_t lane = pm_key_lane(key, &semi);
+        pm_hit(pm, lane, semi, 112, PM_SRC_KEY);      /* now, not on the grid */
+        return;
+    }
+    {   /* SYNTH: at most PM_MAX_HELD notes from the keys: the oldest sounding key lets go (it stays held) */
+        uint32_t i, n = pm_count(pm->voiced), vel;
+        for (i = 0; n >= PM_MAX_HELD && i < pm->norder; i++) {
+            uint32_t o = pm->order[i];
+            if ((pm->voiced >> o) & 1u) {
+                pm->voiced &= ~(1u << o);
+                pm_note_off(pm, pm_key_note(pm, o));
+                n--;
+            }
+        }
+        vel = 104u - 7u * n;                          /* more notes: each a little softer */
+        pm->voiced |= bit;
+        pm_note_on(pm, pm_key_note(pm, key), vel);
+    }
+}
+
+void pm_set_mode(pm_t *pm, uint32_t mode)
+{
+    mode = mode == PM_DRUMS ? PM_DRUMS : PM_SYNTH;
+    if (mode == pm->mode)
+        return;
+    pm_release_keys(pm);
+    pm->mode = (uint8_t)mode;
+}
+void pm_set_pet(pm_t *pm, uint32_t pet) { pm->pet = (uint8_t)(pet % PM_NPET); }
+void pm_set_knob(pm_t *pm, uint32_t id, int32_t v)
+{
+    if (id >= PM_NKNOB)
+        return;
+    pm->knob[id] = (int8_t)(v < PM_KNOB[id].min ? PM_KNOB[id].min : v > PM_KNOB[id].max ? PM_KNOB[id].max : v);
+}
+void pm_home(pm_t *pm)
+{
+    uint32_t i;
+    for (i = 0; i < PM_NKNOB; i++)
+        pm->knob[i] = PM_KNOB[i].def;
+}
+void pm_panic(pm_t *pm)
+{
+    uint32_t n;
+    pm_release_keys(pm);
+    for (n = 0; n < 128u; n++)
+        if (pm->cnt[n]) {
+            pm->cnt[n] = 1;
+            pm_note_off(pm, n);
+        }
+}
+uint32_t pm_bpm(const pm_t *pm) { return (uint32_t)(104 + 4 * pm->knob[PM_K_SPEED]); }
+uint32_t pm_notes_on(const pm_t *pm)
+{
+    uint32_t n, c = 0;
+    for (n = 0; n < 128u; n++)
+        c += pm->cnt[n] != 0;
+    return c;
+}
+
+/* ----------------------------------------------------------- the clock --- */
+static uint32_t pm_step_len(const pm_t *pm, uint32_t step)   /* BOUNCE: the even steps longer, the odd ones shorter */
+{
+    uint32_t sw = PM_STEP_UNITS / 24u * (uint32_t)pm->knob[PM_K_BOUNCE];
+    return (step & 1u) ? PM_STEP_UNITS - sw : PM_STEP_UNITS + sw;
+}
+
+static void pm_step(pm_t *pm)                         /* step pm->step begins */
+{
+    uint32_t s = pm->step, fired = 0, nh = 0, i, l;
+    pm->n_step++;
+    if (s % 4u == 0u)
+        pm->busy = (uint8_t)pm->knob[PM_K_BUSY];      /* a BUSY change waits for the beat */
+    if (pm->beat) {
+        const pm_row_t *row = PM_PATTERN[pm->pet % PM_NPET];
+        for (i = 0; i < PM_ROWS; i++) {
+            char c = row[i].steps[s];
+            uint32_t vel = row[i].vel + (s % 4u == 0u ? 8u : 0u);
+            if (c < '1' || c > '9' || (uint32_t)(c - '0') > pm->busy + 1u)
+                continue;
+            if (((fired >> row[i].lane) & 1u) || nh >= PM_STEP_HITS)
+                continue;
+            fired |= 1u << row[i].lane;
+            nh++;
+            pm_hit(pm, row[i].lane, 0, vel, PM_SRC_BEAT);
+        }
+    }
+    if (pm->mode == PM_DRUMS) {
+        for (l = 0; l < PM_NLANE; l++) {
+            int8_t cand[4];
+            uint32_t nc = 0;
+            if (!((PM_REPEAT[l].steps >> (s % 16u)) & 1u))
+                continue;
+            for (i = 0; i < pm->norder && nc < 4u; i++) {
+                uint32_t k = pm->order[i];
+                if (PM_DRUM_KEY[k].lane == l && pm->age[k] >= PM_MS(PM_REPEAT_MS))
+                    cand[nc++] = PM_DRUM_KEY[k].semi;
+            }
+            if (!nc || ((fired >> l) & 1u) || nh >= PM_STEP_HITS)
+                continue;
+            fired |= 1u << l;
+            nh++;
+            pm_hit(pm, l, cand[pm->lane_rr[l]++ % nc], PM_REPEAT[l].vel + (s % 4u == 0u ? 8u : 0u), PM_SRC_REPEAT);
+        }
+        return;
+    }
+    {   /* SYNTH: the phrase, up and down the held notes an octave above them */
+        uint32_t div = pm->beat ? 2u : 4u, m = 0, period;
+        uint8_t arr[PM_NKEY];
+        if (pm->norder < 2u || pm->multi_age < PM_MS(PM_PHRASE_MS) || s % div)
+            return;
+        for (i = 0; i < pm->norder; i++) {            /* the held notes, each once, rising */
+            uint32_t note = pm_key_note(pm, pm->order[i]), j, at = m;
+            for (j = 0; j < m; j++) {
+                if (arr[j] == note)
+                    break;
+                if (arr[j] > note && at == m)
+                    at = j;
+            }
+            if (j < m)
+                continue;
+            for (j = m; j > at; j--)
+                arr[j] = arr[j - 1u];
+            arr[at] = (uint8_t)note;
+            m++;
+        }
+        if (m < 2u)
+            return;
+        if (!pm->ph_bass) {                       /* the bloom opens: the lowest note an octave down, once */
+            pm->ph_bass = (uint8_t)(arr[0] - 12u);
+            pm_note_on(pm, pm->ph_bass, 56);
+        }
+        period = 2u * m - 2u;
+        pm->ph_idx = (uint8_t)((pm->ph_idx + 1u) % period);
+        i = pm->ph_idx < m ? pm->ph_idx : period - pm->ph_idx;
+        {   /* with the beat: one short note after another; without: long ones, each over the next */
+            uint32_t slot = pm->beat ? 0u : (pm->ph_slot ^= 1u), len = div * PM_STEP_UNITS / pm_bpm(pm);
+            if (pm->beat)
+                pm_phrase_off1(pm, 1);
+            pm_phrase_off1(pm, slot);
+            pm->ph_note[slot] = (uint8_t)(arr[i] + 12u > 96u ? arr[i] : arr[i] + 12u);
+            pm->ph_left[slot] = pm->beat ? len * 4u / 5u : len * 9u / 5u;
+            pm_note_on(pm, pm->ph_note[slot], (pm->beat ? 62u : 50u) + (s % 8u == 0u ? 8u : 0u));
+        }
+    }
+}
+
+void pm_set_beat(pm_t *pm, int on)
+{
+    on = on != 0;
+    if (on == pm->beat)
+        return;
+    pm->beat = (uint8_t)on;
+    if (on) {                                         /* the groove from its first step, at once */
+        pm->pos = 0;
+        pm->step = 0;
+        pm_step(pm);
+    }
+}
+
+void pm_tick(pm_t *pm, uint32_t n)
+{
+    uint32_t k, len;
+    for (k = 0; k < PM_NKEY; k++)
+        if (((pm->held >> k) & 1u) && pm->age[k] < PM_AGE_MAX)
+            pm->age[k] += n;
+    if (pm->mode == PM_SYNTH && pm->norder >= 2u) {
+        if (pm->multi_age < PM_AGE_MAX)
+            pm->multi_age += n;
+    } else {
+        pm->multi_age = 0;
+    }
+    for (k = 0; k < 2u; k++)
+        if (pm->ph_note[k]) {
+            if (pm->ph_left[k] <= n)
+                pm_phrase_off1(pm, k);
+            else
+                pm->ph_left[k] -= n;
+        }
+    if (pm->ph_bass && pm->norder < 2u)           /* the keys went: the bass with them */
+        pm_bass_off(pm);
+    pm->pos += n * pm_bpm(pm);
+    while (pm->pos >= (len = pm_step_len(pm, pm->step))) {
+        pm->pos -= len;
+        pm->step = (uint8_t)((pm->step + 1u) % PM_NSTEP);
+        pm_step(pm);
+    }
+}
+
+void pm_init(pm_t *pm, const pm_out_t *out, void *ud)
+{
+    uint32_t i;
+    uint8_t *p = (uint8_t *)pm;
+    for (i = 0; i < sizeof *pm; i++)
+        p[i] = 0;
+    pm->out = out;
+    pm->ud = ud;
+    pm->mode = PM_SYNTH;
+    pm->pet = PM_CAT;
+    pm_home(pm);
+    pm->busy = (uint8_t)pm->knob[PM_K_BUSY];
+    pm->step = PM_NSTEP - 1u;                         /* the first tick's step is 0 */
+    pm->pos = PM_STEP_UNITS;
+}

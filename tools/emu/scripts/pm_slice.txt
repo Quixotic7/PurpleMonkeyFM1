@@ -1,0 +1,72 @@
+# PurpleMonkey: the first slice end to end (tools/emu/test_pm.sh)
+wait 300
+shot build/emu/pm/boot.ppm            # Cat, SYNTH, its name up
+expect silence
+expect led SEL on
+expect led FX dim
+expect led PLAY dim
+expect led C4 dim
+wait 1500
+shot build/emu/pm/idle.ppm            # the name gone, the mode's word back
+# SYNTH: a key is a note at once
+btn C4 down
+wait 60
+expect led C4 on
+expect sound
+shot build/emu/pm/note.ppm
+wait 200
+btn C4 up
+wait 100
+expect led C4 dim
+# three keys held: the phrase
+btn F3 down
+btn A3 down
+btn C4 down
+wait 1500
+shot build/emu/pm/hold.ppm
+expect sound
+dump
+btn F3 up
+btn A3 up
+btn C4 up
+wait 2500
+expect sound
+wait 3500                             # no stuck note: test_pm.sh checks the voices in this dump (the output itself
+dump                                  # keeps fx.c's 1 LSB DC-blocker dither after a low note: not "expect silence")
+# BEAT
+btn PLAY
+wait 40
+expect led PLAY on
+expect sound
+wait 1200
+shot build/emu/pm/beat.ppm
+# DRUMS over the beat
+btn FX
+wait 60
+expect led FX on
+expect led SEL dim
+btn F3 down
+wait 30
+shot build/emu/pm/drums.ppm
+wait 900
+btn F3 up
+knob KNOB2 +3
+wait 100
+shot build/emu/pm/busy.ppm
+wait 1500
+# pets
+knob SELECT +1
+wait 200
+shot build/emu/pm/dog.ppm
+knob SELECT +1
+wait 200
+shot build/emu/pm/llama.ppm
+knob SELECT +1
+wait 1500
+shot build/emu/pm/monkey.ppm
+dump
+btn PLAY
+wait 60
+expect led PLAY dim
+wait 5000                             # the beat stopped: nothing left sounding (test_pm.sh: the dump's voices, the WAV's end)
+dump

@@ -1,0 +1,320 @@
+{
+ "note": "placeholder rig: tools/make_rig_placeholder.py. Angles in degrees, clockwise on the screen, relative to the parent.",
+ "feet": 20,
+ "parts": [
+  {
+   "name": "body",
+   "file": "body.png",
+   "pivot": [
+    16,
+    34
+   ],
+   "parent": null,
+   "at": null
+  },
+  {
+   "name": "tail",
+   "file": "tail.png",
+   "pivot": [
+    5,
+    22
+   ],
+   "parent": "body",
+   "at": [
+    26,
+    30
+   ]
+  },
+  {
+   "name": "leg_l",
+   "file": "leg_l.png",
+   "pivot": [
+    5,
+    3
+   ],
+   "parent": "body",
+   "at": [
+    11,
+    33
+   ]
+  },
+  {
+   "name": "leg_r",
+   "file": "leg_r.png",
+   "pivot": [
+    5,
+    3
+   ],
+   "parent": "body",
+   "at": [
+    21,
+    33
+   ]
+  },
+  {
+   "name": "arm_l",
+   "file": "arm_l.png",
+   "pivot": [
+    4,
+    3
+   ],
+   "parent": "body",
+   "at": [
+    5,
+    11
+   ]
+  },
+  {
+   "name": "head",
+   "file": "head.png",
+   "pivot": [
+    20,
+    31
+   ],
+   "parent": "body",
+   "at": [
+    16,
+    5
+   ]
+  },
+  {
+   "name": "arm_r",
+   "file": "arm_r.png",
+   "pivot": [
+    4,
+    3
+   ],
+   "parent": "body",
+   "at": [
+    27,
+    11
+   ]
+  }
+ ],
+ "order": [
+  "tail",
+  "leg_l",
+  "leg_r",
+  "arm_l",
+  "body",
+  "head",
+  "arm_r"
+ ],
+ "anims": {
+  "idle": [
+   {
+    "ms": 1400,
+    "root": [
+     0,
+     0
+    ],
+    "a": {
+     "head": -4,
+     "arm_l": 6,
+     "arm_r": -6,
+     "tail": -8
+    }
+   },
+   {
+    "ms": 1400,
+    "root": [
+     0,
+     1
+    ],
+    "a": {
+     "head": 4,
+     "arm_l": 10,
+     "arm_r": -10,
+     "tail": 10
+    }
+   },
+   {
+    "ms": 250,
+    "root": [
+     0,
+     0
+    ],
+    "a": {
+     "head": 6,
+     "arm_r": -150,
+     "tail": 0
+    }
+   },
+   {
+    "ms": 200,
+    "root": [
+     0,
+     0
+    ],
+    "a": {
+     "head": 6,
+     "arm_r": -120
+    }
+   },
+   {
+    "ms": 200,
+    "root": [
+     0,
+     0
+    ],
+    "a": {
+     "head": 6,
+     "arm_r": -155
+    }
+   },
+   {
+    "ms": 200,
+    "root": [
+     0,
+     0
+    ],
+    "a": {
+     "head": 4,
+     "arm_r": -120
+    }
+   },
+   {
+    "ms": 400,
+    "root": [
+     0,
+     0
+    ],
+    "a": {
+     "arm_r": -150
+    }
+   }
+  ],
+  "play": [
+   {
+    "ms": 160,
+    "root": [
+     0,
+     2
+    ],
+    "a": {
+     "body": -5,
+     "head": 6,
+     "arm_l": 70,
+     "arm_r": -25,
+     "leg_l": 8,
+     "leg_r": -4,
+     "tail": 20
+    }
+   },
+   {
+    "ms": 160,
+    "root": [
+     0,
+     -2
+    ],
+    "a": {
+     "body": 0,
+     "head": -3,
+     "arm_l": 20,
+     "arm_r": -80,
+     "leg_l": 0,
+     "leg_r": 0,
+     "tail": -10
+    }
+   },
+   {
+    "ms": 160,
+    "root": [
+     0,
+     2
+    ],
+    "a": {
+     "body": 5,
+     "head": -6,
+     "arm_l": 25,
+     "arm_r": -70,
+     "leg_l": 4,
+     "leg_r": -8,
+     "tail": -20
+    }
+   },
+   {
+    "ms": 160,
+    "root": [
+     0,
+     -2
+    ],
+    "a": {
+     "body": 0,
+     "head": 3,
+     "arm_l": 80,
+     "arm_r": -20,
+     "leg_l": 0,
+     "leg_r": 0,
+     "tail": 10
+    }
+   }
+  ],
+  "dance": [
+   {
+    "ms": 140,
+    "root": [
+     -3,
+     0
+    ],
+    "a": {
+     "body": -10,
+     "head": -8,
+     "arm_l": 160,
+     "arm_r": -150,
+     "leg_l": 25,
+     "leg_r": -5,
+     "tail": 30
+    }
+   },
+   {
+    "ms": 140,
+    "root": [
+     0,
+     -6
+    ],
+    "a": {
+     "body": 0,
+     "head": 0,
+     "arm_l": 130,
+     "arm_r": -130,
+     "leg_l": -10,
+     "leg_r": 10,
+     "tail": 0
+    }
+   },
+   {
+    "ms": 140,
+    "root": [
+     3,
+     0
+    ],
+    "a": {
+     "body": 10,
+     "head": 8,
+     "arm_l": 150,
+     "arm_r": -160,
+     "leg_l": 5,
+     "leg_r": -25,
+     "tail": -30
+    }
+   },
+   {
+    "ms": 140,
+    "root": [
+     0,
+     -6
+    ],
+    "a": {
+     "body": 0,
+     "head": 0,
+     "arm_l": 130,
+     "arm_r": -130,
+     "leg_l": -10,
+     "leg_r": 10,
+     "tail": 0
+    }
+   }
+  ]
+ }
+}

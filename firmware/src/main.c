@@ -144,7 +144,9 @@ static void felucca_init(void)
  * stripes sliding in, the version under them); otherwise (felucca.c) plain text on gfx.c */
 static void splash(void)
 {
-#ifdef CR_A_STRIPES
+#if defined(PM_SPLASH)               /* PurpleMonkey (pm_shim.c): its own */
+    PM_SPLASH();
+#elif defined(CR_A_STRIPES)
     cr_splash();
 #else
     lcd_fill(0, 0, 240, 240, T_BG);
@@ -251,7 +253,11 @@ static void fm1_main(void)
              * shows from 2 s over the whole screen (the menu and the dialogs too: ui_draw), letting
              * go cancels it */
             static uint32_t t0;
-            uint32_t both = (1u << panel.btn[B_OCTDN]) | (1u << panel.btn[B_OCTUP]);
+            uint32_t both = (1u << panel.btn[B_OCTDN]) | (1u << panel.btn[B_OCTUP])
+#ifdef PM_UBOOT_HOME                 /* PurpleMonkey: three buttons, not two (a small child's hands): + HOME */
+                            | (1u << panel.btn[B_HOME])
+#endif
+                ;
             if ((fm1_in.buttons & both) != both) {
                 if (ui.uboot) {
                     ui.uboot = 0;

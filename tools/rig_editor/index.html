@@ -1,0 +1,388 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-only  Copyright (C) 2026 PurpleMonkey FM-1 contributors
+     The pet animation editor: keyframe the rigs by hand. Served by tools/rig_editor/serve.py; poses the parts exactly
+     as firmware/src/pm_rig.c does (same joints, same easing, same planted-leg solver) and saves a set's moves.json. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pet Animator</title>
+<style>
+  :root { --bg:#15122b; --panel:#201b3d; --line:#3a3266; --ink:#f3ecff; --mid:#a79fce; --acc:#60e0c8; --warn:#ff7868; --sel:#ffd65c; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:13px/1.4 system-ui, sans-serif; }
+  header { display:flex; gap:12px; align-items:center; padding:8px 12px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  header h1 { font-size:15px; margin:0 8px 0 0; }
+  main { display:grid; grid-template-columns: 250px minmax(360px, 1fr) 300px; gap:10px; padding:10px; align-items:start; }
+  @media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
+  section { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px; }
+  h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--mid); margin:0 0 8px; }
+  select, input, button, textarea { font:inherit; color:var(--ink); background:#2b2550; border:1px solid var(--line); border-radius:5px; padding:4px 7px; }
+  button { cursor:pointer; } button:hover { border-color:var(--acc); }
+  button.on { background:var(--acc); color:#10222a; border-color:var(--acc); }
+  button.primary { background:var(--acc); color:#10222a; font-weight:600; }
+  input[type=number] { width:64px; } input[type=range] { width:100%; padding:0; }
+  label { color:var(--mid); }
+  #stage { width:100%; max-width:720px; aspect-ratio:1; image-rendering:pixelated; border-radius:8px; display:block; margin:0 auto; cursor:crosshair; touch-action:none; background:#000; }
+  .row { display:flex; gap:6px; align-items:center; margin:4px 0; flex-wrap:wrap; }
+  .keys { display:flex; flex-direction:column; gap:4px; max-height:300px; overflow:auto; }
+  .key { display:flex; gap:6px; align-items:center; padding:4px 6px; border:1px solid var(--line); border-radius:6px; cursor:pointer; }
+  .key.sel { border-color:var(--sel); background:#3a3160; }
+  .parts { max-height:430px; overflow:auto; }
+  .part { display:grid; grid-template-columns: 1fr 64px; gap:4px 6px; align-items:center; padding:3px 4px; border-radius:5px; }
+  .part.sel { background:#3a3160; outline:1px solid var(--sel); }
+  .part.auto { opacity:.5; }
+  .part span { cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .part input[type=range] { grid-column: 1 / 3; }
+  #msg { color:var(--mid); min-height:1.4em; } #msg.bad { color:var(--warn); } #dirty { color:var(--warn); }
+  small { color:var(--mid); }
+  details { margin-top:8px; } summary { cursor:pointer; color:var(--mid); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Pet Animator</h1>
+  <label>Art set <select id="set"></select></label>
+  <label>Pet <select id="pet"></select></label>
+  <label>Animation <select id="anim"><option>idle</option><option>play</option><option>dance</option></select></label>
+  <button id="save" class="primary">Save moves.json</button>
+  <span id="dirty"></span><span id="msg"></span>
+</header>
+<main>
+  <section>
+    <h2>Key poses</h2>
+    <div class="row"><label>Loop takes <input id="beats" type="number" min="1" max="16" step="1"> beats</label></div>
+    <div class="keys" id="keys"></div>
+    <div class="row">
+      <button id="kadd" title="A new key after this one, same pose">Duplicate</button>
+      <button id="kdel">Delete</button>
+      <button id="kup" title="Earlier">&#8593;</button><button id="kdn" title="Later">&#8595;</button>
+    </div>
+    <div class="row"><button id="kcopy">Copy pose</button><button id="kpaste">Paste pose</button><button id="kmirror" title="Swap left and right">Mirror</button><button id="kzero">Rest pose</button></div>
+    <h2 style="margin-top:14px">Preview</h2>
+    <div class="row"><button id="play">&#9654; Play</button><label><input id="beat" type="checkbox" checked> with the beat</label></div>
+    <div class="row"><label>BPM <input id="bpm" type="number" min="72" max="136" value="104"></label><label><input id="onion" type="checkbox"> ghost of previous key</label></div>
+    <div class="row"><button id="hitl">Note: left hand</button><button id="hitr">Note: right hand</button><button id="hits">Snare</button></div>
+    <div class="row"><label><input id="bob" type="checkbox" checked> firmware's head bob</label></div>
+    <div class="row" id="faces"></div>
+    <small>Notes, the head bob and the dip on a hit are added by the firmware on top of your poses; these buttons show them.</small>
+  </section>
+  <section>
+    <canvas id="stage" width="240" height="240"></canvas>
+    <div class="row" style="justify-content:center;margin-top:8px">
+      <button id="mik" class="on" title="Drag a hand or foot: its arm or leg follows. Drag the body: hands and feet stay put. Other parts turn.">Pose (IK)</button><button id="mrot" title="Every part just turns about its own joint">Turn one part</button><button id="mmove" title="Slide the whole pet, limbs and all">Move whole pet</button>
+      <button id="undo">Undo</button>
+    </div>
+    <div class="row" style="justify-content:center"><small>Pose (IK): drag a hand or a foot and the limb follows; drag the body (or its green square, or Alt + drag anywhere) and the hands and feet stay where they are.</small></div>
+    <div class="row" style="justify-content:center"><small>Click a part to select it. Arrow keys: 1&deg; (Shift: 5&deg;). Space: play. Cmd/Ctrl+Z: undo. Cmd/Ctrl+S: save.</small></div>
+  </section>
+  <section>
+    <h2>This key <span id="kname"></span></h2>
+    <div class="row"><label>Takes <input id="kms" type="number" min="20" max="5000" step="10"> ms to reach the next key</label></div>
+    <div class="row"><label>Pet moved by x <input id="rx" type="number" min="-60" max="60"></label><label>y <input id="ry" type="number" min="-60" max="60"></label></div>
+    <h2 style="margin-top:10px">Parts (degrees, clockwise)</h2>
+    <div class="parts" id="parts"></div>
+    <details><summary>Rig options for this pet</summary>
+      <div class="row"><label><input id="planted" type="checkbox"> feet planted (knees bend to keep them on the ground)</label></div>
+      <small>Planted legs are posed by the firmware, so their angles are ignored. Props and draw order are in moves.json.</small>
+    </details>
+  </section>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const PETS = ["monkey", "cat", "dog", "llama"], ANIMS = ["idle", "play", "dance"];
+const LAYERS = ["eyes", "mouth", "nose", "ear_l", "ear_r"];
+const S = { sets: {}, set: null, pet: null, anim: "idle", key: 0, part: null, rig: null, img: {}, alpha: {}, layers: {}, face: {},
+            playing: false, t0: 0, mode: "ik", dirty: false, undo: [], clip: null, strike: [0, 0], hop: 0, lastTick: 0 };
+const cv = $("stage"), cx = cv.getContext("2d");
+const rad = d => d * Math.PI / 180;
+
+function say(t, bad) { $("msg").textContent = t || ""; $("msg").className = bad ? "bad" : ""; }
+function touch() { S.dirty = true; $("dirty").textContent = "unsaved changes"; }
+function moves() { return S.sets[S.set].moves; }
+function loadImg(url) { return new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error("no image " + url)); i.src = url; }); }
+function alphaOf(img) { const c = document.createElement("canvas"); c.width = img.width; c.height = img.height; const g = c.getContext("2d"); g.drawImage(img, 0, 0); return g.getImageData(0, 0, img.width, img.height); }
+
+/* the animation being edited: moves.json's if it has one, else a copy of rig.json's starter poses (made on first edit) */
+function curAnim(make) {
+  const m = moves();
+  if (m[S.pet] && m[S.pet][S.anim]) return m[S.pet][S.anim];
+  const a = { beats: S.anim === "dance" ? 1 : 2, keys: JSON.parse(JSON.stringify(S.rig.anims[S.anim])) };
+  if (make) { (m[S.pet] = m[S.pet] || {})[S.anim] = a; }
+  return a;
+}
+function edit(fn) {   /* every change goes through here: undo, the dirty flag, a redraw */
+  S.undo.push(JSON.stringify(moves())); if (S.undo.length > 200) S.undo.shift();
+  fn(curAnim(true)); touch(); refresh();
+}
+function chains() { return ((moves().planted || {})[S.pet] || []).map(c => Array.isArray(c) ? c : [c]); }
+function isPlanted(name) { return chains().some(c => c.includes(name)); }
+function props() { return (moves().props || {})[S.pet] || []; }
+function order() { return (moves().order || {})[S.pet] || S.rig.order; }
+
+async function loadPet() {
+  const base = `/art/${S.set}/${S.pet}/`;
+  /* everything is loaded aside and swapped in at once: the stage keeps drawing the pet it has meanwhile */
+  const rig = await (await fetch(base + "rig.json")).json(), img = {}, alpha = {}, layers = {}, face = {};
+  await Promise.all(rig.parts.map(async p => { img[p.name] = await loadImg(base + p.file); alpha[p.name] = alphaOf(img[p.name]); }));
+  try {
+    const fv = await (await fetch(base + "face-variants.json")).json();
+    for (const l of LAYERS) if (fv.layers[l]) {
+      layers[l] = { def: fv.layers[l].default, im: {} };
+      await Promise.all(Object.entries(fv.layers[l].frames).map(async ([v, f]) => { layers[l].im[v] = await loadImg(base + f); }));
+      face[l] = fv.layers[l].default;
+    }
+  } catch (e) { /* an older set: one head, no layers */ }
+  Object.assign(S, { rig, img, alpha, layers, face, key: 0, part: null, undo: [], shown: S.pet });
+  buildFaces(); refresh();
+}
+
+/* ---- the pose: as firmware/src/pm_rig.c pm_rig_solve ---- */
+const lerp = (a, b, f) => a + (b - a) * f;
+function shortest(a, b) { let d = ((b - a) % 360 + 540) % 360 - 180; return d; }
+function poseAt(anim, t, phase) {   /* -> {root:[dx,dy], a:{part:deg}} blended between two keys */
+  const K = anim.keys, total = K.reduce((s, k) => s + k.ms, 0);
+  if (phase != null) t = total * phase;
+  t = ((t % total) + total) % total;
+  let i = 0; while (i + 1 < K.length && t >= K[i].ms) { t -= K[i].ms; i++; }
+  const k0 = K[i], k1 = K[(i + 1) % K.length]; let f = t / k0.ms; f = f * f * (3 - 2 * f);
+  const a = {}; for (const p of S.rig.parts) { const x = k0.a[p.name] || 0, y = k1.a[p.name] || 0; a[p.name] = x + shortest(x, y) * f; }
+  return { root: [lerp(k0.root[0], k1.root[0], f), lerp(k0.root[1], k1.root[1], f)], a };
+}
+function solve(pose, extra, dip) {  /* -> {name: {x, y, a}} on the 240 px screen */
+  const P = {}, by = {}; for (const p of S.rig.parts) by[p.name] = p;
+  const root = S.rig.parts.find(p => !p.parent), rx = 120, ry = 210 - S.rig.feet, pr = props();
+  const todo = S.rig.parts.slice(), turn = (vx, vy, a) => [vx * Math.cos(rad(a)) - vy * Math.sin(rad(a)), vx * Math.sin(rad(a)) + vy * Math.cos(rad(a))];
+  while (todo.length) for (let i = 0; i < todo.length; i++) {
+    const p = todo[i], la = (pose.a[p.name] || 0) + ((extra || {})[p.name] || 0);
+    if (pr.includes(p.name)) P[p.name] = { x: rx + p.at[0] - root.pivot[0], y: ry + p.at[1] - root.pivot[1], a: 0 };
+    else if (!p.parent) P[p.name] = { x: rx + pose.root[0], y: ry + (dip || 0) + pose.root[1], a: la };
+    else if (P[p.parent]) { const q = by[p.parent], o = turn(p.at[0] - q.pivot[0], p.at[1] - q.pivot[1], P[p.parent].a);
+      P[p.name] = { x: P[p.parent].x + o[0], y: P[p.parent].y + o[1], a: P[p.parent].a + la }; }
+    else continue;
+    todo.splice(i, 1); i--;
+  }
+  const ang = (dx, dy) => Math.atan2(-dx, dy) * 180 / Math.PI;
+  for (const c of chains()) {       /* planted legs: the hip where the body has it, the ankle where it stands at rest */
+    const up = by[c[0]]; if (!up || !P[c[0]]) continue;
+    let fx = rx + up.at[0] - root.pivot[0], fy = ry + up.at[1] - root.pivot[1];
+    if (c.length === 3) {
+      const lo = by[c[1]], ft = by[c[2]], u = [lo.at[0] - up.pivot[0], lo.at[1] - up.pivot[1]], v = [ft.at[0] - lo.pivot[0], ft.at[1] - lo.pivot[1]];
+      fx += u[0] + v[0]; fy += u[1] + v[1];
+      const l1 = Math.hypot(...u) || 1, l2 = Math.hypot(...v) || 1, hx = P[c[0]].x, hy = P[c[0]].y;
+      let d = Math.hypot(fx - hx, fy - hy); d = Math.min(Math.max(d, Math.abs(l1 - l2) + 1), l1 + l2);
+      const cs = Math.min(1, Math.max(-1, (l1 * l1 + d * d - l2 * l2) / (2 * l1 * d))), bend = c[0].endsWith("_r") ? -1 : 1;
+      const dir = ang(fx - hx, fy - hy) + bend * Math.acos(cs) * 180 / Math.PI;
+      P[c[0]].a = dir - ang(u[0], u[1]);
+      const kx = hx - l1 * Math.sin(rad(dir)), ky = hy + l1 * Math.cos(rad(dir));
+      P[c[1]] = { x: kx, y: ky, a: ang(fx - kx, fy - ky) - ang(v[0], v[1]) };
+      P[c[2]] = { x: fx, y: fy, a: 0 };
+    } else { fy += S.img[c[0]].height - 1 - up.pivot[1]; P[c[0]].a = ang(fx - P[c[0]].x, fy - P[c[0]].y); }
+  }
+  return P;
+}
+function texOf(name) { const l = S.layers[name]; return l ? (l.im[S.face[name]] || l.im[l.def]) : S.img[name]; }
+
+/* what the firmware adds on top (pm_ui.c): a struck hand, the nod, the head's bob with the beat */
+function overlays(now, barPhase, moving) {
+  const x = {}, has = n => S.rig.parts.some(p => p.name === n), head = has("head_shape") ? "head_shape" : "head";
+  let nod = 0;
+  ["l", "r"].forEach((s, k) => { const v = S.strike[k], inn = (k ? v : -v) / 255;
+    if (has("forearm_" + s) && has("hand_" + s)) { x["forearm_" + s] = inn * 12.7; x["hand_" + s] = inn * 35.2; }
+    else if (has("arm_" + s) && has("hand_" + s)) { x["arm_" + s] = -inn * 7; x["hand_" + s] = inn * 36.6; }
+    else if (has("arm_" + s)) x["arm_" + s] = -inn * 64.7;
+    nod += k ? -v : v; });
+  let h = nod * ((has("upper_arm_l") || has("arm_l")) ? 6 : 20) / 255 * 1.406;
+  if ($("bob").checked && moving && $("beat").checked && S.anim !== "idle")
+    h += (Math.sin(2 * Math.PI * barPhase * 4) * 9 + Math.sin(2 * Math.PI * barPhase) * 6) * 1.406;
+  x[head] = h; if (has("neck")) x.neck = -h / 2;
+  return x;
+}
+
+function draw(P, alpha) {
+  cx.globalAlpha = alpha;
+  for (const n of order()) { const p = S.rig.parts.find(q => q.name === n), w = P[n]; if (!p || !w) continue;
+    cx.save(); cx.translate(Math.round(w.x), Math.round(w.y)); cx.rotate(rad(w.a)); cx.drawImage(texOf(n), -p.pivot[0], -p.pivot[1]); cx.restore(); }
+  cx.globalAlpha = 1;
+}
+function scene() {
+  const g = cx.createLinearGradient(0, 0, 0, 240); g.addColorStop(0, "#181042"); g.addColorStop(1, "#4e3080");
+  cx.fillStyle = g; cx.fillRect(0, 0, 240, 240); cx.fillStyle = "#1e1448"; cx.fillRect(0, 200, 240, 40);
+  cx.fillStyle = "#ffffff22"; cx.fillRect(0, 210, 240, 1);
+}
+let lastP = null;
+function render(now) {
+  if (!S.rig || S.shown !== S.pet) return requestAnimationFrame(render);   /* (a pet is loading) */
+  const an = curAnim(false); cx.imageSmoothingEnabled = false; scene();
+  let pose, bar = 0;
+  if (S.playing) {
+    const t = now - S.t0, beatMs = 60000 / (+$("bpm").value || 104); bar = (t / (beatMs * 4)) % 1;
+    pose = $("beat").checked && S.anim !== "idle" ? poseAt(an, 0, (t / (beatMs * an.beats)) % 1) : poseAt(an, t);
+  } else {
+    const k = an.keys[Math.min(S.key, an.keys.length - 1)]; pose = { root: k.root, a: k.a };
+    if ($("onion").checked && an.keys.length > 1) { const q = an.keys[(S.key + an.keys.length - 1) % an.keys.length]; draw(solve({ root: q.root, a: q.a }), 0.3); }
+  }
+  if (now - S.lastTick >= 50) { S.lastTick = now; S.strike = S.strike.map(v => Math.floor(v * 9 / 16)); S.hop = Math.max(0, S.hop - 2); }
+  lastP = solve(pose, overlays(now, bar, S.playing), chains().length ? S.hop * 0.75 : -S.hop);
+  draw(lastP, 1);
+  if (!S.playing && S.mode === "ik") {      /* the body's handle: drag it (or the body) and the hands and feet stay */
+    const w = lastP[S.rig.parts.find(p => !p.parent).name]; cx.strokeStyle = "#60e0c8"; cx.lineWidth = 1;
+    cx.strokeRect(Math.round(w.x) - 3.5, Math.round(w.y) - 3.5, 7, 7); }
+  if (!S.playing && S.part && lastP[S.part]) { const w = lastP[S.part]; cx.strokeStyle = "#ffd65c"; cx.lineWidth = 1; cx.beginPath(); cx.arc(Math.round(w.x) + .5, Math.round(w.y) + .5, 3, 0, 7); cx.stroke(); }
+  requestAnimationFrame(render);
+}
+
+/* ---- the panels ---- */
+function refresh() {
+  const an = curAnim(false); S.key = Math.min(S.key, an.keys.length - 1); const k = an.keys[S.key];
+  $("beats").value = an.beats; $("kms").value = k.ms; $("rx").value = k.root[0]; $("ry").value = k.root[1];
+  $("kname").textContent = `${S.key + 1} of ${an.keys.length}`;
+  $("planted").checked = chains().length > 0;
+  $("keys").innerHTML = ""; an.keys.forEach((q, i) => { const d = document.createElement("div"); d.className = "key" + (i === S.key ? " sel" : "");
+    d.textContent = `${i + 1}. ${q.ms} ms`; d.onclick = () => { S.key = i; stop(); refresh(); }; $("keys").appendChild(d); });
+  const box = $("parts"); box.innerHTML = "";
+  for (const p of S.rig.parts) { const auto = isPlanted(p.name) || props().includes(p.name), v = Math.round(k.a[p.name] || 0);
+    const d = document.createElement("div"); d.className = "part" + (p.name === S.part ? " sel" : "") + (auto ? " auto" : "");
+    d.innerHTML = `<span title="${p.name}">${p.name}${auto ? " (auto)" : ""}</span><input type="number" min="-180" max="180" value="${v}"><input type="range" min="-180" max="180" value="${v}">`;
+    d.querySelector("span").onclick = () => { S.part = p.name; refresh(); };
+    const set = (val, live) => { val = Math.max(-180, Math.min(180, +val || 0)); S.part = p.name;
+      if (live) { curAnim(true).keys[S.key].a[p.name] = val; d.querySelector("input[type=number]").value = val; touch(); } else edit(a => { setAngle(a.keys[S.key], p.name, val); }); };
+    d.querySelector("input[type=number]").onchange = e => set(e.target.value);
+    const r = d.querySelector("input[type=range]"); let pushed = false;
+    r.oninput = e => { if (!pushed) { S.undo.push(JSON.stringify(moves())); pushed = true; } set(e.target.value, true); };
+    r.onchange = () => { pushed = false; refresh(); };
+    box.appendChild(d); }
+}
+function setAngle(key, name, v) { v = Math.round(v); if (v) key.a[name] = v; else delete key.a[name]; }
+function buildFaces() {
+  const f = $("faces"); f.innerHTML = "";
+  for (const l of Object.keys(S.layers)) { const s = document.createElement("select"); s.title = l;
+    for (const v of Object.keys(S.layers[l].im)) { const o = document.createElement("option"); o.textContent = v; o.value = v; if (v === S.face[l]) o.selected = true; s.appendChild(o); }
+    s.onchange = () => { S.face[l] = s.value; }; const lab = document.createElement("label"); lab.textContent = l + " "; lab.appendChild(s); f.appendChild(lab); }
+}
+function stop() { S.playing = false; $("play").innerHTML = "&#9654; Play"; $("play").classList.remove("on"); }
+function togglePlay() { S.playing = !S.playing; S.t0 = performance.now(); $("play").innerHTML = S.playing ? "&#9632; Stop" : "&#9654; Play"; $("play").classList.toggle("on", S.playing); }
+
+/* ---- the stage: pick, turn, move ---- */
+function at(e) { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * 240 / r.width, (e.clientY - r.top) * 240 / r.height]; }
+function pick(x, y) {
+  const o = order(), pr = props(); for (let i = o.length - 1; i >= 0; i--) { const n = o[i], p = S.rig.parts.find(q => q.name === n), w = lastP && lastP[n];
+    if (!w || pr.includes(n)) continue;       /* (a prop is not posed: a click goes through it to the pet) */
+    const dx = x - w.x, dy = y - w.y, c = Math.cos(rad(-w.a)), s = Math.sin(rad(-w.a));
+    const u = Math.floor(dx * c - dy * s + p.pivot[0]), v = Math.floor(dx * s + dy * c + p.pivot[1]), im = S.alpha[n];
+    if (u >= 0 && v >= 0 && u < im.width && v < im.height && im.data[(v * im.width + u) * 4 + 3] > 127) return n; }
+  return null;
+}
+/* ---- inverse kinematics: drag a hand or a foot and its limb follows; drag the body and they stay put ----
+ * A limb is upper part -> lower part -> end (a part named hand_* or foot_*). The two bones are turned so the end's
+ * joint (wrist, ankle) lands on the target, bending to the side the limb already bends to; the end keeps the angle
+ * it had on the screen. What is stored is still plain angles per part: the firmware plays them as any other key. */
+const norm = a => ((a + 180) % 360 + 360) % 360 - 180;
+const angOf = (dx, dy) => Math.atan2(-dx, dy) * 180 / Math.PI;      /* of a part that hangs down, pointing along (dx, dy) */
+function byName(n) { return S.rig.parts.find(p => p.name === n); }
+function limbOf(end) {             /* [upper, lower, end] for a hand or a foot, or null */
+  if (!/^(hand|foot)_/.test(end)) return null;
+  const e = byName(end), lo = e && byName(e.parent), up = lo && byName(lo.parent);
+  return up && up.parent ? [up.name, lo.name, end] : null;
+}
+function limbs() { return S.rig.parts.map(p => limbOf(p.name)).filter(c => c && !c.some(isPlanted)); }
+function reach(key, c, tx, ty, endA) {   /* turn limb c so its end joint is at (tx, ty) and the end points as endA */
+  const P = solve({ root: key.root, a: key.a }), up = byName(c[0]), lo = byName(c[1]), en = byName(c[2]);
+  const u = [lo.at[0] - up.pivot[0], lo.at[1] - up.pivot[1]], v = [en.at[0] - lo.pivot[0], en.at[1] - lo.pivot[1]];
+  const l1 = Math.hypot(...u) || 1, l2 = Math.hypot(...v) || 1, hx = P[c[0]].x, hy = P[c[0]].y;
+  let d = Math.hypot(tx - hx, ty - hy); d = Math.min(Math.max(d, Math.abs(l1 - l2) + 0.5), l1 + l2 - 0.01);
+  const phi = Math.acos(Math.min(1, Math.max(-1, (l1 * l1 + d * d - l2 * l2) / (2 * l1 * d)))) * 180 / Math.PI, base = angOf(tx - hx, ty - hy);
+  const parentA = P[up.parent].a, was = P[c[0]].a;
+  let best = null;
+  for (const bend of [1, -1]) {     /* both elbows reach it: keep the one nearer the limb's pose now */
+    const dir = base + bend * phi, ua = dir - angOf(u[0], u[1]);
+    const kx = hx - l1 * Math.sin(rad(dir)), ky = hy + l1 * Math.cos(rad(dir)), la = angOf(tx - kx, ty - ky) - angOf(v[0], v[1]);
+    const cost = Math.abs(norm(ua - was)); if (!best || cost < best.cost) best = { cost, ua, la };
+  }
+  setAngle(key, c[0], norm(best.ua - parentA)); setAngle(key, c[1], norm(best.la - best.ua)); setAngle(key, c[2], norm(endA - best.la));
+}
+let drag = null;
+cv.onpointerdown = e => { stop(); const [x, y] = at(e), n = pick(x, y); try { cv.setPointerCapture(e.pointerId); } catch (err) { /* (not a live pointer) */ }
+  const k = curAnim(false).keys[S.key];
+  if (S.mode === "move") { S.undo.push(JSON.stringify(moves())); drag = { move: true, x, y, r0: k.root.slice() }; return; }
+  const root = S.rig.parts.find(p => !p.parent).name, w = n && lastP[n];
+  if (n) { S.part = n; refresh(); }
+  const rw = lastP[root], onHandle = Math.hypot(x - rw.x, y - rw.y) <= 7;
+  if (S.mode === "ik" && (n === root || onHandle || e.altKey)) {   /* the body (the part, its handle, or Alt + drag anywhere,
+                                                                    * for a pet whose body is behind a drum): it moves, every
+                                                                    * free hand and foot stays where it is */
+    S.part = root; refresh();
+    S.undo.push(JSON.stringify(moves()));
+    drag = { torso: true, x, y, r0: k.root.slice(), locks: limbs().map(c => ({ c, x: lastP[c[2]].x, y: lastP[c[2]].y, a: lastP[c[2]].a })) }; return; }
+  if (!n) { S.part = null; refresh(); return; }
+  if (isPlanted(n) || props().includes(n)) { say(n + " is posed by the firmware (planted or a prop): untick 'feet planted' to pose the legs yourself"); return; }
+  const c = S.mode === "ik" && limbOf(n);
+  S.undo.push(JSON.stringify(moves()));
+  if (c && !c.some(isPlanted)) { drag = { ik: c, ox: w.x - x, oy: w.y - y, a: w.a }; return; }
+  drag = { n, a0: Math.atan2(y - w.y, x - w.x), v0: k.a[n] || 0, px: w.x, py: w.y }; };
+cv.onpointermove = e => { if (!drag) return; const [x, y] = at(e), k = curAnim(true).keys[S.key];
+  if (drag.move) k.root = [Math.round(drag.r0[0] + x - drag.x), Math.round(drag.r0[1] + y - drag.y)];
+  else if (drag.torso) { k.root = [Math.round(drag.r0[0] + x - drag.x), Math.round(drag.r0[1] + y - drag.y)]; for (const l of drag.locks) reach(k, l.c, l.x, l.y, l.a); }
+  else if (drag.ik) reach(k, drag.ik, x + drag.ox, y + drag.oy, drag.a);
+  else { let v = drag.v0 + (Math.atan2(y - drag.py, x - drag.px) - drag.a0) * 180 / Math.PI; setAngle(k, drag.n, norm(v)); }
+  touch(); };
+cv.onpointerup = () => { if (drag) { drag = null; refresh(); } };
+
+/* ---- buttons ---- */
+$("play").onclick = togglePlay;
+for (const [id, m] of [["mik", "ik"], ["mrot", "rot"], ["mmove", "move"]])
+  $(id).onclick = () => { S.mode = m; for (const b of ["mik", "mrot", "mmove"]) $(b).classList.toggle("on", b === id); };
+$("beats").onchange = e => edit(a => { a.beats = Math.max(1, Math.min(16, Math.round(+e.target.value || 1))); });
+$("kms").onchange = e => edit(a => { a.keys[S.key].ms = Math.max(20, Math.min(5000, Math.round(+e.target.value || 200))); });
+$("rx").onchange = e => edit(a => { a.keys[S.key].root[0] = Math.max(-60, Math.min(60, Math.round(+e.target.value || 0))); });
+$("ry").onchange = e => edit(a => { a.keys[S.key].root[1] = Math.max(-60, Math.min(60, Math.round(+e.target.value || 0))); });
+$("kadd").onclick = () => edit(a => { a.keys.splice(S.key + 1, 0, JSON.parse(JSON.stringify(a.keys[S.key]))); S.key++; });
+$("kdel").onclick = () => { if (curAnim(false).keys.length < 2) return say("an animation needs at least one key", true); edit(a => { a.keys.splice(S.key, 1); S.key = Math.max(0, S.key - 1); }); };
+$("kup").onclick = () => { if (S.key > 0) edit(a => { const k = a.keys.splice(S.key, 1)[0]; a.keys.splice(--S.key, 0, k); }); };
+$("kdn").onclick = () => { if (S.key < curAnim(false).keys.length - 1) edit(a => { const k = a.keys.splice(S.key, 1)[0]; a.keys.splice(++S.key, 0, k); }); };
+$("kcopy").onclick = () => { S.clip = JSON.stringify(curAnim(false).keys[S.key]); say("pose copied"); };
+$("kpaste").onclick = () => { if (S.clip) edit(a => { const c = JSON.parse(S.clip); a.keys[S.key].a = c.a; a.keys[S.key].root = c.root; }); };
+$("kzero").onclick = () => edit(a => { a.keys[S.key].a = {}; a.keys[S.key].root = [0, 0]; });
+$("kmirror").onclick = () => edit(a => { const k = a.keys[S.key], o = {}; const sw = n => n.endsWith("_l") ? n.slice(0, -2) + "_r" : n.endsWith("_r") ? n.slice(0, -2) + "_l" : n;
+  for (const [n, v] of Object.entries(k.a)) o[S.rig.parts.some(p => p.name === sw(n)) ? sw(n) : n] = -v; k.a = o; k.root = [-k.root[0], k.root[1]]; });
+$("hitl").onclick = () => { S.strike[0] = 255; S.hop = 5; }; $("hitr").onclick = () => { S.strike[1] = 255; S.hop = 5; }; $("hits").onclick = () => { S.hop = 8; };
+$("undo").onclick = undo;
+function undo() { const u = S.undo.pop(); if (!u) return say("nothing to undo"); S.sets[S.set].moves = JSON.parse(u); touch(); refresh(); }
+$("planted").onchange = e => { S.undo.push(JSON.stringify(moves())); const m = moves(); m.planted = m.planted || {};
+  if (e.target.checked) { const has = n => S.rig.parts.some(p => p.name === n);
+    m.planted[S.pet] = has("upper_leg_l") ? [["upper_leg_l", "lower_leg_l", "foot_l"], ["upper_leg_r", "lower_leg_r", "foot_r"]] : has("leg_l") ? [["leg_l"], ["leg_r"]] : [];
+    if (!m.planted[S.pet].length) { delete m.planted[S.pet]; say("this pet has no pair of legs to plant", true); } }
+  else delete m.planted[S.pet];
+  touch(); refresh(); };
+async function save() {
+  try { const r = await fetch("/api/save/" + S.set, { method: "POST", body: JSON.stringify(moves()) }), j = await r.json();
+    if (!r.ok) throw new Error(j.error); S.dirty = false; $("dirty").textContent = ""; say("saved " + j.saved + " — rebuild the emulator to see it: sh tools/emu/build_pm.sh"); }
+  catch (e) { say(String(e.message || e), true); }
+}
+$("save").onclick = save;
+addEventListener("keydown", e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === "s") { e.preventDefault(); return save(); }
+  if ((e.metaKey || e.ctrlKey) && e.key === "z") { e.preventDefault(); return undo(); }
+  if (/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+  if (e.key === " ") { e.preventDefault(); return togglePlay(); }
+  const d = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1 }[e.key];
+  if (d && S.part && !isPlanted(S.part) && !props().includes(S.part)) { e.preventDefault(); const step = d * (e.shiftKey ? 5 : 1);
+    edit(a => { const k = a.keys[S.key]; setAngle(k, S.part, Math.max(-180, Math.min(180, (k.a[S.part] || 0) + step))); }); }
+});
+addEventListener("beforeunload", e => { if (S.dirty) { e.preventDefault(); e.returnValue = ""; } });
+function leave() { return !S.dirty || confirm("Unsaved changes in this art set will stay in the page only until you save. Switch anyway?"); }
+$("anim").onchange = e => { S.anim = e.target.value; S.key = 0; stop(); refresh(); };
+$("pet").onchange = async e => { S.pet = e.target.value; S.shown = null; stop(); await loadPet(); };
+$("set").onchange = async e => { if (!leave()) { e.target.value = S.set; return; } S.set = e.target.value; S.shown = null; S.dirty = false; $("dirty").textContent = ""; fillPets(); await loadPet(); };
+function fillPets() { $("pet").innerHTML = ""; for (const p of S.sets[S.set].pets) { const o = document.createElement("option"); o.textContent = p; $("pet").appendChild(o); }
+  S.pet = S.sets[S.set].pets.includes("cat") ? "cat" : S.sets[S.set].pets[0]; $("pet").value = S.pet; }
+(async () => {
+  try { S.sets = await (await fetch("/api/sets")).json(); const names = Object.keys(S.sets);
+    for (const n of names) { const o = document.createElement("option"); o.textContent = n; $("set").appendChild(o); }
+    S.set = names[0]; fillPets(); await loadPet(); requestAnimationFrame(render); }
+  catch (e) { say("could not load the rigs: " + e.message, true); }
+})();
+</script>
+</body>
+</html>

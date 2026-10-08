@@ -1,0 +1,332 @@
+{
+  "cell_size": [
+    64,
+    64
+  ],
+  "sheet": "spritesheet-64.png",
+  "frames": {
+    "ear_l": {
+      "cell": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        11,
+        8,
+        41,
+        47
+      ],
+      "file": "ear_l.png",
+      "pivot_in_cell": [
+        43,
+        15
+      ]
+    },
+    "head": {
+      "cell": [
+        64,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        71,
+        3,
+        50,
+        57
+      ],
+      "file": "head.png",
+      "pivot_in_cell": [
+        31,
+        52
+      ]
+    },
+    "ear_r": {
+      "cell": [
+        128,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        140,
+        8,
+        40,
+        47
+      ],
+      "file": "ear_r.png",
+      "pivot_in_cell": [
+        20,
+        15
+      ]
+    },
+    "body": {
+      "cell": [
+        192,
+        0,
+        64,
+        64
+      ],
+      "content": [
+        200,
+        0,
+        48,
+        64
+      ],
+      "file": "body.png",
+      "pivot_in_cell": [
+        32,
+        38
+      ]
+    },
+    "arm_l": {
+      "cell": [
+        0,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        22,
+        71,
+        20,
+        50
+      ],
+      "file": "arm_l.png",
+      "pivot_in_cell": [
+        29,
+        11
+      ]
+    },
+    "arm_r": {
+      "cell": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        86,
+        71,
+        20,
+        50
+      ],
+      "file": "arm_r.png",
+      "pivot_in_cell": [
+        34,
+        12
+      ]
+    },
+    "leg_l": {
+      "cell": [
+        128,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        142,
+        74,
+        35,
+        43
+      ],
+      "file": "leg_l.png",
+      "pivot_in_cell": [
+        31,
+        14
+      ]
+    },
+    "leg_r": {
+      "cell": [
+        192,
+        64,
+        64,
+        64
+      ],
+      "content": [
+        207,
+        74,
+        34,
+        43
+      ],
+      "file": "leg_r.png",
+      "pivot_in_cell": [
+        31,
+        14
+      ]
+    },
+    "tail": {
+      "cell": [
+        0,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        13,
+        137,
+        38,
+        46
+      ],
+      "file": "tail.png",
+      "pivot_in_cell": [
+        19,
+        47
+      ]
+    },
+    "hand_l": {
+      "cell": [
+        64,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        82,
+        141,
+        28,
+        38
+      ],
+      "file": "hand_l.png",
+      "pivot_in_cell": [
+        39,
+        36
+      ]
+    },
+    "hand_r": {
+      "cell": [
+        128,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        146,
+        141,
+        27,
+        37
+      ],
+      "file": "hand_r.png",
+      "pivot_in_cell": [
+        23,
+        36
+      ]
+    },
+    "head_neutral": {
+      "cell": [
+        192,
+        128,
+        64,
+        64
+      ],
+      "content": [
+        199,
+        131,
+        50,
+        57
+      ],
+      "file": "head_neutral.png",
+      "pivot_in_cell": [
+        31,
+        52
+      ]
+    },
+    "head_blink": {
+      "cell": [
+        0,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        7,
+        195,
+        50,
+        57
+      ],
+      "file": "head_blink.png",
+      "pivot_in_cell": [
+        31,
+        52
+      ]
+    },
+    "head_happy": {
+      "cell": [
+        64,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        71,
+        195,
+        50,
+        57
+      ],
+      "file": "head_happy.png",
+      "pivot_in_cell": [
+        31,
+        52
+      ]
+    },
+    "head_sing": {
+      "cell": [
+        128,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        135,
+        195,
+        50,
+        57
+      ],
+      "file": "head_sing.png",
+      "pivot_in_cell": [
+        31,
+        52
+      ]
+    },
+    "head_surprised": {
+      "cell": [
+        192,
+        192,
+        64,
+        64
+      ],
+      "content": [
+        199,
+        195,
+        50,
+        57
+      ],
+      "file": "head_surprised.png",
+      "pivot_in_cell": [
+        31,
+        52
+      ]
+    },
+    "head_sleepy": {
+      "cell": [
+        0,
+        256,
+        64,
+        64
+      ],
+      "content": [
+        7,
+        259,
+        50,
+        57
+      ],
+      "file": "head_sleepy.png",
+      "pivot_in_cell": [
+        31,
+        52
+      ]
+    }
+  }
+}

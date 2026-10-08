@@ -1,0 +1,19 @@
+# PurpleMonkey: the rig renderer on the placeholder doll (PM_RIG_DEMO=1: it stands in for the Monkey)
+wait 300
+knob SELECT -1                        # the Monkey
+wait 3000
+shot build/emu/pm/rig_idle.ppm
+btn PLAY
+wait 700
+shot build/emu/pm/rig_play.ppm
+btn F3 down
+btn A3 down
+btn C4 down
+wait 1300
+shot build/emu/pm/rig_dance.ppm
+btn F3 up
+btn A3 up
+btn C4 up
+btn PLAY
+wait 3000
+dump

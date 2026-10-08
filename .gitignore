@@ -2,3 +2,7 @@ build/
 .DS_Store
 __pycache__/
 *.fwsc
+
+# PurpleMonkey: convenience archives of art that is in the tree as files; the rig editor's backup of moves.json
+assets/purplemonkey/**/*.zip
+*.json.bak

@@ -1,0 +1,30 @@
+{
+  "monkey": {
+    "parts": 16,
+    "expressions": 6,
+    "colors": 31,
+    "cell_size": 64,
+    "body_pixel_bytes": 13435
+  },
+  "cat": {
+    "parts": 16,
+    "expressions": 6,
+    "colors": 27,
+    "cell_size": 64,
+    "body_pixel_bytes": 13721
+  },
+  "dog": {
+    "parts": 17,
+    "expressions": 6,
+    "colors": 24,
+    "cell_size": 64,
+    "body_pixel_bytes": 16079
+  },
+  "llama": {
+    "parts": 17,
+    "expressions": 6,
+    "colors": 28,
+    "cell_size": 64,
+    "body_pixel_bytes": 12687
+  }
+}

@@ -1,0 +1,199 @@
+{
+  "note": "Extracted art; l/r denote viewer-left/right. Angles relative to neutral. Conservative QA motions. Expression metadata is separate; existing generator does not swap heads.",
+  "feet": 29,
+  "parts": [
+    {
+      "name": "body",
+      "file": "body.png",
+      "pivot": [
+        10,
+        14
+      ],
+      "parent": null,
+      "at": null
+    },
+    {
+      "name": "tail",
+      "file": "tail.png",
+      "pivot": [
+        4,
+        3
+      ],
+      "parent": "body",
+      "at": [
+        16,
+        19
+      ]
+    },
+    {
+      "name": "leg_l",
+      "file": "leg_l.png",
+      "pivot": [
+        6,
+        2
+      ],
+      "parent": "body",
+      "at": [
+        6,
+        20
+      ]
+    },
+    {
+      "name": "leg_r",
+      "file": "leg_r.png",
+      "pivot": [
+        6,
+        2
+      ],
+      "parent": "body",
+      "at": [
+        13,
+        20
+      ]
+    },
+    {
+      "name": "arm_l",
+      "file": "arm_l.png",
+      "pivot": [
+        4,
+        2
+      ],
+      "parent": "body",
+      "at": [
+        3,
+        6
+      ]
+    },
+    {
+      "name": "head",
+      "file": "head.png",
+      "pivot": [
+        15,
+        19
+      ],
+      "parent": "body",
+      "at": [
+        10,
+        3
+      ]
+    },
+    {
+      "name": "arm_r",
+      "file": "arm_r.png",
+      "pivot": [
+        4,
+        2
+      ],
+      "parent": "body",
+      "at": [
+        16,
+        6
+      ]
+    },
+    {
+      "name": "drum",
+      "file": "drum.png",
+      "pivot": [
+        10,
+        3
+      ],
+      "parent": "body",
+      "at": [
+        10,
+        16
+      ]
+    }
+  ],
+  "order": [
+    "tail",
+    "leg_l",
+    "leg_r",
+    "arm_l",
+    "body",
+    "head",
+    "drum",
+    "arm_r"
+  ],
+  "anims": {
+    "idle": [
+      {
+        "ms": 1200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "head": -2,
+          "tail": -3
+        }
+      },
+      {
+        "ms": 1200,
+        "root": [
+          0,
+          1
+        ],
+        "a": {
+          "head": 2,
+          "tail": 3
+        }
+      }
+    ],
+    "play": [
+      {
+        "ms": 200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "arm_l": 35,
+          "arm_r": -10,
+          "head": -3
+        }
+      },
+      {
+        "ms": 200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "arm_l": 10,
+          "arm_r": -35,
+          "head": 3
+        }
+      }
+    ],
+    "dance": [
+      {
+        "ms": 250,
+        "root": [
+          -1,
+          -2
+        ],
+        "a": {
+          "body": -5,
+          "arm_l": 45,
+          "arm_r": -30,
+          "head": 4,
+          "tail": 12
+        }
+      },
+      {
+        "ms": 250,
+        "root": [
+          1,
+          0
+        ],
+        "a": {
+          "body": 5,
+          "arm_l": 30,
+          "arm_r": -45,
+          "head": -4,
+          "tail": -12
+        }
+      }
+    ]
+  }
+}

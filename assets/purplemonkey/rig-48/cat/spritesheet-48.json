@@ -1,0 +1,275 @@
+{
+  "cell_size": [
+    48,
+    48
+  ],
+  "sheet": "spritesheet-48.png",
+  "frames": {
+    "head": {
+      "cell": [
+        0,
+        0,
+        48,
+        48
+      ],
+      "content": [
+        0,
+        4,
+        48,
+        39
+      ],
+      "file": "head.png",
+      "pivot_in_cell": [
+        24,
+        37
+      ]
+    },
+    "body": {
+      "cell": [
+        48,
+        0,
+        48,
+        48
+      ],
+      "content": [
+        56,
+        1,
+        32,
+        45
+      ],
+      "file": "body.png",
+      "pivot_in_cell": [
+        24,
+        27
+      ]
+    },
+    "arm_l": {
+      "cell": [
+        96,
+        0,
+        48,
+        48
+      ],
+      "content": [
+        114,
+        4,
+        12,
+        39
+      ],
+      "file": "arm_l.png",
+      "pivot_in_cell": [
+        24,
+        7
+      ]
+    },
+    "arm_r": {
+      "cell": [
+        144,
+        0,
+        48,
+        48
+      ],
+      "content": [
+        162,
+        4,
+        12,
+        39
+      ],
+      "file": "arm_r.png",
+      "pivot_in_cell": [
+        24,
+        7
+      ]
+    },
+    "leg_l": {
+      "cell": [
+        0,
+        48,
+        48,
+        48
+      ],
+      "content": [
+        14,
+        54,
+        20,
+        36
+      ],
+      "file": "leg_l.png",
+      "pivot_in_cell": [
+        24,
+        10
+      ]
+    },
+    "leg_r": {
+      "cell": [
+        48,
+        48,
+        48,
+        48
+      ],
+      "content": [
+        62,
+        54,
+        20,
+        36
+      ],
+      "file": "leg_r.png",
+      "pivot_in_cell": [
+        24,
+        10
+      ]
+    },
+    "tail": {
+      "cell": [
+        96,
+        48,
+        48,
+        48
+      ],
+      "content": [
+        109,
+        56,
+        22,
+        32
+      ],
+      "file": "tail.png",
+      "pivot_in_cell": [
+        30,
+        34
+      ]
+    },
+    "xylophone": {
+      "cell": [
+        144,
+        48,
+        48,
+        48
+      ],
+      "content": [
+        144,
+        59,
+        48,
+        26
+      ],
+      "file": "xylophone.png",
+      "pivot_in_cell": [
+        24,
+        17
+      ]
+    },
+    "head_neutral": {
+      "cell": [
+        0,
+        96,
+        48,
+        48
+      ],
+      "content": [
+        0,
+        100,
+        48,
+        39
+      ],
+      "file": "head_neutral.png",
+      "pivot_in_cell": [
+        24,
+        37
+      ]
+    },
+    "head_blink": {
+      "cell": [
+        48,
+        96,
+        48,
+        48
+      ],
+      "content": [
+        48,
+        100,
+        48,
+        39
+      ],
+      "file": "head_blink.png",
+      "pivot_in_cell": [
+        24,
+        37
+      ]
+    },
+    "head_happy": {
+      "cell": [
+        96,
+        96,
+        48,
+        48
+      ],
+      "content": [
+        96,
+        100,
+        48,
+        39
+      ],
+      "file": "head_happy.png",
+      "pivot_in_cell": [
+        24,
+        37
+      ]
+    },
+    "head_sing": {
+      "cell": [
+        144,
+        96,
+        48,
+        48
+      ],
+      "content": [
+        144,
+        100,
+        48,
+        39
+      ],
+      "file": "head_sing.png",
+      "pivot_in_cell": [
+        24,
+        37
+      ]
+    },
+    "head_surprised": {
+      "cell": [
+        0,
+        144,
+        48,
+        48
+      ],
+      "content": [
+        0,
+        148,
+        48,
+        39
+      ],
+      "file": "head_surprised.png",
+      "pivot_in_cell": [
+        24,
+        37
+      ]
+    },
+    "head_sleepy": {
+      "cell": [
+        48,
+        144,
+        48,
+        48
+      ],
+      "content": [
+        48,
+        148,
+        48,
+        39
+      ],
+      "file": "head_sleepy.png",
+      "pivot_in_cell": [
+        24,
+        37
+      ]
+    }
+  }
+}

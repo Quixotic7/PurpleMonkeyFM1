@@ -1,0 +1,98 @@
+{
+  "monkey": {
+    "size": [
+      1536,
+      1024
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      254
+    ],
+    "frames": [
+      "neutral",
+      "blink",
+      "happy",
+      "sing",
+      "surprised",
+      "sleepy"
+    ],
+    "layout": [
+      3,
+      2
+    ],
+    "status": "source artwork; extraction and registration required"
+  },
+  "cat": {
+    "size": [
+      1536,
+      1024
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      254
+    ],
+    "frames": [
+      "neutral",
+      "blink",
+      "happy",
+      "sing",
+      "surprised",
+      "sleepy"
+    ],
+    "layout": [
+      3,
+      2
+    ],
+    "status": "source artwork; extraction and registration required"
+  },
+  "dog": {
+    "size": [
+      1536,
+      1024
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      254
+    ],
+    "frames": [
+      "neutral",
+      "blink",
+      "happy",
+      "sing",
+      "surprised",
+      "sleepy"
+    ],
+    "layout": [
+      3,
+      2
+    ],
+    "status": "source artwork; extraction and registration required"
+  },
+  "llama": {
+    "size": [
+      1536,
+      1024
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      254
+    ],
+    "frames": [
+      "neutral",
+      "blink",
+      "happy",
+      "sing",
+      "surprised",
+      "sleepy"
+    ],
+    "layout": [
+      3,
+      2
+    ],
+    "status": "source artwork; extraction and registration required"
+  }
+}

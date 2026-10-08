@@ -1,0 +1,151 @@
+{
+  "source": "parts-source-v1.png",
+  "source_sha256": "3bdcbbbdc6335d47ce0afbacdda8b71e328a20226032009a741284a5ec6db12d",
+  "common_scale": 0.107981220657277,
+  "parts": {
+    "head": {
+      "source_box": [
+        0,
+        45,
+        510,
+        465
+      ],
+      "trim_box": [
+        41,
+        35,
+        464,
+        380
+      ],
+      "source_size": [
+        423,
+        345
+      ]
+    },
+    "body": {
+      "source_box": [
+        530,
+        120,
+        825,
+        550
+      ],
+      "trim_box": [
+        14,
+        35,
+        291,
+        430
+      ],
+      "source_size": [
+        277,
+        395
+      ]
+    },
+    "arm_l": {
+      "source_box": [
+        885,
+        180,
+        1010,
+        575
+      ],
+      "trim_box": [
+        21,
+        36,
+        117,
+        379
+      ],
+      "source_size": [
+        96,
+        343
+      ]
+    },
+    "arm_r": {
+      "source_box": [
+        1070,
+        180,
+        1200,
+        575
+      ],
+      "trim_box": [
+        19,
+        36,
+        115,
+        379
+      ],
+      "source_size": [
+        96,
+        343
+      ]
+    },
+    "leg_l": {
+      "source_box": [
+        35,
+        490,
+        250,
+        845
+      ],
+      "trim_box": [
+        24,
+        20,
+        188,
+        332
+      ],
+      "source_size": [
+        164,
+        312
+      ]
+    },
+    "leg_r": {
+      "source_box": [
+        330,
+        490,
+        535,
+        845
+      ],
+      "trim_box": [
+        15,
+        19,
+        179,
+        332
+      ],
+      "source_size": [
+        164,
+        313
+      ]
+    },
+    "tail": {
+      "source_box": [
+        550,
+        540,
+        780,
+        845
+      ],
+      "trim_box": [
+        13,
+        6,
+        200,
+        287
+      ],
+      "source_size": [
+        187,
+        281
+      ]
+    },
+    "xylophone": {
+      "source_box": [
+        780,
+        595,
+        1230,
+        855
+      ],
+      "trim_box": [
+        9,
+        20,
+        435,
+        245
+      ],
+      "source_size": [
+        426,
+        225
+      ]
+    }
+  }
+}

@@ -53,9 +53,12 @@ SDK_SHA256 = {
     "cfg/eq_cfg_hw.bin": "41167491bffed4651750719c973d2758adeb9021a5670d02d6a53c85ed80ea7d",
 }
 
-UNIT = "choralroot"                 # firmware/src/UNIT.c; outputs build/UNIT.{bin,elf,dis,fwsc}
-PRODUCT = "FM-1_920"                # package identity (ChoralRoot: constant, releases too)
-VERSION = None                      # FELUCCA_VERSION for release builds (default: firmware/src/choralroot.c)
+# PurpleMonkey FM-1: the unit is firmware/src/purplemonkey.c, identity FM-1_927. FM1_UNIT=choralroot builds the
+# ChoralRoot unit this tree was forked from (identity FM-1_920), unchanged: the baseline to compare sizes against
+UNIT = os.environ.get("FM1_UNIT", "purplemonkey")   # firmware/src/UNIT.c; outputs build/UNIT.{bin,elf,dis,fwsc}
+PRODUCT = {"purplemonkey": "FM-1_927", "choralroot": "FM-1_920"}[UNIT]   # package identity (constant, releases too)
+VERSION_NAME = {"purplemonkey": "PurpleMonkey", "choralroot": "ChoralRoot"}[UNIT]
+VERSION = None                      # FELUCCA_VERSION for release builds (default: the unit's own)
 XIP_LEN, RAM_LEN, POOL_LEN, NOINIT_LEN = 0x8DFBC, 96 * 1024, 0x54000, 0x3D50   # firmware/app.ld
 
 
@@ -110,7 +113,12 @@ def generate():
             [tools / "gen_tables.py", GEN / "felucca_tables.h"],
             [tools / "gen_fm6_patches.py", GEN / "felucca_fm6.h"],
             [tools / "gen_cz1_factory.py", GEN / "melodee_cz1.h"],   # CZ-1: Casio's 64 tones (Melodee's)
-            [tools / "gen_samples.py", GEN / "felucca_samples.h"]]
+            [tools / "gen_samples.py", GEN / "felucca_samples.h"],
+            # PurpleMonkey's: SLOOP's synthesised kits (a curated few), the pets' FM6 voices, the pets' sprites
+            [tools / "gen_drumkits.py", GEN / "pm_drumkits.h", "--kits", "VINTAGE,LATIN,808,JAZZ"],
+            [tools / "gen_pm_patches.py", GEN / "pm_fm6.h"],
+            [tools / "gen_pm_sprites.py", GEN / "pm_sprites.h", "--names-only"],
+            [tools / "gen_pm_rig.py", GEN / "pm_rig.h"]]       # the rigs of assets/purplemonkey/rig/
     procs = [subprocess.Popen([sys.executable, *map(str, c)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                               text=True) for c in cmds]
     failed = []
@@ -354,7 +362,7 @@ def main():
         m = re.fullmatch(r"\d+\.\d+(?:\.\d+)?(?:-[A-Za-z0-9.]+)?", a.release)   # the identity never encodes it
         if not m:
             raise SystemExit(f"--release {a.release}: use X.Y, X.Y.Z or X.Y-suffix")
-        VERSION = "ChoralRoot " + a.release.lower()      # e.g. ChoralRoot 1.0, ChoralRoot 1.1-rc1
+        VERSION = VERSION_NAME + " " + a.release.lower()   # e.g. PurpleMonkey 1.0, PurpleMonkey 1.1-rc1
         name = f"{UNIT}-{a.release}.fwsc"
     fm1pkg_make.SDK = a.sdk
     for rel, sha in SDK_SHA256.items():          # fail early without the SDK

@@ -1,0 +1,19 @@
+{
+  "part": "head",
+  "canvas": [
+    64,
+    52
+  ],
+  "pivot": [
+    32,
+    45
+  ],
+  "frames": {
+    "neutral": "head_neutral.png",
+    "blink": "head_blink.png",
+    "happy": "head_happy.png",
+    "sing": "head_sing.png",
+    "surprised": "head_surprised.png",
+    "sleepy": "head_sleepy.png"
+  }
+}

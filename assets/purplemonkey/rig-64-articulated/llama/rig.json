@@ -1,0 +1,355 @@
+{
+  "parts": [
+    {
+      "name": "body",
+      "file": "body.png",
+      "parent": null,
+      "at": null,
+      "pivot": [
+        31,
+        26
+      ]
+    },
+    {
+      "name": "tail",
+      "file": "tail.png",
+      "parent": "body",
+      "at": [
+        6,
+        12
+      ],
+      "pivot": [
+        20,
+        18
+      ]
+    },
+    {
+      "name": "neck",
+      "file": "neck.png",
+      "parent": "body",
+      "at": [
+        50,
+        13
+      ],
+      "pivot": [
+        12,
+        55
+      ]
+    },
+    {
+      "name": "upper_leg_far_l",
+      "file": "upper_leg_far_l.png",
+      "parent": "body",
+      "at": [
+        14,
+        34
+      ],
+      "pivot": [
+        8,
+        6
+      ]
+    },
+    {
+      "name": "upper_leg_far_r",
+      "file": "upper_leg_far_r.png",
+      "parent": "body",
+      "at": [
+        48,
+        34
+      ],
+      "pivot": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "upper_leg_near_l",
+      "file": "upper_leg_near_l.png",
+      "parent": "body",
+      "at": [
+        7,
+        34
+      ],
+      "pivot": [
+        8,
+        6
+      ]
+    },
+    {
+      "name": "upper_leg_near_r",
+      "file": "upper_leg_near_r.png",
+      "parent": "body",
+      "at": [
+        55,
+        34
+      ],
+      "pivot": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "head",
+      "file": "head.png",
+      "parent": "neck",
+      "at": [
+        12,
+        8
+      ],
+      "pivot": [
+        14,
+        45
+      ]
+    },
+    {
+      "name": "collar",
+      "file": "collar.png",
+      "parent": "neck",
+      "at": [
+        12,
+        50
+      ],
+      "pivot": [
+        18,
+        4
+      ]
+    },
+    {
+      "name": "lower_leg_far_l",
+      "file": "lower_leg_far_l.png",
+      "parent": "upper_leg_far_l",
+      "at": [
+        8,
+        22
+      ],
+      "pivot": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "lower_leg_far_r",
+      "file": "lower_leg_far_r.png",
+      "parent": "upper_leg_far_r",
+      "at": [
+        6,
+        22
+      ],
+      "pivot": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "lower_leg_near_l",
+      "file": "lower_leg_near_l.png",
+      "parent": "upper_leg_near_l",
+      "at": [
+        8,
+        22
+      ],
+      "pivot": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "lower_leg_near_r",
+      "file": "lower_leg_near_r.png",
+      "parent": "upper_leg_near_r",
+      "at": [
+        6,
+        22
+      ],
+      "pivot": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "foot_far_l",
+      "file": "foot_far_l.png",
+      "parent": "lower_leg_far_l",
+      "at": [
+        6,
+        22
+      ],
+      "pivot": [
+        12,
+        5
+      ]
+    },
+    {
+      "name": "foot_far_r",
+      "file": "foot_far_r.png",
+      "parent": "lower_leg_far_r",
+      "at": [
+        6,
+        22
+      ],
+      "pivot": [
+        10,
+        5
+      ]
+    },
+    {
+      "name": "foot_near_l",
+      "file": "foot_near_l.png",
+      "parent": "lower_leg_near_l",
+      "at": [
+        6,
+        22
+      ],
+      "pivot": [
+        12,
+        5
+      ]
+    },
+    {
+      "name": "foot_near_r",
+      "file": "foot_near_r.png",
+      "parent": "lower_leg_near_r",
+      "at": [
+        6,
+        22
+      ],
+      "pivot": [
+        10,
+        5
+      ]
+    }
+  ],
+  "order": [
+    "tail",
+    "upper_leg_far_l",
+    "lower_leg_far_l",
+    "foot_far_l",
+    "upper_leg_far_r",
+    "lower_leg_far_r",
+    "foot_far_r",
+    "body",
+    "upper_leg_near_l",
+    "lower_leg_near_l",
+    "foot_near_l",
+    "upper_leg_near_r",
+    "lower_leg_near_r",
+    "foot_near_r",
+    "neck",
+    "head",
+    "collar"
+  ],
+  "feet": 60,
+  "anims": {
+    "idle": [
+      {
+        "ms": 1200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "head": -2
+        }
+      },
+      {
+        "ms": 1200,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "head": 2
+        }
+      }
+    ],
+    "play": [
+      {
+        "ms": 350,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "upper_leg_far_l": 8,
+          "lower_leg_far_l": -28,
+          "foot_far_l": 15,
+          "upper_leg_far_r": -8,
+          "lower_leg_far_r": 28,
+          "foot_far_r": -15,
+          "upper_leg_near_l": 8,
+          "lower_leg_near_l": -28,
+          "foot_near_l": 15,
+          "upper_leg_near_r": -8,
+          "lower_leg_near_r": 28,
+          "foot_near_r": -15
+        }
+      },
+      {
+        "ms": 350,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "upper_leg_far_l": -8,
+          "lower_leg_far_l": 12,
+          "foot_far_l": -6,
+          "upper_leg_far_r": 8,
+          "lower_leg_far_r": -12,
+          "foot_far_r": 6,
+          "upper_leg_near_l": -8,
+          "lower_leg_near_l": 12,
+          "foot_near_l": -6,
+          "upper_leg_near_r": 8,
+          "lower_leg_near_r": -12,
+          "foot_near_r": 6
+        }
+      }
+    ],
+    "dance": [
+      {
+        "ms": 500,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "upper_leg_far_l": 8,
+          "lower_leg_far_l": -28,
+          "foot_far_l": 15,
+          "upper_leg_far_r": -8,
+          "lower_leg_far_r": 28,
+          "foot_far_r": -15,
+          "upper_leg_near_l": 8,
+          "lower_leg_near_l": -28,
+          "foot_near_l": 15,
+          "upper_leg_near_r": -8,
+          "lower_leg_near_r": 28,
+          "foot_near_r": -15
+        }
+      },
+      {
+        "ms": 500,
+        "root": [
+          0,
+          0
+        ],
+        "a": {
+          "upper_leg_far_l": -8,
+          "lower_leg_far_l": 12,
+          "foot_far_l": -6,
+          "upper_leg_far_r": 8,
+          "lower_leg_far_r": -12,
+          "foot_far_r": 6,
+          "upper_leg_near_l": -8,
+          "lower_leg_near_l": 12,
+          "foot_near_l": -6,
+          "upper_leg_near_r": 8,
+          "lower_leg_near_r": -12,
+          "foot_near_r": 6
+        }
+      }
+    ]
+  },
+  "note": "Articulated 64px option. Round-ended generated limbs; forearms and shins overlap at elbows/knees. Requires part capacity >=17. l/r mean viewer sides."
+}

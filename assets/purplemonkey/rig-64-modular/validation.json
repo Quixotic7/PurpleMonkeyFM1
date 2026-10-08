@@ -1,0 +1,46 @@
+{
+  "monkey": {
+    "rig_parts": 21,
+    "atlas_sprites": 35,
+    "facial_layers": 5,
+    "ear_poses_per_side": 4,
+    "eye_variants": 4,
+    "mouth_variants": 4,
+    "nose_variants": 3,
+    "opaque_colors": 31,
+    "body_and_default_face_pixel_bytes": 26963
+  },
+  "cat": {
+    "rig_parts": 21,
+    "atlas_sprites": 35,
+    "facial_layers": 5,
+    "ear_poses_per_side": 4,
+    "eye_variants": 4,
+    "mouth_variants": 4,
+    "nose_variants": 3,
+    "opaque_colors": 29,
+    "body_and_default_face_pixel_bytes": 26681
+  },
+  "dog": {
+    "rig_parts": 20,
+    "atlas_sprites": 34,
+    "facial_layers": 5,
+    "ear_poses_per_side": 4,
+    "eye_variants": 4,
+    "mouth_variants": 4,
+    "nose_variants": 3,
+    "opaque_colors": 20,
+    "body_and_default_face_pixel_bytes": 27406
+  },
+  "llama": {
+    "rig_parts": 22,
+    "atlas_sprites": 36,
+    "facial_layers": 5,
+    "ear_poses_per_side": 4,
+    "eye_variants": 4,
+    "mouth_variants": 4,
+    "nose_variants": 3,
+    "opaque_colors": 29,
+    "body_and_default_face_pixel_bytes": 24259
+  }
+}

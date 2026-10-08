@@ -1,0 +1,6 @@
+size: 434 main-loop functions built for size (318 not in this build)
+  ok    .ram_text: 909 insns, no calls
+  ok    image 354692 B; RAM .data+.bss 79428 B of 98304; pool 317536 B of 344064
+  ok    register access: hal/ only (src/, loader/ clean)
+size: .text 339732 B, .ram_text 2888 B, .data 12072 B, .bss 67348 B; XIP 354692 B of 581564 (61.0%), RAM 79420 B of 98304 (80.8%), POOL 317536 B of 344064 (92.3%), NOINIT 216 B of 15696 (1.4%)
+package  /Volumes/Q7Media-2025/Projects/Github/PurpleMonkeyFM1/PurpleMonkeyFM1/build/choralroot.fwsc  609857 B, identity FM-1_920

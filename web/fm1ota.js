@@ -83,6 +83,7 @@ export function classifyFirmware(identity, info) {
   if (num === 0) return { verdict: "refuse", kind: "sloop", name: "Sloop's rescue mode (FM-1_000)" };
   if (num < 900) return { verdict: "refuse", kind: "unknown", name: `an unknown firmware (${identity})` };
   if (/^choralroot\b/i.test(v)) return { verdict: "allow", kind: "choralroot", name: v };
+  if (/^purplemonkey\b/i.test(v)) return { verdict: "allow", kind: "purplemonkey", name: v };   // PurpleMonkey FM-1 (pm_info.c)
   if (/^melodee\b/i.test(v)) return { verdict: "allow", kind: "melodee", name: `Melodee (${v.slice(8)})` };
   if (/sloop/i.test(v)) return { verdict: "refuse", kind: "sloop", name: "Sloop" };
   const f = /^felucca\s+(v)?(\d+)\.(\d+)(\S*)$/i.exec(v);

@@ -193,6 +193,8 @@ def classify_firmware(identity, info):
         return "refuse", "unknown", f"an unknown firmware ({identity})"
     if re.match(r"choralroot\b", v, re.I):
         return "allow", "choralroot", v
+    if re.match(r"purplemonkey\b", v, re.I):       # PurpleMonkey FM-1 (firmware/src/pm_info.c): ChoralRoot's platform
+        return "allow", "purplemonkey", v
     if re.match(r"melodee\b", v, re.I):
         return "allow", "melodee", f"Melodee ({v[8:]})"
     if re.search(r"sloop", v, re.I):

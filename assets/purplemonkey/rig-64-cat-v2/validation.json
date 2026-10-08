@@ -1,0 +1,7 @@
+{
+  "parts": 21,
+  "sprites": 35,
+  "max_cell": 64,
+  "colors": 27,
+  "independently_drawn_ears": true
+}

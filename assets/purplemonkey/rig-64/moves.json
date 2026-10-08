@@ -1,0 +1,517 @@
+{
+ "note": "PurpleMonkey's choreography for the 64 px rigs (rig-64/), read by tools/gen_pm_rig.py in place of a rig.json animation of the same name; root offsets in these rigs' own pixels. beats: how many beats a loop takes when the beat plays. props: parts that stand on the ground where the rest pose puts them and do not move or turn with the pet. Arm strikes, wrist flicks and the head's bob are added by the firmware (pm_ui.c). planted: legs whose feet stay on their spot. order: a rig's parts back to front, in place of rig.json's (the cat's left hand plays in front of its xylophone).",
+ "monkey": {
+  "play": {
+   "beats": 2,
+   "keys": [
+    {
+     "ms": 300,
+     "root": [
+      0,
+      0
+     ],
+     "a": {
+      "body": -3,
+      "arm_l": 18,
+      "arm_r": -18,
+      "tail": 10
+     }
+    },
+    {
+     "ms": 300,
+     "root": [
+      0,
+      2
+     ],
+     "a": {
+      "body": 3,
+      "arm_l": 18,
+      "arm_r": -18,
+      "tail": -10
+     }
+    }
+   ]
+  },
+  "dance": {
+   "beats": 1,
+   "keys": [
+    {
+     "ms": 200,
+     "root": [
+      -4,
+      -4
+     ],
+     "a": {
+      "body": -9,
+      "leg_l": 14,
+      "leg_r": -6,
+      "head": 5,
+      "tail": 18
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      4,
+      -4
+     ],
+     "a": {
+      "body": 9,
+      "leg_l": 6,
+      "leg_r": -14,
+      "head": -5,
+      "tail": -18
+     }
+    }
+   ]
+  }
+ },
+ "cat": {
+  "play": {
+   "beats": 2,
+   "keys": [
+    {
+     "ms": 300,
+     "root": [
+      0,
+      0
+     ],
+     "a": {
+      "body": -1,
+      "arm_l": 26,
+      "arm_r": -26,
+      "tail": 12,
+      "hand_l": -58,
+      "hand_r": 58
+     }
+    },
+    {
+     "ms": 300,
+     "root": [
+      0,
+      0
+     ],
+     "a": {
+      "body": 1,
+      "arm_l": 26,
+      "arm_r": -26,
+      "tail": -12,
+      "hand_l": -58,
+      "hand_r": 58
+     }
+    }
+   ]
+  },
+  "dance": {
+   "beats": 2,
+   "keys": [
+    {
+     "ms": 300,
+     "root": [
+      -2,
+      0
+     ],
+     "a": {
+      "body": -4,
+      "arm_l": 26,
+      "arm_r": -26,
+      "tail": 20,
+      "hand_l": -58,
+      "hand_r": 58
+     }
+    },
+    {
+     "ms": 300,
+     "root": [
+      2,
+      0
+     ],
+     "a": {
+      "body": 4,
+      "arm_l": 26,
+      "arm_r": -26,
+      "tail": -20,
+      "hand_l": -58,
+      "hand_r": 58
+     }
+    }
+   ]
+  }
+ },
+ "dog": {
+  "play": {
+   "beats": 2,
+   "keys": [
+    {
+     "ms": 300,
+     "root": [
+      -2,
+      0
+     ],
+     "a": {
+      "body": -5,
+      "arm_l": 25,
+      "arm_r": -25,
+      "ear_l": 12,
+      "ear_r": -12,
+      "tail": 20
+     }
+    },
+    {
+     "ms": 300,
+     "root": [
+      2,
+      0
+     ],
+     "a": {
+      "body": 5,
+      "arm_l": 25,
+      "arm_r": -25,
+      "ear_l": -8,
+      "ear_r": 8,
+      "tail": -20
+     }
+    }
+   ]
+  },
+  "dance": {
+   "beats": 4,
+   "keys": [
+    {
+     "ms": 200,
+     "root": [
+      -6,
+      0
+     ],
+     "a": {
+      "body": -10,
+      "arm_l": 70,
+      "arm_r": -20,
+      "leg_l": 18,
+      "leg_r": -8,
+      "head": 8,
+      "ear_l": 25,
+      "ear_r": -10,
+      "tail": 25
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      6,
+      0
+     ],
+     "a": {
+      "body": 10,
+      "arm_l": 20,
+      "arm_r": -70,
+      "leg_l": 8,
+      "leg_r": -18,
+      "head": -8,
+      "ear_l": 10,
+      "ear_r": -25,
+      "tail": -25
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      0,
+      12
+     ],
+     "a": {
+      "body": 0,
+      "arm_l": 40,
+      "arm_r": -40,
+      "leg_l": 55,
+      "leg_r": -55,
+      "head": 0,
+      "ear_l": 30,
+      "ear_r": -30
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      0,
+      -8
+     ],
+     "a": {
+      "body": 90,
+      "arm_l": 100,
+      "arm_r": -30,
+      "leg_l": 30,
+      "leg_r": -40,
+      "head": -10,
+      "ear_l": 40,
+      "ear_r": 10
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      0,
+      -24
+     ],
+     "a": {
+      "body": 180,
+      "arm_l": 150,
+      "arm_r": -150,
+      "leg_l": 45,
+      "leg_r": -45,
+      "head": 0,
+      "ear_l": 60,
+      "ear_r": -60
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      0,
+      -8
+     ],
+     "a": {
+      "body": 270,
+      "arm_l": 30,
+      "arm_r": -100,
+      "leg_l": 40,
+      "leg_r": -30,
+      "head": 10,
+      "ear_l": -10,
+      "ear_r": -40
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      0,
+      10
+     ],
+     "a": {
+      "body": 0,
+      "arm_l": 30,
+      "arm_r": -30,
+      "leg_l": 40,
+      "leg_r": -40,
+      "head": 0,
+      "ear_l": 35,
+      "ear_r": -35
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      0,
+      -6
+     ],
+     "a": {
+      "body": -14,
+      "arm_l": 130,
+      "arm_r": -110,
+      "leg_l": 25,
+      "leg_r": -5,
+      "head": 12,
+      "ear_l": 15,
+      "ear_r": -15,
+      "tail": 30
+     }
+    }
+   ]
+  }
+ },
+ "llama": {
+  "play": {
+   "beats": 2,
+   "keys": [
+    {
+     "ms": 300,
+     "root": [
+      0,
+      0
+     ],
+     "a": {
+      "neck": -8,
+      "head": 10,
+      "tail": 15,
+      "leg_near_l": 6
+     }
+    },
+    {
+     "ms": 300,
+     "root": [
+      0,
+      2
+     ],
+     "a": {
+      "neck": 8,
+      "head": -10,
+      "tail": -15,
+      "leg_near_r": -6
+     }
+    }
+   ]
+  },
+  "dance": {
+   "beats": 4,
+   "keys": [
+    {
+     "ms": 200,
+     "root": [
+      -4,
+      0
+     ],
+     "a": {
+      "body": -6,
+      "neck": -18,
+      "head": 18,
+      "tail": 25,
+      "leg_near_l": 14,
+      "leg_far_r": -10
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      4,
+      0
+     ],
+     "a": {
+      "body": 6,
+      "neck": 18,
+      "head": -18,
+      "tail": -25,
+      "leg_near_r": -14,
+      "leg_far_l": 10
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      0,
+      10
+     ],
+     "a": {
+      "body": 0,
+      "neck": -10,
+      "head": 10,
+      "leg_near_l": 35,
+      "leg_far_l": 35,
+      "leg_near_r": -35,
+      "leg_far_r": -35
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      0,
+      -28
+     ],
+     "a": {
+      "body": 90,
+      "neck": -25,
+      "head": 20,
+      "leg_near_l": 30,
+      "leg_far_l": 10,
+      "leg_near_r": -10,
+      "leg_far_r": -30,
+      "tail": 30
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      0,
+      -56
+     ],
+     "a": {
+      "body": 180,
+      "neck": 0,
+      "head": 0,
+      "leg_near_l": 40,
+      "leg_far_l": 20,
+      "leg_near_r": -40,
+      "leg_far_r": -20,
+      "tail": 0
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      0,
+      -28
+     ],
+     "a": {
+      "body": 270,
+      "neck": 25,
+      "head": -20,
+      "leg_near_l": 10,
+      "leg_far_l": 30,
+      "leg_near_r": -30,
+      "leg_far_r": -10,
+      "tail": -30
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      0,
+      8
+     ],
+     "a": {
+      "body": 0,
+      "neck": 10,
+      "head": -10,
+      "leg_near_l": 30,
+      "leg_far_l": 30,
+      "leg_near_r": -30,
+      "leg_far_r": -30
+     }
+    },
+    {
+     "ms": 200,
+     "root": [
+      0,
+      -6
+     ],
+     "a": {
+      "body": -8,
+      "neck": -28,
+      "head": 28,
+      "tail": 35,
+      "leg_near_l": 20,
+      "leg_far_r": -12
+     }
+    }
+   ]
+  }
+ },
+ "props": {
+  "cat": [
+   "xylophone"
+  ]
+ },
+ "planted": {
+  "cat": [
+   [
+    "leg_l"
+   ],
+   [
+    "leg_r"
+   ]
+  ]
+ },
+ "order": {
+  "cat": [
+   "tail",
+   "leg_l",
+   "leg_r",
+   "arm_l",
+   "body",
+   "head",
+   "xylophone",
+   "hand_l",
+   "arm_r",
+   "hand_r"
+  ]
+ }
+}
