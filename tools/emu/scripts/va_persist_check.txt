@@ -1,0 +1,14 @@
+# test_persist.sh, VA run 2 (the same flash file): the power-on sound is U01 (the settings record of run 1 holds the
+# chord part's sound: VA 01, the place U01 is bound to): the trace "va: load slot 1 patch crc XXXX" (the same patch as saved);
+# a chord on it sounds
+wait 500
+key F3 down
+wait 40
+btn D4 down
+wait 600
+expect sound
+btn D4 up
+key F3 up
+wait 300
+dump
+quit

@@ -1,0 +1,64 @@
+# tools/emu/perf.sh (d): (c) on the SCOPE view (HOME tapped four times first: a full redraw every frame)
+wait 300
+btn HOME
+wait 100
+btn HOME
+wait 100
+btn HOME
+wait 100
+btn HOME
+wait 100
+wait 300
+knob PRESETS +4               # FM6 05 FM PAD
+wait 200
+knob SELECT +80
+wait 200
+knob ALGORITHM +9             # OFF -> ANALOG 08 SUB BASS (the bass part's pool, after OFF)
+wait 300
+btn REC
+wait 300
+key F3 down
+key 2 down
+key 4 down
+key 5 down
+wait 40
+btn D4 down
+wait 560
+btn D4 up
+btn A4 down
+wait 560
+btn A4 up
+key F3 up
+key 2 up
+key 4 up
+key 5 up
+wait 40
+btn REC
+wait 300
+btn ARP down
+wait 400
+knob SELECT +3                # Arpeggiate (SELECT picks: the roots play in PERF)
+wait 100
+wait 200
+btn ARP up
+btn OCT-                      # the layer stays open after a hold: OCT- closes it
+wait 300
+key F3 down
+key 2 down
+key 4 down
+key 5 down
+wait 40
+btn E4 down
+wait 6000
+dump
+btn E4 up
+key F3 up
+key 2 up
+key 4 up
+key 5 up
+wait 300
+btn PLAY
+wait 300
+btn ARP 80
+wait 1500
+dump

@@ -1,0 +1,24 @@
+# ChoralRoot: tap KEY (X = printed SEL): Key Mode on, its LED, "Key: C" on the top line; D4 alone -> Dm (C major);
+# hold KEY: the select-key screen, locked open after release; a root (E4) in it: the tonic; OCT- closes it
+wait 300
+btn SEL 80
+wait 200
+expect led SEL on
+btn D4 down
+wait 700
+shot build/emu/test/cr_keymode.ppm
+dump
+btn D4 up
+wait 200
+btn SEL down
+wait 500
+shot build/emu/test/cr_selectkey.ppm
+btn E4 100
+wait 100
+shot build/emu/test/cr_selectkey_e.ppm
+btn SEL up
+btn OCT-                      # the layer stays open after a hold: OCT- closes it
+wait 200
+dump
+wait 2000
+dump

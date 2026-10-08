@@ -1,0 +1,35 @@
+# VA (eng_va.c, docs/VA.md): OPT + PRESETS +1 -> the VA, its pool's 01 LUSH PAD; a 6-note chord (MAJ + 6 + M7 + 9 on
+# D4) held 2 s, then a chord change to G4 (the same chord type) held 1.5 s, released; the sound, the screen; silent
+# 9 s after the release (the release and the FX tails rang out: no voice left)
+wait 300
+btn GLO down
+wait 100
+knob PRESETS +1               # OPT + PRESETS: the engine (FM6 -> VA: 01 LUSH PAD), on OPT's release
+wait 100
+btn GLO up
+wait 600
+shot build/emu/test/va_chord_sound.ppm
+dump
+key F3 down
+key 2 down
+key 4 down
+key 5 down
+wait 40
+btn D4 down
+wait 2000
+expect sound
+shot build/emu/test/va_chord_held.ppm
+btn D4 up
+btn A4 down
+wait 1500
+dump
+btn A4 up
+key F3 up
+key 2 up
+key 4 up
+key 5 up
+wait 6000
+expect sound
+wait 3000
+expect silence
+quit

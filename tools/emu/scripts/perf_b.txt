@@ -1,0 +1,20 @@
+# tools/emu/perf.sh (b): the same 6-note chord held 6 s on FM PAD (PRESETS: FM6 05), the bank's heaviest FM6 sound
+# (tools/emu/perf.sh cpu table: the highest average of the 24)
+wait 300
+knob PRESETS +4               # FM6 05 FM PAD
+wait 500
+key F3 down
+key 2 down
+key 4 down
+key 5 down
+wait 40
+btn D4 down
+wait 6000
+dump
+btn D4 up
+key F3 up
+key 2 up
+key 4 up
+key 5 up
+wait 1500
+dump
