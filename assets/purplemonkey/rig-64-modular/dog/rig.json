@@ -1,397 +1,397 @@
 {
-  "parts": [
-    {
-      "name": "body",
-      "file": "body.png",
-      "parent": null,
-      "at": null,
-      "pivot": [
-        24,
-        38
-      ]
-    },
-    {
-      "name": "tail",
-      "file": "tail.png",
-      "parent": "body",
-      "at": [
-        39,
-        49
-      ],
-      "pivot": [
-        6,
-        38
-      ]
-    },
-    {
-      "name": "upper_arm_l",
-      "file": "upper_arm_l.png",
-      "parent": "body",
-      "at": [
-        8,
-        16
-      ],
-      "pivot": [
-        7,
-        6
-      ]
-    },
-    {
-      "name": "upper_leg_l",
-      "file": "upper_leg_l.png",
-      "parent": "body",
-      "at": [
-        14,
-        54
-      ],
-      "pivot": [
-        8,
-        6
-      ]
-    },
-    {
-      "name": "upper_arm_r",
-      "file": "upper_arm_r.png",
-      "parent": "body",
-      "at": [
-        39,
-        16
-      ],
-      "pivot": [
-        7,
-        6
-      ]
-    },
-    {
-      "name": "upper_leg_r",
-      "file": "upper_leg_r.png",
-      "parent": "body",
-      "at": [
-        33,
-        54
-      ],
-      "pivot": [
-        8,
-        6
-      ]
-    },
-    {
-      "name": "forearm_l",
-      "file": "forearm_l.png",
-      "parent": "upper_arm_l",
-      "at": [
-        7,
-        22
-      ],
-      "pivot": [
-        6,
-        6
-      ]
-    },
-    {
-      "name": "lower_leg_l",
-      "file": "lower_leg_l.png",
-      "parent": "upper_leg_l",
-      "at": [
-        8,
-        22
-      ],
-      "pivot": [
-        6,
-        6
-      ]
-    },
-    {
-      "name": "forearm_r",
-      "file": "forearm_r.png",
-      "parent": "upper_arm_r",
-      "at": [
-        7,
-        22
-      ],
-      "pivot": [
-        6,
-        6
-      ]
-    },
-    {
-      "name": "lower_leg_r",
-      "file": "lower_leg_r.png",
-      "parent": "upper_leg_r",
-      "at": [
-        8,
-        22
-      ],
-      "pivot": [
-        6,
-        6
-      ]
-    },
-    {
-      "name": "hand_l",
-      "file": "hand_l.png",
-      "parent": "forearm_l",
-      "at": [
-        6,
-        22
-      ],
-      "pivot": [
-        8,
-        16
-      ]
-    },
-    {
-      "name": "foot_l",
-      "file": "foot_l.png",
-      "parent": "lower_leg_l",
-      "at": [
-        6,
-        22
-      ],
-      "pivot": [
-        14,
-        4
-      ]
-    },
-    {
-      "name": "hand_r",
-      "file": "hand_r.png",
-      "parent": "forearm_r",
-      "at": [
-        6,
-        22
-      ],
-      "pivot": [
-        3,
-        16
-      ]
-    },
-    {
-      "name": "foot_r",
-      "file": "foot_r.png",
-      "parent": "lower_leg_r",
-      "at": [
-        6,
-        22
-      ],
-      "pivot": [
-        5,
-        4
-      ]
-    },
-    {
-      "name": "head_shape",
-      "file": "head_shape.png",
-      "parent": "body",
-      "at": [
-        24,
-        8
-      ],
-      "pivot": [
-        24,
-        44
-      ]
-    },
-    {
-      "name": "eyes",
-      "file": "eyes_open.png",
-      "parent": "head_shape",
-      "at": [
-        24,
-        44
-      ],
-      "pivot": [
-        24,
-        44
-      ]
-    },
-    {
-      "name": "nose",
-      "file": "nose_neutral.png",
-      "parent": "head_shape",
-      "at": [
-        24,
-        44
-      ],
-      "pivot": [
-        24,
-        44
-      ]
-    },
-    {
-      "name": "mouth",
-      "file": "mouth_smile.png",
-      "parent": "head_shape",
-      "at": [
-        24,
-        44
-      ],
-      "pivot": [
-        24,
-        44
-      ]
-    },
-    {
-      "name": "ear_l",
-      "file": "ear_l_relaxed.png",
-      "parent": "head_shape",
-      "at": [
-        3,
-        12
-      ],
-      "pivot": [
-        32,
-        16
-      ]
-    },
-    {
-      "name": "ear_r",
-      "file": "ear_r_relaxed.png",
-      "parent": "head_shape",
-      "at": [
-        44,
-        12
-      ],
-      "pivot": [
-        32,
-        16
-      ]
-    }
-  ],
-  "order": [
-    "tail",
-    "upper_leg_l",
-    "lower_leg_l",
-    "foot_l",
-    "upper_leg_r",
-    "lower_leg_r",
-    "foot_r",
-    "upper_arm_l",
-    "forearm_l",
-    "hand_l",
-    "body",
-    "upper_arm_r",
-    "forearm_r",
-    "hand_r",
-    "ear_l",
-    "ear_r",
-    "head_shape",
-    "eyes",
-    "nose",
-    "mouth"
-  ],
-  "feet": 62,
-  "anims": {
-    "idle": [
-      {
-        "ms": 1200,
-        "root": [
-          0,
-          0
-        ],
-        "a": {
-          "head_shape": -2
-        }
-      },
-      {
-        "ms": 1200,
-        "root": [
-          0,
-          0
-        ],
-        "a": {
-          "head_shape": 2
-        }
-      }
-    ],
-    "play": [
-      {
-        "ms": 350,
-        "root": [
-          0,
-          0
-        ],
-        "a": {
-          "upper_arm_l": -12,
-          "forearm_l": 45,
-          "hand_l": -12,
-          "upper_leg_l": 8,
-          "lower_leg_l": -28,
-          "foot_l": 15,
-          "upper_arm_r": 12,
-          "forearm_r": -45,
-          "hand_r": 12,
-          "upper_leg_r": -8,
-          "lower_leg_r": 28,
-          "foot_r": -15
-        }
-      },
-      {
-        "ms": 350,
-        "root": [
-          0,
-          0
-        ],
-        "a": {
-          "upper_arm_l": -8,
-          "forearm_l": 15,
-          "hand_l": -6,
-          "upper_leg_l": -8,
-          "lower_leg_l": 12,
-          "foot_l": -6,
-          "upper_arm_r": 8,
-          "forearm_r": -15,
-          "hand_r": 6,
-          "upper_leg_r": 8,
-          "lower_leg_r": -12,
-          "foot_r": 6
-        }
-      }
-    ],
-    "dance": [
-      {
-        "ms": 500,
-        "root": [
-          0,
-          0
-        ],
-        "a": {
-          "upper_arm_l": -12,
-          "forearm_l": 45,
-          "hand_l": -12,
-          "upper_leg_l": 8,
-          "lower_leg_l": -28,
-          "foot_l": 15,
-          "upper_arm_r": 12,
-          "forearm_r": -45,
-          "hand_r": 12,
-          "upper_leg_r": -8,
-          "lower_leg_r": 28,
-          "foot_r": -15
-        }
-      },
-      {
-        "ms": 500,
-        "root": [
-          0,
-          0
-        ],
-        "a": {
-          "upper_arm_l": -8,
-          "forearm_l": 15,
-          "hand_l": -6,
-          "upper_leg_l": -8,
-          "lower_leg_l": 12,
-          "foot_l": -6,
-          "upper_arm_r": 8,
-          "forearm_r": -15,
-          "hand_r": 6,
-          "upper_leg_r": 8,
-          "lower_leg_r": -12,
-          "foot_r": 6
-        }
-      }
-    ]
+ "parts": [
+  {
+   "name": "body",
+   "file": "body.png",
+   "parent": null,
+   "at": null,
+   "pivot": [
+    24,
+    38
+   ]
   },
-  "note": "64px articulated limbs and modular facial layers. Requires >=22 part slots and per-part texture swapping. No flattened expression heads."
+  {
+   "name": "tail",
+   "file": "tail.png",
+   "parent": "body",
+   "at": [
+    39,
+    49
+   ],
+   "pivot": [
+    6,
+    38
+   ]
+  },
+  {
+   "name": "upper_arm_l",
+   "file": "upper_arm_l.png",
+   "parent": "body",
+   "at": [
+    8,
+    16
+   ],
+   "pivot": [
+    7,
+    6
+   ]
+  },
+  {
+   "name": "upper_leg_l",
+   "file": "upper_leg_l.png",
+   "parent": "body",
+   "at": [
+    14,
+    54
+   ],
+   "pivot": [
+    8,
+    6
+   ]
+  },
+  {
+   "name": "upper_arm_r",
+   "file": "upper_arm_r.png",
+   "parent": "body",
+   "at": [
+    39,
+    16
+   ],
+   "pivot": [
+    7,
+    6
+   ]
+  },
+  {
+   "name": "upper_leg_r",
+   "file": "upper_leg_r.png",
+   "parent": "body",
+   "at": [
+    33,
+    54
+   ],
+   "pivot": [
+    8,
+    6
+   ]
+  },
+  {
+   "name": "forearm_l",
+   "file": "forearm_l.png",
+   "parent": "upper_arm_l",
+   "at": [
+    7,
+    22
+   ],
+   "pivot": [
+    6,
+    6
+   ]
+  },
+  {
+   "name": "lower_leg_l",
+   "file": "lower_leg_l.png",
+   "parent": "upper_leg_l",
+   "at": [
+    8,
+    27
+   ],
+   "pivot": [
+    6,
+    6
+   ]
+  },
+  {
+   "name": "forearm_r",
+   "file": "forearm_r.png",
+   "parent": "upper_arm_r",
+   "at": [
+    7,
+    22
+   ],
+   "pivot": [
+    6,
+    6
+   ]
+  },
+  {
+   "name": "lower_leg_r",
+   "file": "lower_leg_r.png",
+   "parent": "upper_leg_r",
+   "at": [
+    8,
+    27
+   ],
+   "pivot": [
+    6,
+    6
+   ]
+  },
+  {
+   "name": "hand_l",
+   "file": "hand_l.png",
+   "parent": "forearm_l",
+   "at": [
+    6,
+    22
+   ],
+   "pivot": [
+    8,
+    16
+   ]
+  },
+  {
+   "name": "foot_l",
+   "file": "foot_l.png",
+   "parent": "lower_leg_l",
+   "at": [
+    6,
+    22
+   ],
+   "pivot": [
+    14,
+    4
+   ]
+  },
+  {
+   "name": "hand_r",
+   "file": "hand_r.png",
+   "parent": "forearm_r",
+   "at": [
+    6,
+    22
+   ],
+   "pivot": [
+    3,
+    16
+   ]
+  },
+  {
+   "name": "foot_r",
+   "file": "foot_r.png",
+   "parent": "lower_leg_r",
+   "at": [
+    6,
+    22
+   ],
+   "pivot": [
+    5,
+    4
+   ]
+  },
+  {
+   "name": "head_shape",
+   "file": "head_shape.png",
+   "parent": "body",
+   "at": [
+    24,
+    8
+   ],
+   "pivot": [
+    24,
+    44
+   ]
+  },
+  {
+   "name": "eyes",
+   "file": "eyes_open.png",
+   "parent": "head_shape",
+   "at": [
+    24,
+    44
+   ],
+   "pivot": [
+    24,
+    44
+   ]
+  },
+  {
+   "name": "nose",
+   "file": "nose_neutral.png",
+   "parent": "head_shape",
+   "at": [
+    24,
+    44
+   ],
+   "pivot": [
+    24,
+    44
+   ]
+  },
+  {
+   "name": "mouth",
+   "file": "mouth_smile.png",
+   "parent": "head_shape",
+   "at": [
+    24,
+    44
+   ],
+   "pivot": [
+    24,
+    44
+   ]
+  },
+  {
+   "name": "ear_l",
+   "file": "ear_l_relaxed.png",
+   "parent": "head_shape",
+   "at": [
+    3,
+    12
+   ],
+   "pivot": [
+    32,
+    16
+   ]
+  },
+  {
+   "name": "ear_r",
+   "file": "ear_r_relaxed.png",
+   "parent": "head_shape",
+   "at": [
+    44,
+    12
+   ],
+   "pivot": [
+    32,
+    16
+   ]
+  }
+ ],
+ "order": [
+  "tail",
+  "upper_leg_l",
+  "lower_leg_l",
+  "foot_l",
+  "upper_leg_r",
+  "lower_leg_r",
+  "foot_r",
+  "upper_arm_l",
+  "forearm_l",
+  "hand_l",
+  "body",
+  "upper_arm_r",
+  "forearm_r",
+  "hand_r",
+  "ear_l",
+  "ear_r",
+  "head_shape",
+  "eyes",
+  "nose",
+  "mouth"
+ ],
+ "feet": 67,
+ "anims": {
+  "idle": [
+   {
+    "ms": 1200,
+    "root": [
+     0,
+     0
+    ],
+    "a": {
+     "head_shape": -2
+    }
+   },
+   {
+    "ms": 1200,
+    "root": [
+     0,
+     0
+    ],
+    "a": {
+     "head_shape": 2
+    }
+   }
+  ],
+  "play": [
+   {
+    "ms": 350,
+    "root": [
+     0,
+     0
+    ],
+    "a": {
+     "upper_arm_l": -12,
+     "forearm_l": 45,
+     "hand_l": -12,
+     "upper_leg_l": 8,
+     "lower_leg_l": -28,
+     "foot_l": 15,
+     "upper_arm_r": 12,
+     "forearm_r": -45,
+     "hand_r": 12,
+     "upper_leg_r": -8,
+     "lower_leg_r": 28,
+     "foot_r": -15
+    }
+   },
+   {
+    "ms": 350,
+    "root": [
+     0,
+     0
+    ],
+    "a": {
+     "upper_arm_l": -8,
+     "forearm_l": 15,
+     "hand_l": -6,
+     "upper_leg_l": -8,
+     "lower_leg_l": 12,
+     "foot_l": -6,
+     "upper_arm_r": 8,
+     "forearm_r": -15,
+     "hand_r": 6,
+     "upper_leg_r": 8,
+     "lower_leg_r": -12,
+     "foot_r": 6
+    }
+   }
+  ],
+  "dance": [
+   {
+    "ms": 500,
+    "root": [
+     0,
+     0
+    ],
+    "a": {
+     "upper_arm_l": -12,
+     "forearm_l": 45,
+     "hand_l": -12,
+     "upper_leg_l": 8,
+     "lower_leg_l": -28,
+     "foot_l": 15,
+     "upper_arm_r": 12,
+     "forearm_r": -45,
+     "hand_r": 12,
+     "upper_leg_r": -8,
+     "lower_leg_r": 28,
+     "foot_r": -15
+    }
+   },
+   {
+    "ms": 500,
+    "root": [
+     0,
+     0
+    ],
+    "a": {
+     "upper_arm_l": -8,
+     "forearm_l": 15,
+     "hand_l": -6,
+     "upper_leg_l": -8,
+     "lower_leg_l": 12,
+     "foot_l": -6,
+     "upper_arm_r": 8,
+     "forearm_r": -15,
+     "hand_r": 6,
+     "upper_leg_r": 8,
+     "lower_leg_r": -12,
+     "foot_r": 6
+    }
+   }
+  ]
+ },
+ "note": "64px articulated limbs and modular facial layers. Requires >=22 part slots and per-part texture swapping. No flattened expression heads. Knees lowered 5 px on the thighs (feet +5) so the thighs show below the body."
 }

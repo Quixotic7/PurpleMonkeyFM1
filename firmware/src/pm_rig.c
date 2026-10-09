@@ -16,13 +16,15 @@
  * Layers (PM_RL_*): eyes, mouth, nose and each ear are parts like any other, each with a few pictures of one size
  * and pivot (pm_rig_t.tex). The pose names a picture per layer, independently; painting such a part reads that
  * picture instead of its own. Nothing else of the rig knows: joint, parent, place in the order stay. (The
- * earlier art sets have one head with six whole faces: the HEAD layer.) pm_rig_t.expr says which picture of each
- * layer makes each expression; the caller may then change single layers (a blink, an ear's flick).
+ * earlier art sets have one head with six whole faces: the HEAD layer.) Each expression has its own animation of
+ * the face (pm_rig_t.face: keys of a picture per layer and the ears' angles), played apart from the body's by the
+ * caller, who may then change single layers on top (an ear's flick at a note).
  *
  * Planted legs (pm_rig_t.leg): the foot stays on its spot whatever the body does. A leg of upper, lower and foot
  * bends at the knee to do it (two-bone inverse kinematics: the hip is where the body has it, the ankle where it
  * stands at rest, the knee to the side pm_rig_t.bend says), so the body can sink, rise a little, sway and lean
- * with both feet flat on the ground; a one-piece leg (the earlier sets) is aimed at its spot from the hip.
+ * with both feet flat on the ground; a one-piece leg (the earlier sets) is aimed at its spot from the hip. A key
+ * may move a planted foot from its rest spot (pm_rkey_t.fx, fy: a step, a kick) and turn it (the foot's angle).
  * Props: a part with parent -2 (the cat's xylophone) is a thing on the ground: it stays where the rest pose puts
  * it, upright.
  * On top of an animation the caller may turn any part further (pm_rig_tick's add): how the pets answer the music
@@ -39,6 +41,7 @@
 enum { PM_RA_IDLE, PM_RA_PLAY, PM_RA_DANCE };
 enum { PM_RF_NEUTRAL, PM_RF_BLINK, PM_RF_HAPPY, PM_RF_SING, PM_RF_SURPRISED, PM_RF_SLEEPY };   /* gen_pm_rig.py EXPRS */
 enum { PM_RL_EYES, PM_RL_MOUTH, PM_RL_NOSE, PM_RL_EAR_L, PM_RL_EAR_R, PM_RL_HEAD };             /* .. LAYERS */
+enum { PM_RR_NOTE_L, PM_RR_NOTE_R, PM_RR_SNARE };                                               /* .. REACTS */
 enum { PM_RV_EYES_BLINK = 1, PM_RV_NOSE_SCRUNCH = 1, PM_RV_EAR_FLICK = 3 };                     /* .. their variants */
 #define PM_RIG_AUTO (-2)
 static int8_t pm_rig_ovr[PM_NPET] = {PM_RIG_AUTO, PM_RIG_AUTO, PM_RIG_AUTO, PM_RIG_AUTO};
@@ -130,14 +133,17 @@ static void pm_rig_leg(const pm_rig_t *R, const int8_t *leg, int32_t bend, int32
 
 /* animation anim at t ms into it (or, phase >= 0, at phase / 65536 of its loop: the beat's clock) -> pose.
  * ground: where the root's feet level is now (the caller sinks or lifts the body with it); floor_y: the ground
- * itself, where props and planted feet stay. add: per part, an angle on top of the animation's, 0 = none */
+ * itself, where props and planted feet stay. add: per part, an angle on top of the animation's, 0 = none;
+ * addx, addy: per part, screen px it is pushed on top of the key's pose, whichever way its parent is turned (the
+ * root: the whole pet moved), 0 = none */
 static void pm_rig_solve(const pm_rig_t *R, uint32_t anim, uint32_t t, int32_t phase, int32_t xc, int32_t ground,
-                         int32_t floor_y, const int8_t *add, pm_rpose_t *P)
+                         int32_t floor_y, const int8_t *add, const int8_t *addx, const int8_t *addy, pm_rpose_t *P)
 {
     const pm_rkey_t *K = R->anim[anim % PM_RIG_NANIM].key, *k0, *k1;
     const pm_rpart_t *root = &R->part[0];
     uint32_t n = R->anim[anim % PM_RIG_NANIM].n, i, total = 0, f;
     int32_t dx, dy, rx = xc, ry = floor_y - PM_RZ((int32_t)R->feet);      /* the root's pivot at rest */
+    int8_t own[PM_RIG_MAXP];                      /* each part's own keyed angle (a planted foot's is its angle) */
     for (i = 0; i < n; i++)
         total += K[i].ms;
     if (phase >= 0)
@@ -154,32 +160,39 @@ static void pm_rig_solve(const pm_rig_t *R, uint32_t anim, uint32_t t, int32_t p
     for (i = 0; i < R->npart; i++) {
         const pm_rpart_t *p = &R->part[i];
         int32_t la = k0->a[i] + ((((int8_t)(k1->a[i] - k0->a[i])) * (int32_t)f) >> 8) + (add ? add[i] : 0);   /* the short way round */
-        if (p->parent == -2) {                    /* a prop: on the ground where the rest pose has it, upright */
-            P->a[i] = 0;
-            P->x[i] = (int16_t)(rx + PM_RZ((int32_t)p->ax - root->px));
-            P->y[i] = (int16_t)(ry + PM_RZ((int32_t)p->ay - root->py));
+        int32_t sx = k0->tx[i] + (((k1->tx[i] - k0->tx[i]) * (int32_t)f) >> 8);       /* the key may slide it off */
+        int32_t sy = k0->ty[i] + (((k1->ty[i] - k0->ty[i]) * (int32_t)f) >> 8);       /* its joint (a prop: its spot) */
+        own[i] = (int8_t)la;
+        if (p->parent == -2) {                    /* a prop: on the ground where the rest pose has it, moved by the
+                                                   * key and the caller (screen px), turned only as they say */
+            P->a[i] = (uint8_t)la;
+            P->x[i] = (int16_t)(rx + PM_RZ((int32_t)p->ax - root->px + sx) + PM_RZ(addx ? addx[i] : 0));
+            P->y[i] = (int16_t)(ry + PM_RZ((int32_t)p->ay - root->py + sy) + PM_RZ(addy ? addy[i] : 0));
         } else if (p->parent < 0) {
             P->a[i] = (uint8_t)la;
-            P->x[i] = (int16_t)(xc + PM_RZ(dx));
-            P->y[i] = (int16_t)(ground - PM_RZ((int32_t)R->feet) + PM_RZ(dy));
+            P->x[i] = (int16_t)(xc + PM_RZ(dx + (addx ? addx[i] : 0)));
+            P->y[i] = (int16_t)(ground - PM_RZ((int32_t)R->feet) + PM_RZ(dy + (addy ? addy[i] : 0)));
         } else {
             const pm_rpart_t *q = &R->part[p->parent];
             int32_t ox, oy;
-            pm_rturn(PM_RZ((int32_t)p->ax - q->px), PM_RZ((int32_t)p->ay - q->py), P->a[p->parent], &ox, &oy);
+            pm_rturn(PM_RZ((int32_t)p->ax - q->px + sx), PM_RZ((int32_t)p->ay - q->py + sy), P->a[p->parent], &ox, &oy);
             P->a[i] = (uint8_t)(P->a[p->parent] + (uint32_t)la);
-            P->x[i] = (int16_t)(P->x[p->parent] + ox);
-            P->y[i] = (int16_t)(P->y[p->parent] + oy);
+            P->x[i] = (int16_t)(P->x[p->parent] + ox + PM_RZ(addx ? addx[i] : 0));    /* .. and the caller pushes it, on screen */
+            P->y[i] = (int16_t)(P->y[p->parent] + oy + PM_RZ(addy ? addy[i] : 0));
         }
     }
     for (i = 0; i < PM_RIG_NLEG && R->leg[i][0] >= 0; i++) {              /* the planted legs, over what the keys said */
         const int8_t *leg = R->leg[i];
         const pm_rpart_t *up = &R->part[leg[0]];
         int32_t fx = rx + PM_RZ((int32_t)up->ax - root->px), fy = ry + PM_RZ((int32_t)up->ay - root->py);   /* the hip at rest */
+        fx += PM_RZ(k0->fx[i] + (((k1->fx[i] - k0->fx[i]) * (int32_t)f) >> 8));          /* .. and where the key has the foot */
+        fy += PM_RZ(k0->fy[i] + (((k1->fy[i] - k0->fy[i]) * (int32_t)f) >> 8));
         if (leg[1] >= 0) {
             const pm_rpart_t *lo = &R->part[leg[1]], *ft = &R->part[leg[2]];
             fx += PM_RZ((int32_t)lo->ax - up->px) + PM_RZ((int32_t)ft->ax - lo->px);     /* .. and its ankle */
             fy += PM_RZ((int32_t)lo->ay - up->py) + PM_RZ((int32_t)ft->ay - lo->py);
             pm_rig_leg(R, leg, R->bend[i], fx, fy, P);
+            P->a[leg[2]] = (uint8_t)own[leg[2]];  /* the foot: flat unless the key turns it */
         } else {                                  /* one stiff piece: aimed from the hip at where its foot stands */
             fy += PM_RZ((int32_t)up->h - 1 - up->py);
             P->a[leg[0]] = (uint8_t)pm_rang(fx - P->x[leg[0]], fy - P->y[leg[0]]);
@@ -245,7 +258,7 @@ static void pm_rig_dirty(void)                    /* each part's own reach (not 
 /* the animation asked for (a change starts it from its first key) and each layer's picture, now; the rest as
  * pm_rig_solve. Repaints the parts that moved, turned or changed picture, where they were and where they are */
 static void pm_rig_tick(const pm_rig_t *R, uint32_t anim, const uint8_t *var, uint32_t now, int32_t phase, int32_t xc,
-                        int32_t ground, int32_t floor_y, const int8_t *add)
+                        int32_t ground, int32_t floor_y, const int8_t *add, const int8_t *addx, const int8_t *addy)
 {
     pm_rpose_t P;
     uint32_t i, l, was = rg.valid && rg.R == R;
@@ -254,7 +267,7 @@ static void pm_rig_tick(const pm_rig_t *R, uint32_t anim, const uint8_t *var, ui
         rg.anim = (uint8_t)anim;
         rg.t0 = now;
     }
-    pm_rig_solve(R, anim, now - rg.t0, phase, xc, ground, floor_y, add, &P);
+    pm_rig_solve(R, anim, now - rg.t0, phase, xc, ground, floor_y, add, addx, addy, &P);
     for (l = 0; l < PM_RIG_NLAYER; l++)
         P.var[l] = (uint8_t)(R->layer[l] >= 0 && R->tex[l][var[l] % PM_RIG_NVAR] ? var[l] % PM_RIG_NVAR : 0u);
     if (!was) {                                   /* another pet's pose (or none): everything */

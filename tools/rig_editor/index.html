@@ -8,101 +8,366 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pet Animator</title>
 <style>
-  :root { --bg:#15122b; --panel:#201b3d; --line:#3a3266; --ink:#f3ecff; --mid:#a79fce; --acc:#60e0c8; --warn:#ff7868; --sel:#ffd65c; }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font:13px/1.4 system-ui, sans-serif; }
-  header { display:flex; gap:12px; align-items:center; padding:8px 12px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
-  header h1 { font-size:15px; margin:0 8px 0 0; }
-  main { display:grid; grid-template-columns: 250px minmax(360px, 1fr) 300px; gap:10px; padding:10px; align-items:start; }
-  @media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
-  section { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px; }
-  h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--mid); margin:0 0 8px; }
-  select, input, button, textarea { font:inherit; color:var(--ink); background:#2b2550; border:1px solid var(--line); border-radius:5px; padding:4px 7px; }
-  button { cursor:pointer; } button:hover { border-color:var(--acc); }
-  button.on { background:var(--acc); color:#10222a; border-color:var(--acc); }
-  button.primary { background:var(--acc); color:#10222a; font-weight:600; }
-  input[type=number] { width:64px; } input[type=range] { width:100%; padding:0; }
-  label { color:var(--mid); }
-  #stage { width:100%; max-width:720px; aspect-ratio:1; image-rendering:pixelated; border-radius:8px; display:block; margin:0 auto; cursor:crosshair; touch-action:none; background:#000; }
-  .row { display:flex; gap:6px; align-items:center; margin:4px 0; flex-wrap:wrap; }
-  .keys { display:flex; flex-direction:column; gap:4px; max-height:300px; overflow:auto; }
-  .key { display:flex; gap:6px; align-items:center; padding:4px 6px; border:1px solid var(--line); border-radius:6px; cursor:pointer; }
-  .key.sel { border-color:var(--sel); background:#3a3160; }
-  .parts { max-height:430px; overflow:auto; }
-  .part { display:grid; grid-template-columns: 1fr 64px; gap:4px 6px; align-items:center; padding:3px 4px; border-radius:5px; }
-  .part.sel { background:#3a3160; outline:1px solid var(--sel); }
-  .part.auto { opacity:.5; }
-  .part span { cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .part input[type=range] { grid-column: 1 / 3; }
-  #msg { color:var(--mid); min-height:1.4em; } #msg.bad { color:var(--warn); } #dirty { color:var(--warn); }
-  small { color:var(--mid); }
-  details { margin-top:8px; } summary { cursor:pointer; color:var(--mid); }
+  :root { --bg:#161616; --panel:#232323; --panel2:#2b2b2b; --head:#2d2d2d; --field:#1a1a1a; --line:#3a3a3a; --line2:#474747; --hover:#333;
+          --ink:#e4e4e4; --mid:#a8a8a8; --dim:#737373; --acc:#2f8bec; --accd:#1d6fc8; --val:#62aeff; --warn:#ff6b6b; --sel:#ffd166; }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:12px/1.35 -apple-system, "Segoe UI", system-ui, sans-serif; display:grid; grid-template-rows:38px minmax(0,1fr) 206px; height:100vh; overflow:hidden; user-select:none; -webkit-font-smoothing:antialiased; }
+  ::-webkit-scrollbar { width:10px; height:10px; } ::-webkit-scrollbar-thumb { background:#3d3d3d; border:2px solid var(--panel); border-radius:6px; } ::-webkit-scrollbar-thumb:hover { background:#4a4a4a; } ::-webkit-scrollbar-track { background:transparent; }
+  svg.i { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; display:block; }
+  svg.i.f { fill:currentColor; stroke:none; }
+  /* app bar */
+  #bar { display:flex; align-items:center; gap:10px; padding:0 10px; background:var(--panel); border-bottom:1px solid #0d0d0d; }
+  #bar .brand { font-weight:600; letter-spacing:.02em; color:#fff; margin-right:6px; }
+  .ws { display:flex; gap:2px; } .ws button { background:none; border:0; border-bottom:2px solid transparent; border-radius:0; color:var(--mid); padding:9px 10px 7px; font-weight:500; }
+  .ws button:hover { color:var(--ink); } .ws button.on { color:#fff; border-bottom-color:var(--acc); }
+  .grow { flex:1; }
+  #msg { color:var(--mid); max-width:460px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } #msg.bad { color:var(--warn); }
+  /* controls */
+  select, input, button { font:inherit; color:var(--ink); background:var(--panel2); border:1px solid var(--line); border-radius:3px; padding:3px 7px; }
+  select { padding-right:4px; } select:hover, input:hover { border-color:var(--line2); }
+  select:focus, input:focus { outline:none; border-color:var(--acc); }
+  button { cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:5px; line-height:16px; }
+  button:hover { background:var(--hover); border-color:var(--line2); } button:active { background:#1e1e1e; }
+  button:disabled { opacity:.35; cursor:default; background:var(--panel2); border-color:var(--line); }
+  button.on { background:var(--acc); border-color:var(--acc); color:#fff; } button.on:hover { background:var(--accd); }
+  button.primary { background:var(--acc); border-color:var(--acc); color:#fff; font-weight:600; padding:3px 12px; } button.primary:hover { background:var(--accd); }
+  button.primary.dirty::after { content:""; width:6px; height:6px; border-radius:50%; background:#fff; margin-left:2px; }
+  button.ic { padding:3px 5px; } button.ghost { background:none; border-color:transparent; } button.ghost:hover { background:var(--hover); }
+  .seg { display:inline-flex; background:var(--panel2); border:1px solid var(--line); border-radius:3px; overflow:hidden; }
+  .seg button { border:0; border-radius:0; border-right:1px solid var(--line); background:none; } .seg button:last-child { border-right:0; } .seg button.on { background:var(--acc); }
+  label { color:var(--mid); display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+  input[type=number] { width:58px; padding:2px 4px; text-align:right; color:var(--val); background:transparent; border-color:transparent; cursor:ew-resize; -moz-appearance:textfield; }
+  input[type=number]::-webkit-inner-spin-button { -webkit-appearance:none; }
+  input[type=number]:hover { border-color:var(--line); background:var(--field); } input[type=number]:focus { cursor:text; background:var(--field); border-color:var(--acc); color:var(--ink); }
+  input[type=number].scrub { background:var(--field); border-color:var(--line); color:var(--ink); }
+  input[type=range] { -webkit-appearance:none; appearance:none; height:14px; background:transparent; padding:0; border:0; flex:1; min-width:0; }
+  input[type=range]::-webkit-slider-runnable-track { height:3px; background:var(--line2); border-radius:2px; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:11px; height:11px; margin-top:-4px; border-radius:50%; background:#d8d8d8; border:1px solid #111; }
+  input[type=range]:hover::-webkit-slider-thumb { background:#fff; }
+  input[type=checkbox] { margin:0; accent-color:var(--acc); }
+  .row { display:flex; gap:8px; align-items:center; margin:4px 0; flex-wrap:wrap; }
+  small, .note { color:var(--dim); } .note { display:block; margin:4px 0; line-height:1.4; }
+  /* workspace */
+  #work { display:grid; grid-template-columns:42px minmax(240px,1fr) 316px; min-height:0; background:var(--bg); gap:1px; }
+  #tools { background:var(--panel); display:flex; flex-direction:column; align-items:center; padding:6px 0; gap:3px; }
+  #tools button { width:30px; height:30px; justify-content:center; background:none; border-color:transparent; color:var(--mid); }
+  #tools button:hover { background:var(--hover); color:var(--ink); } #tools button.on { background:var(--acc); color:#fff; }
+  #tools .sep { width:20px; border-top:1px solid var(--line); margin:5px 0; }
+  #tools .k { font-size:10px; font-weight:600; }
+  #viewer { display:grid; grid-template-rows:minmax(0,1fr) 24px; background:#111; min-height:0; }
+  #stagebox { display:flex; align-items:center; justify-content:center; min-height:0; padding:12px; }
+  #stagewrap { position:relative; height:100%; max-height:720px; aspect-ratio:1; max-width:100%; }
+  #stage { width:100%; height:100%; image-rendering:pixelated; display:block; cursor:crosshair; touch-action:none; background:#000; outline:1px solid #2a2a2a; }
+  #stage.grab { cursor:grab; } #stage.grabbing { cursor:grabbing; } #stage.move { cursor:move; }
+  #hoverlab { position:absolute; pointer-events:none; background:#000d; color:#fff; font-size:11px; padding:2px 6px; border-radius:3px; display:none; white-space:nowrap; z-index:2; }
+  #vfoot { display:flex; align-items:center; gap:12px; padding:0 10px; background:var(--panel); border-top:1px solid #0d0d0d; color:var(--dim); font-size:11px; white-space:nowrap; overflow:hidden; }
+  #vfoot #hint { overflow:hidden; text-overflow:ellipsis; }
+  /* panels */
+  .panel { background:var(--panel); display:flex; flex-direction:column; min-height:0; }
+  .ph { display:flex; align-items:stretch; height:28px; background:var(--head); border-bottom:1px solid #0d0d0d; flex:none; }
+  .ph .t { padding:0 12px; display:flex; align-items:center; color:var(--mid); font-weight:500; border:0; border-radius:0; background:none; border-right:1px solid #1a1a1a; }
+  .ph .t:hover { color:var(--ink); background:#333; } .ph .t.on { color:#fff; background:var(--panel); box-shadow:inset 0 2px 0 var(--acc); }
+  .ph .t.plain { cursor:default; } .ph .t.plain:hover { background:none; }
+  .ph .side { margin-left:auto; display:flex; align-items:center; gap:6px; padding:0 8px; }
+  .pb { overflow:auto; min-height:0; flex:1; }
+  .tab { display:none; } .tab.on { display:block; }
+  details.sec { border-bottom:1px solid #1a1a1a; } details.sec > summary { list-style:none; cursor:pointer; padding:6px 10px; font-weight:600; color:var(--mid); display:flex; align-items:center; gap:6px; background:#272727; }
+  details.sec > summary::-webkit-details-marker { display:none; }
+  details.sec > summary::before { content:""; width:0; height:0; border:4px solid transparent; border-left:5px solid var(--dim); margin-left:2px; transition:transform .12s; }
+  details.sec[open] > summary::before { transform:rotate(90deg) translate(-1px,1px); }
+  details.sec > summary:hover { color:var(--ink); } details.sec > .sb { padding:6px 10px 8px; }
+  .prow { display:grid; grid-template-columns:minmax(0,1fr) 62px; gap:6px; align-items:center; padding:1px 6px 1px 10px; border-radius:3px; cursor:pointer; min-height:22px; }
+  .prow:hover { background:var(--hover); } .prow.sel { background:#2a3a4f; box-shadow:inset 2px 0 0 var(--acc); }
+  .prow.auto { color:var(--dim); cursor:default; } .prow .pn { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .prow.rx { grid-template-columns:18px minmax(0,1fr) 50px 44px 44px; gap:3px; } .prow.rx input { width:100%; }
+  .prow.bob { grid-template-columns:minmax(0,1fr) 56px 56px; } .prow.bob input { width:100%; }
+  .prow.hdr { cursor:default; min-height:16px; } .prow.hdr small { text-align:right; font-size:10px; } .prow.hdr:hover { background:none; }
+  .prow .x { background:none; border:0; color:var(--dim); padding:0; width:18px; height:18px; justify-content:center; } .prow .x:hover { color:var(--warn); background:none; }
+  .grp { color:var(--dim); font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.07em; padding:8px 10px 2px; }
+  .selp { padding:6px 10px 8px; } .selp .nm { font-weight:600; color:#fff; }
+  .pics { display:flex; flex-wrap:wrap; gap:4px; padding:2px 10px 6px; }
+  .pic { padding:2px; background:var(--field); } .pic img { display:block; image-rendering:pixelated; width:38px; height:38px; border-radius:2px; }
+  .pic.on { border-color:var(--acc); box-shadow:0 0 0 1px var(--acc); } .pic:hover { border-color:var(--line2); }
+  /* timeline panel */
+  #tlpanel { border-top:1px solid #0d0d0d; }
+  #tlbody { display:grid; grid-template-columns:200px minmax(0,1fr) 232px; min-height:0; flex:1; }
+  #transport { border-right:1px solid #1a1a1a; padding:8px 10px; display:flex; flex-direction:column; gap:6px; }
+  #transport .row { margin:0; }
+  #tlmid { padding:8px 10px; min-width:0; display:flex; flex-direction:column; gap:6px; overflow:hidden; }
+  #keyinsp { border-left:1px solid #1a1a1a; padding:8px 10px; display:flex; flex-direction:column; gap:4px; }
+  #keyinsp .prow { padding-left:0; cursor:default; } #keyinsp .prow:hover { background:none; }
+  .tl { position:relative; height:44px; background:var(--field); border:1px solid var(--line); border-radius:3px; overflow:hidden; touch-action:none; flex:none; }
+  .tl .seg-k { position:absolute; top:0; bottom:0; border-right:1px solid #333; display:flex; align-items:center; padding-left:8px; font-size:11px; color:var(--mid); overflow:hidden; cursor:pointer; white-space:nowrap; }
+  .tl .seg-k small { color:var(--dim); margin-left:4px; } .tl .seg-k:hover { background:#242424; }
+  .tl .seg-k.sel { background:#2a2a2a; color:#fff; box-shadow:inset 0 2px 0 #2f8bec88; } .tl .seg-k.cur { box-shadow:inset 0 2px 0 var(--acc); }
+  .tl .seg-k .h { position:absolute; right:-3px; top:0; bottom:0; width:7px; cursor:col-resize; } .tl .seg-k .h:hover { background:#2f8bec55; }
+  .tl .tick { position:absolute; top:0; bottom:0; width:0; border-left:1px dashed #555; pointer-events:none; }
+  .tl .head { position:absolute; top:0; bottom:0; width:1px; background:var(--acc); pointer-events:none; display:none; }
+  .tl .head::before { content:""; position:absolute; top:0; left:-5px; border:5px solid transparent; border-top:6px solid var(--acc); }
+  .tl.off { opacity:.4; pointer-events:none; }
+  .keys { display:flex; gap:4px; overflow-x:auto; overflow-y:hidden; flex:none; padding-bottom:2px; }
+  .key { display:flex; flex-direction:column; align-items:center; gap:1px; padding:2px; border:1px solid var(--line); border-radius:3px; cursor:pointer; background:var(--field); font-size:10px; color:var(--dim); flex:none; }
+  .key canvas { image-rendering:pixelated; border-radius:2px; background:#1f1f1f; display:block; }
+  .key:hover { border-color:var(--line2); } .key.sel { border-color:var(--acc); color:var(--ink); } .key.cur { box-shadow:0 0 0 1px var(--acc); }
+  #kbtns { display:flex; gap:4px; flex-wrap:wrap; }
+  body.face .v-body, body:not(.face) .v-face { display:none !important; }
+  dialog { background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:6px; max-width:620px; padding:16px 20px; box-shadow:0 20px 60px #000c; }
+  dialog::backdrop { background:#000a; }
+  dialog h3 { margin:14px 0 6px; font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.07em; }
+  dialog table { border-collapse:collapse; } dialog td { padding:2px 10px 2px 0; vertical-align:top; } dialog td:first-child { white-space:nowrap; }
+  kbd { background:var(--panel2); border:1px solid var(--line); border-bottom-width:2px; border-radius:3px; padding:0 5px; font:inherit; font-size:11px; }
+  @media (max-width: 900px) { #work { grid-template-columns:42px minmax(200px,1fr) 260px; } #tlbody { grid-template-columns:170px minmax(0,1fr) 200px; } }
 </style>
 </head>
 <body>
-<header>
-  <h1>Pet Animator</h1>
-  <label>Art set <select id="set"></select></label>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-pose" viewBox="0 0 24 24"><path d="M5 3l14 8.5-6.5 1.5-3 6.5z"/></symbol>
+  <symbol id="i-turn" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v4.3h-4.3"/></symbol>
+  <symbol id="i-move" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M8.5 5.5L12 2l3.5 3.5M8.5 18.5L12 22l3.5-3.5M5.5 8.5L2 12l3.5 3.5M18.5 8.5L22 12l-3.5 3.5"/></symbol>
+  <symbol id="i-slide" viewBox="0 0 24 24"><path d="M3 12h11M10 8l4 4-4 4M20 4v16"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M8 14L3 9l5-5M3 9h11a6 6 0 0 1 0 12h-4"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24"><path d="M16 14l5-5-5-5M21 9H10a6 6 0 0 0 0 12h4"/></symbol>
+  <symbol id="i-dup" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="1.5"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></symbol>
+  <symbol id="i-del" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-mirror" viewBox="0 0 24 24"><path d="M12 3v18M8 8l-5 4 5 4M16 8l5 4-5 4"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.3h4.3"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="1.5"/><path d="M15 9V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h4"/></symbol>
+  <symbol id="i-paste" viewBox="0 0 24 24"><path d="M9 4h6v3H9zM15 5h3a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h3M9 12h6M9 16h6"/></symbol>
+  <symbol id="i-fire" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></symbol>
+</svg>
+<div id="bar">
+  <span class="brand">Pet Animator</span>
+  <span class="ws"><button id="vbody" class="on" title="Key poses of the whole pet: body, head, arms, legs">Body</button><button id="vface" title="Each expression's own animation: eyes, mouth, nose, ears">Face</button></span>
+  <label>Set <select id="set"></select></label>
   <label>Pet <select id="pet"></select></label>
-  <label>Animation <select id="anim"><option>idle</option><option>play</option><option>dance</option></select></label>
-  <button id="save" class="primary">Save moves.json</button>
-  <span id="dirty"></span><span id="msg"></span>
-</header>
-<main>
-  <section>
-    <h2>Key poses</h2>
-    <div class="row"><label>Loop takes <input id="beats" type="number" min="1" max="16" step="1"> beats</label></div>
-    <div class="keys" id="keys"></div>
-    <div class="row">
-      <button id="kadd" title="A new key after this one, same pose">Duplicate</button>
-      <button id="kdel">Delete</button>
-      <button id="kup" title="Earlier">&#8593;</button><button id="kdn" title="Later">&#8595;</button>
+  <span class="seg v-body" id="anims"><button data-anim="idle" class="on" title="At rest, not locked to the beat">Idle</button><button data-anim="play" title="While a key is held: locked to the beat">Play</button><button data-anim="dance" title="With the beat playing: locked to the beat">Dance</button></span>
+  <span class="grow"></span>
+  <span id="msg"></span>
+  <button id="undo" class="ic ghost" title="Undo (Cmd/Ctrl+Z)"><svg class="i"><use href="#i-undo"/></svg></button><button id="redo" class="ic ghost" title="Redo (Cmd/Ctrl+Shift+Z)"><svg class="i"><use href="#i-redo"/></svg></button>
+  <button id="revert" title="Throw away unsaved changes: reload this set's moves.json">Revert</button>
+  <button id="save" class="primary" title="Write this set's moves.json (Cmd/Ctrl+S)">Save</button>
+</div>
+<div id="work">
+  <div id="tools">
+    <span id="modes" class="v-body" style="display:contents">
+      <button data-mode="ik" class="on" title="Pose (1): drag a hand or foot and its limb follows; drag the body and the hands and feet stay put; other parts turn"><svg class="i"><use href="#i-pose"/></svg></button>
+      <button data-mode="rot" title="Turn (2): every part turns about its own joint"><svg class="i"><use href="#i-turn"/></svg></button>
+      <button data-mode="move" title="Move pet (3): slide the whole pet, planted feet and all"><svg class="i"><use href="#i-move"/></svg></button>
+      <button data-mode="slide" title="Slide part (4): slide one part off its joint; what hangs from it goes along"><svg class="i"><use href="#i-slide"/></svg></button>
+    </span>
+    <span class="sep v-body"></span>
+    <button id="hitl" class="k v-body" title="Fire the left-note reaction (L)">L</button>
+    <button id="hitr" class="k v-body" title="Fire the right-note reaction (R)">R</button>
+    <button id="hits" class="k v-body" title="Fire the snare reaction (S)">S</button>
+    <span class="grow"></span>
+    <button id="help" class="k" title="Help and keyboard shortcuts (?)">?</button>
+  </div>
+  <div id="viewer">
+    <div id="stagebox"><div id="stagewrap"><canvas id="stage" width="240" height="240"></canvas><div id="hoverlab"></div></div></div>
+    <div id="vfoot"><span id="hint"></span><span class="grow"></span><label class="v-body" title="Ghost of a neighbouring key behind the pose">Ghost <select id="onion"><option value="">none</option><option value="prev">previous</option><option value="next">next</option><option value="both">both</option></select></label><label class="v-body" title="Which expression the pet wears while you pose the body (its first key; the Face editor animates it)">Face <select id="exprb"></select></label><label class="v-face"><input id="fzoom" type="checkbox" checked> close-up</label></div>
+  </div>
+  <div class="panel" id="right">
+    <div class="ph v-body"><button class="t on" data-tab="pose">Properties</button><button class="t" data-tab="rx">Reactions</button><button class="t" data-tab="rig">Rig</button></div>
+    <div class="ph v-face"><span class="t on plain">Face key <span id="fname2" style="margin-left:6px;color:var(--mid);font-weight:400"></span></span></div>
+    <div class="pb v-body">
+      <div class="tab on" id="tab-pose">
+        <details class="sec" open><summary>Selected part</summary><div class="selp" id="selp"></div></details>
+        <details class="sec" open><summary>Parts <small style="font-weight:400;margin-left:4px">degrees, clockwise</small></summary><div id="parts" style="padding:0 4px 8px"></div></details>
+      </div>
+      <div class="tab" id="tab-rx">
+        <details class="sec" open><summary>Reaction</summary><div class="sb">
+          <div class="row"><span class="seg" id="rxseg"><button data-rx="note_l" class="on">Left note</button><button data-rx="note_r">Right note</button><button data-rx="snare">Snare</button></span><button id="rxfire" class="ic" title="Play this reaction once on the stage"><svg class="i"><use href="#i-fire"/></svg></button></div>
+          <div class="row"><label title="Holds this reaction on the stage without playing it; dragging a part then changes the reaction, not the key pose"><input id="rxpose" type="checkbox"> hold on stage at</label><input id="rxamt" type="range" min="0" max="100" value="100" style="width:70px;flex:none"><span id="rxamtv" style="color:var(--val)">100</span>%</div>
+          <small class="note">What the pet does on top of its animation when a note or a snare sounds: put on at once, then dying away.</small>
+        </div></details>
+        <details class="sec" open><summary>Parts turned and slid</summary><div style="padding:2px 4px 6px">
+          <div class="prow rx hdr"><span></span><span class="pn"></span><small>turn &deg;</small><small>x px</small><small>y px</small></div>
+          <div id="rxrows"></div>
+          <small class="note" style="padding:0 6px">Values are held on the stage while you adjust them; a part stays until you remove it with its &times;. With "hold on stage" ticked, the Pose or Turn tool turns a part for this reaction (the head, a drum or a xylophone: moves it, its ring turns it) and the Slide tool pushes any part. Pushes are screen px, whichever way the parent is turned.</small>
+          <div class="row" style="padding:4px 6px 0"><select id="rxadd" style="flex:1"></select><button id="rxaddb">Add</button></div>
+        </div></details>
+        <details class="sec" open><summary>Body and timing</summary><div style="padding:2px 4px 6px">
+          <div class="prow" style="cursor:default"><span class="pn" title="How far the body sinks at the hit. Negative: it hops up">Body down (px)</span><input id="rxdip" type="number" min="-30" max="30"></div>
+          <div class="prow" style="cursor:default"><span class="pn" title="Time to come on. 0: at once">Comes on in (ms)</span><input id="rxrise" type="number" min="0" max="2000" step="10"></div>
+          <div class="prow" style="cursor:default"><span class="pn" title="Time it stays at full">Stays (ms)</span><input id="rxhold" type="number" min="0" max="5000" step="10"></div>
+          <div class="prow" style="cursor:default"><span class="pn" title="Time to die away">Dies away in (ms)</span><input id="rxfade" type="number" min="10" max="5000" step="10"></div>
+          <div class="row" style="padding:4px 6px 0"><button id="rxreset" title="Back to the built-in reaction"><svg class="i"><use href="#i-reset"/></svg> Default</button></div>
+        </div></details>
+        <details class="sec" open><summary>Head bob with the beat <small id="bobanim" style="font-weight:400;margin-left:4px"></small></summary><div style="padding:2px 4px 6px">
+          <div class="row" style="padding:0 6px 4px"><label title="This animation's bob happens in the firmware (only while the beat plays)"><input id="bobon" type="checkbox"> on in this animation</label><label title="Preview it here while playing with the beat"><input id="bob" type="checkbox" checked> show here</label></div>
+          <div class="prow bob hdr"><span class="pn"></span><small>each beat</small><small>over the bar</small></div>
+          <div class="prow bob" style="cursor:default"><span class="pn" title="The head turned, degrees">Head turn &deg;</span><input id="bobh0" type="number" min="-60" max="60"><input id="bobh1" type="number" min="-60" max="60"></div>
+          <div class="prow bob" id="bobneckrow" style="cursor:default"><span class="pn" title="The neck turned, degrees (the head rides on it)">Neck turn &deg;</span><input id="bobn0" type="number" min="-60" max="60"><input id="bobn1" type="number" min="-60" max="60"></div>
+          <div class="prow bob" style="cursor:default"><span class="pn" title="The head pushed sideways, px">Head side to side px</span><input id="bobx0" type="number" min="-30" max="30"><input id="bobx1" type="number" min="-30" max="30"></div>
+          <div class="prow bob" style="cursor:default"><span class="pn" title="The head pushed down (negative: up), px">Head up and down px</span><input id="boby0" type="number" min="-30" max="30"><input id="boby1" type="number" min="-30" max="30"></div>
+          <small class="note" style="padding:0 6px">A sine each beat and one over the bar, scaled by these, per animation (pick Idle, Play or Dance above). Press Play with "with the beat" ticked to see it.</small>
+        </div></details>
+      </div>
+      <div class="tab" id="tab-rig">
+        <details class="sec" open><summary>Legs</summary><div class="sb">
+          <label><input id="planted" type="checkbox"> feet planted</label>
+          <small class="note">A planted leg's knee is bent by the firmware to keep the foot where the key puts it: drag the foot to place it (a step, a kick), turn it with its angle. Unticked, the legs are plain angles like the arms.</small>
+        </div></details>
+        <details class="sec" open><summary>Props</summary><div class="sb"><small class="note" id="rigprops"></small></div></details>
+        <details class="sec" open><summary>Draw order <small style="font-weight:400;margin-left:4px">back to front</small></summary><div class="sb"><small class="note" id="rigorder"></small><small class="note">Props and draw order are edited in moves.json by hand.</small></div></details>
+      </div>
     </div>
-    <div class="row"><button id="kcopy">Copy pose</button><button id="kpaste">Paste pose</button><button id="kmirror" title="Swap left and right">Mirror</button><button id="kzero">Rest pose</button></div>
-    <h2 style="margin-top:14px">Preview</h2>
-    <div class="row"><button id="play">&#9654; Play</button><label><input id="beat" type="checkbox" checked> with the beat</label></div>
-    <div class="row"><label>BPM <input id="bpm" type="number" min="72" max="136" value="104"></label><label><input id="onion" type="checkbox"> ghost of previous key</label></div>
-    <div class="row"><button id="hitl">Note: left hand</button><button id="hitr">Note: right hand</button><button id="hits">Snare</button></div>
-    <div class="row"><label><input id="bob" type="checkbox" checked> firmware's head bob</label></div>
-    <div class="row" id="faces"></div>
-    <small>Notes, the head bob and the dip on a hit are added by the firmware on top of your poses; these buttons show them.</small>
-  </section>
-  <section>
-    <canvas id="stage" width="240" height="240"></canvas>
-    <div class="row" style="justify-content:center;margin-top:8px">
-      <button id="mik" class="on" title="Drag a hand or foot: its arm or leg follows. Drag the body: hands and feet stay put. Other parts turn.">Pose (IK)</button><button id="mrot" title="Every part just turns about its own joint">Turn one part</button><button id="mmove" title="Slide the whole pet, limbs and all">Move whole pet</button>
-      <button id="undo">Undo</button>
+    <div class="pb v-face">
+      <details class="sec" open><summary>Timing</summary><div style="padding:2px 4px 6px"><div class="prow" style="cursor:default"><span class="pn">Shows for (ms)</span><input id="fms" type="number" min="20" max="10000" step="10"></div></div></details>
+      <details class="sec" open><summary>Pictures</summary><div id="flayers" style="padding:0 0 4px"></div></details>
+      <details class="sec" open><summary>Ears turned <small style="font-weight:400;margin-left:4px">degrees, clockwise</small></summary><div style="padding:2px 4px 6px">
+        <div class="prow" style="cursor:default"><span class="pn">ear_l</span><input id="fel" type="number" min="-90" max="90"></div>
+        <div class="prow" style="cursor:default"><span class="pn">ear_r</span><input id="fer" type="number" min="-90" max="90"></div>
+      </div></details>
     </div>
-    <div class="row" style="justify-content:center"><small>Pose (IK): drag a hand or a foot and the limb follows; drag the body (or its green square, or Alt + drag anywhere) and the hands and feet stay where they are.</small></div>
-    <div class="row" style="justify-content:center"><small>Click a part to select it. Arrow keys: 1&deg; (Shift: 5&deg;). Space: play. Cmd/Ctrl+Z: undo. Cmd/Ctrl+S: save.</small></div>
-  </section>
-  <section>
-    <h2>This key <span id="kname"></span></h2>
-    <div class="row"><label>Takes <input id="kms" type="number" min="20" max="5000" step="10"> ms to reach the next key</label></div>
-    <div class="row"><label>Pet moved by x <input id="rx" type="number" min="-60" max="60"></label><label>y <input id="ry" type="number" min="-60" max="60"></label></div>
-    <h2 style="margin-top:10px">Parts (degrees, clockwise)</h2>
-    <div class="parts" id="parts"></div>
-    <details><summary>Rig options for this pet</summary>
-      <div class="row"><label><input id="planted" type="checkbox"> feet planted (knees bend to keep them on the ground)</label></div>
-      <small>Planted legs are posed by the firmware, so their angles are ignored. Props and draw order are in moves.json.</small>
-    </details>
-  </section>
-</main>
+  </div>
+</div>
+<div class="panel" id="tlpanel">
+  <div class="ph"><span class="t on plain">Timeline</span><span class="t plain v-body" id="kname"></span><span class="t plain v-face" id="fname"></span>
+    <span class="side v-face"><select id="expr"></select><small id="fwhen"></small></span></div>
+  <div id="tlbody">
+    <div id="transport">
+      <div class="row v-body"><button id="play" class="primary" style="min-width:76px"><svg class="i f"><use href="#i-play"/></svg> Play</button><label title="Lock the loop to the beat (play and dance) and show the head's bob"><input id="beat" type="checkbox" checked> with the beat</label></div>
+      <div class="row v-body"><label>BPM <input id="bpm" type="number" min="72" max="136" value="104"></label><label title="How many beats the whole loop takes when it is locked to the beat (play and dance)">beats <input id="beats" type="number" min="1" max="16" step="1"></label></div>
+      <div class="row v-face"><button id="fplay" class="primary" style="min-width:76px"><svg class="i f"><use href="#i-play"/></svg> Play</button></div>
+      <small class="note">Space plays. &larr; &rarr; step keys.</small>
+    </div>
+    <div id="tlmid">
+      <div class="tl v-body" id="tl"></div>
+      <div class="keys v-body" id="keys"></div>
+      <div id="kbtns" class="v-body">
+        <button id="kadd" title="A new key after this one, same pose"><svg class="i"><use href="#i-dup"/></svg> Duplicate</button>
+        <button id="kdel" class="ic" title="Delete this key"><svg class="i"><use href="#i-del"/></svg></button>
+        <button id="kup" class="ic" title="Earlier in the loop"><svg class="i"><use href="#i-prev"/></svg></button><button id="kdn" class="ic" title="Later in the loop"><svg class="i"><use href="#i-next"/></svg></button>
+        <button id="kcopy" class="ic" title="Copy this key's pose"><svg class="i"><use href="#i-copy"/></svg></button><button id="kpaste" class="ic" title="Paste the copied pose into this key"><svg class="i"><use href="#i-paste"/></svg></button>
+        <button id="kmirror" class="ic" title="Mirror: swap left and right"><svg class="i"><use href="#i-mirror"/></svg></button>
+        <button id="kzero" title="Everything back to the rig's rest pose"><svg class="i"><use href="#i-reset"/></svg> Rest pose</button>
+      </div>
+      <div class="tl v-face" id="ftl"></div>
+      <div class="keys v-face" id="fkeys"></div>
+      <div id="fbtns" class="v-face" style="display:flex;gap:4px;flex-wrap:wrap">
+        <button id="fadd" title="A new key after this one, same pictures"><svg class="i"><use href="#i-dup"/></svg> Duplicate</button>
+        <button id="fdel" class="ic" title="Delete this key"><svg class="i"><use href="#i-del"/></svg></button>
+        <button id="fup" class="ic" title="Earlier"><svg class="i"><use href="#i-prev"/></svg></button><button id="fdn" class="ic" title="Later"><svg class="i"><use href="#i-next"/></svg></button>
+        <button id="freset" title="Back to the expression as the art gives it"><svg class="i"><use href="#i-reset"/></svg> Default</button>
+      </div>
+    </div>
+    <div id="keyinsp">
+      <div class="v-body" style="display:contents">
+        <div class="grp" style="padding:0 0 2px">This key</div>
+        <div class="prow"><span class="pn" title="Time to reach the next key">Lasts (ms)</span><input id="kms" type="number" min="20" max="5000" step="10"></div>
+        <div class="prow"><span class="pn" title="Stretch or squeeze every key together to this total">Whole loop (ms)</span><input id="total" type="number" min="20" max="60000" step="10"></div>
+        <div class="prow"><span class="pn" title="The whole pet moved from its spot">Pet moved x</span><input id="rx" type="number" min="-60" max="60"></div>
+        <div class="prow"><span class="pn">Pet moved y</span><input id="ry" type="number" min="-60" max="60"></div>
+      </div>
+      <small class="note v-face">Each expression has its own loop of face pictures, played apart from the body. The firmware picks the expression from what is going on; here you make what each one looks like.</small>
+      <small class="note v-body">Drag a blue value to change it, or click to type. Shift-click or Cmd/Ctrl-click keys to select several. Drag a key's right edge on the timeline to retime it; drag along the bar to scrub.</small>
+    </div>
+  </div>
+</div>
+<dialog id="helpdlg">
+  <div class="row"><b style="font-size:14px">Pet Animator</b><span class="grow"></span><button id="helpclose">Close</button></div>
+  <p>Pick a set, a pet and an animation (Idle, Play, Dance). Pose the pet on the stage key by key; the firmware blends between keys with the same easing. Save writes the set's <code>moves.json</code>; <code>sh tools/emu/build_pm.sh</code> then picks it up.</p>
+  <h3>Tools (Body)</h3>
+  <table>
+    <tr><td><kbd>1</kbd> Pose</td><td>Drag a hand or a foot and its arm or leg follows; drag the small ring past its tip to turn it in place without moving it. Drag the head to move it off its neck; its ring, above it, turns it. The same for a drum or xylophone: drag to move, ring to turn. The body's ring, just off its left edge, turns the body alone: hands and feet stay where they are, the head and instrument keep their bearing, the tail goes with the body. The Turn tool on the body turns everything with it. Drag a forearm or a shin and its elbow or knee swings towards the cursor while the hand or foot stays put (Flip bend in the Selected part section bends it the other way). Drag the body (or its orange square, or <kbd>Alt</kbd>+drag anywhere) and the hands and feet stay where they are. Planted feet: drag the foot, the knee follows. Other parts turn.</td></tr>
+    <tr><td><kbd>2</kbd> Turn</td><td>Every part turns about its own joint.</td></tr>
+    <tr><td><kbd>3</kbd> Move pet</td><td>Slide the whole pet, planted feet and all.</td></tr>
+    <tr><td><kbd>4</kbd> Slide part</td><td>Slide one part off its joint (the head forward, down into the shoulders); what hangs from it goes along.</td></tr>
+  </table>
+  <h3>Values</h3>
+  <p>Blue numbers are scrubbable: drag left or right to change them (<kbd>Shift</kbd> for finer steps), or click to type.</p>
+  <h3>Keys</h3>
+  <table>
+    <tr><td><kbd>Space</kbd></td><td>play / stop</td></tr>
+    <tr><td><kbd>&larr;</kbd> <kbd>&rarr;</kbd></td><td>previous / next key</td></tr>
+    <tr><td><kbd>Shift</kbd>+click, <kbd>Cmd/Ctrl</kbd>+click</td><td>select a range of keys, add or drop a key; Duplicate, Delete, the arrows, Mirror, Rest pose, Copy and Paste act on all selected keys</td></tr>
+    <tr><td><kbd>Cmd/Ctrl+A</kbd></td><td>select every key</td></tr>
+    <tr><td><kbd>Delete</kbd></td><td>delete the selected keys</td></tr>
+    <tr><td><kbd>&uarr;</kbd> <kbd>&darr;</kbd></td><td>turn the selected part 1&deg; (<kbd>Shift</kbd>: 5&deg;)</td></tr>
+    <tr><td><kbd>Alt</kbd>+arrows</td><td>nudge the whole pet 1 px</td></tr>
+    <tr><td><kbd>L</kbd> <kbd>R</kbd> <kbd>S</kbd></td><td>fire the left-note, right-note, snare reaction</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>deselect, stop scrubbing</td></tr>
+    <tr><td><kbd>Cmd/Ctrl+Z</kbd> / <kbd>+Shift+Z</kbd></td><td>undo / redo</td></tr>
+    <tr><td><kbd>Cmd/Ctrl+S</kbd></td><td>save</td></tr>
+    <tr><td><kbd>?</kbd></td><td>this help</td></tr>
+  </table>
+  <h3>Timeline</h3>
+  <p>Click a key to select it; Shift-click selects a range, Cmd/Ctrl-click adds or drops one. Drag along the bar to scrub the loop. Drag a key's right edge to change how long it takes to reach the next key. Dashed lines are beats when the loop is locked to the beat.</p>
+</dialog>
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
-const PETS = ["monkey", "cat", "dog", "llama"], ANIMS = ["idle", "play", "dance"];
+const PETS = ["monkey", "cat", "dog", "llama"], ANIMS = ["idle", "play", "dance"], MODES = ["ik", "rot", "move", "slide"];
 const LAYERS = ["eyes", "mouth", "nose", "ear_l", "ear_r"];
-const S = { sets: {}, set: null, pet: null, anim: "idle", key: 0, part: null, rig: null, img: {}, alpha: {}, layers: {}, face: {},
-            playing: false, t0: 0, mode: "ik", dirty: false, undo: [], clip: null, strike: [0, 0], hop: 0, lastTick: 0 };
+const S = { sets: {}, set: null, pet: null, anim: "idle", key: 0, part: null, hover: null, rig: null, img: {}, alpha: {}, layers: {}, face: {}, thumbs: {},
+            playing: false, t0: 0, mode: "ik", dirty: false, undo: [], redo: [], clip: null, rxT: [0, 0, 0], rx: "note_l", view: "body", tab: "pose",
+            expr: "neutral", fkey: 0, sel: [0], fsel: [0], fv: null, faceNow: { layers: {}, a: {} }, scrub: null, fscrub: null, shown: null };
 const cv = $("stage"), cx = cv.getContext("2d");
-const rad = d => d * Math.PI / 180;
+const rad = d => d * Math.PI / 180, clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const ICON = n => `<svg class="i f"><use href="#i-${n}"/></svg>`;
 
-function say(t, bad) { $("msg").textContent = t || ""; $("msg").className = bad ? "bad" : ""; }
-function touch() { S.dirty = true; $("dirty").textContent = "unsaved changes"; }
+/* ---- small things: messages, the dirty flag, undo and redo, remembered preferences ---- */
+let msgT = 0;
+function say(t, bad, keep) { clearTimeout(msgT); $("msg").textContent = t || ""; $("msg").className = bad ? "bad" : "";
+  if (t && !bad) msgT = setTimeout(() => { if ($("msg").textContent === t) $("msg").textContent = ""; }, keep || 4000); }
+function touch() { S.dirty = true; $("save").classList.add("dirty"); }
+function clean() { S.dirty = false; $("save").classList.remove("dirty"); }
 function moves() { return S.sets[S.set].moves; }
+function snap() { S.undo.push(JSON.stringify(moves())); if (S.undo.length > 200) S.undo.shift(); S.redo.length = 0; }
+function undo() { const u = S.undo.pop(); if (!u) return say("nothing to undo"); S.redo.push(JSON.stringify(moves())); S.sets[S.set].moves = JSON.parse(u); touch(); refresh(); }
+function redo() { const u = S.redo.pop(); if (!u) return say("nothing to redo"); S.undo.push(JSON.stringify(moves())); S.sets[S.set].moves = JSON.parse(u); touch(); refresh(); }
+const PREF = "petanim.prefs";
+function prefs() { try { return JSON.parse(localStorage.getItem(PREF) || "{}"); } catch (e) { return {}; } }
+function savePrefs() { try { localStorage.setItem(PREF, JSON.stringify({ set: S.set, pet: S.pet, anim: S.anim, view: S.view, mode: S.mode, tab: S.tab,
+  bpm: $("bpm").value, beat: $("beat").checked, onion: $("onion").value, fzoom: $("fzoom").checked })); } catch (e) { /* (no storage) */ } }
 function loadImg(url) { return new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error("no image " + url)); i.src = url; }); }
 function alphaOf(img) { const c = document.createElement("canvas"); c.width = img.width; c.height = img.height; const g = c.getContext("2d"); g.drawImage(img, 0, 0); return g.getImageData(0, 0, img.width, img.height); }
+/* a number field that is live while it changes (typed or scrubbed), one undo step per gesture, the panels rebuilt when it settles */
+function live(el, apply) { let pushed = false;
+  el.oninput = e => { if (!pushed) { snap(); pushed = true; } apply(+e.target.value || 0); touch(); };
+  el.onchange = () => { pushed = false; refresh(); }; }
+/* the same for a reaction's values: held on the stage while the value changes, let go when it settles (unless held by hand) */
+function liveRx(el, apply) { let pushed = false;
+  el.oninput = e => { if (!pushed) { snap(); pushed = true; } if (!$("rxpose").checked) { $("rxpose").checked = true; S.rxAuto = true; } apply(+e.target.value || 0); touch(); };
+  el.onchange = () => { pushed = false; if (S.rxAuto) { $("rxpose").checked = false; S.rxAuto = false; } refresh(); }; }
+/* scrubbable values, as Adobe's: drag a number sideways to change it, click to type */
+{ let sc = null;
+  document.addEventListener("pointerdown", e => { const el = e.target; if (!(el instanceof HTMLInputElement) || el.type !== "number" || el.disabled || document.activeElement === el) return;
+    sc = { el, x0: e.clientX, v0: +el.value || 0, moved: false, id: e.pointerId }; }, true);
+  document.addEventListener("pointermove", e => { if (!sc) return; const dx = e.clientX - sc.x0;
+    if (!sc.moved) { if (Math.abs(dx) < 4) return; sc.moved = true; sc.el.classList.add("scrub"); try { sc.el.setPointerCapture(sc.id); } catch (err) { /* (not a live pointer) */ } sc.el.blur(); }
+    e.preventDefault(); const step = +sc.el.step || 1, per = e.shiftKey ? 8 : 2;     /* px per step */
+    let v = sc.v0 + Math.round(dx / per) * step; if (sc.el.min !== "") v = Math.max(+sc.el.min, v); if (sc.el.max !== "") v = Math.min(+sc.el.max, v);
+    if (+sc.el.value !== v) { sc.el.value = v; sc.el.dispatchEvent(new Event("input", { bubbles: true })); } });
+  const end = () => { if (!sc) return; const s = sc; sc = null; if (s.moved) { s.el.classList.remove("scrub"); s.el.dispatchEvent(new Event("change", { bubbles: true })); } };
+  document.addEventListener("pointerup", end, true); document.addEventListener("pointercancel", end, true);
+  document.addEventListener("click", e => { const el = e.target; if (el instanceof HTMLInputElement && el.type === "number" && !el.classList.contains("scrub") && document.activeElement !== el) { el.focus(); el.select(); } }, true);
+  document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target instanceof HTMLInputElement && e.target.type === "number") e.target.blur(); }); }
+
+/* which keys are selected: a click picks one, Shift a range from the current key, Cmd/Ctrl toggles; the current key (S.key) is
+ * always among them. Shared by the body's keys (S.sel) and the face's (S.fsel) */
+function pickKeys(sel, cur, i, e) {
+  if (e && e.shiftKey) { const lo = Math.min(cur, i), hi = Math.max(cur, i); return [...Array(hi - lo + 1)].map((_, j) => lo + j); }
+  if (e && (e.metaKey || e.ctrlKey)) { const t = sel.includes(i) ? sel.filter(j => j !== i) : [...sel, i].sort((a, b) => a - b); return t.length ? t : [i]; }
+  return [i];
+}
+function selectKey(i, e) { S.sel = pickKeys(S.sel, S.key, i, e); S.key = i; S.scrub = null; stop(); refresh(); }
+function selectFaceKey(i, e) { S.fsel = pickKeys(S.fsel, S.fkey, i, e); S.fkey = i; S.fscrub = null; stop(); refresh(); }
+const clone = o => JSON.parse(JSON.stringify(o));
+/* the key operations, on every selected key: on a key list `keys`, selection `sel`, the current `cur`; -> [sel, cur] */
+const KEYOPS = {
+  dup(keys, sel) { const at = Math.max(...sel) + 1, copies = sel.map(i => clone(keys[i])); keys.splice(at, 0, ...copies); const ns = copies.map((_, j) => at + j); return [ns, ns[ns.length - 1]]; },
+  del(keys, sel) { if (sel.length >= keys.length) sel = sel.slice(1); for (const i of [...sel].sort((a, b) => b - a)) keys.splice(i, 1); const c = Math.min(Math.min(...sel), keys.length - 1); return [[c], c]; },
+  move(keys, sel, cur, dir) { const lo = Math.min(...sel), hi = Math.max(...sel); if ((dir < 0 && lo === 0) || (dir > 0 && hi === keys.length - 1)) return [sel, cur];
+    const block = sel.map(i => keys[i]); for (const i of [...sel].sort((a, b) => b - a)) keys.splice(i, 1);
+    const at = lo + dir; keys.splice(at, 0, ...block); const ns = block.map((_, j) => at + j); return [ns, at + sel.indexOf(cur)]; },
+};
 
 /* the animation being edited: moves.json's if it has one, else a copy of rig.json's starter poses (made on first edit) */
 function curAnim(make) {
@@ -112,30 +377,45 @@ function curAnim(make) {
   if (make) { (m[S.pet] = m[S.pet] || {})[S.anim] = a; }
   return a;
 }
-function edit(fn) {   /* every change goes through here: undo, the dirty flag, a redraw */
-  S.undo.push(JSON.stringify(moves())); if (S.undo.length > 200) S.undo.shift();
-  fn(curAnim(true)); touch(); refresh();
-}
+function edit(fn) { snap(); fn(curAnim(true)); touch(); refresh(); }   /* every change goes through here: undo, the dirty flag, a redraw */
 function chains() { return ((moves().planted || {})[S.pet] || []).map(c => Array.isArray(c) ? c : [c]); }
 function isPlanted(name) { return chains().some(c => c.includes(name)); }
+function plantedFoot(name) { return chains().some(c => c.length === 3 && c[2] === name); }   /* posable: its spot and its angle */
+function isAuto(name) { return (isPlanted(name) && !plantedFoot(name)) || isFace(name); }
+/* a thing the pet holds or plays (a prop on the ground, or a drum hung from the body): dragged, it moves; its ring turns it */
+function isThing(n) { return isProp(n) || !/^(body|tail|neck|collar|.*arm.*|.*leg.*|hand_.*|foot_.*|head.*|eyes|nose|mouth|ear_.*)$/.test(n); }
 function props() { return (moves().props || {})[S.pet] || []; }
 function order() { return (moves().order || {})[S.pet] || S.rig.order; }
+function byName(n) { return S.rig.parts.find(p => p.name === n); }
+function headName() { return byName("head_shape") ? "head_shape" : "head"; }
+function isFace(n) { return !!S.layers[n] && !/^ear_/.test(n); }   /* eyes, nose, mouth: pictures and angles from the Face editor only
+                                                                     * (the ears: their picture from the Face editor, turned by both) */
+function isProp(n) { return props().includes(n); }
+function autoWhy(n) { if (isFace(n)) return "a face layer: its pictures and angles are made in the Face editor (the ears can be turned here too)"; return props().includes(n) ? "a prop: drawn where the rig puts it, never turned" : "bent by the firmware so the foot stays planted: drag the foot instead"; }
 
 async function loadPet() {
-  const base = `/art/${S.set}/${S.pet}/`;
+  const base = `/art/${S.set}/${S.pet}/`; say(`loading ${S.pet} …`, false, 30000);
   /* everything is loaded aside and swapped in at once: the stage keeps drawing the pet it has meanwhile */
-  const rig = await (await fetch(base + "rig.json")).json(), img = {}, alpha = {}, layers = {}, face = {};
+  const rig = await (await fetch(base + "rig.json")).json(), img = {}, alpha = {}, layers = {}, face = {}, thumbs = {}; let fvj = null;
   await Promise.all(rig.parts.map(async p => { img[p.name] = await loadImg(base + p.file); alpha[p.name] = alphaOf(img[p.name]); }));
   try {
-    const fv = await (await fetch(base + "face-variants.json")).json();
+    const fv = await (await fetch(base + "face-variants.json")).json(); fvj = fv;
     for (const l of LAYERS) if (fv.layers[l]) {
-      layers[l] = { def: fv.layers[l].default, im: {} };
-      await Promise.all(Object.entries(fv.layers[l].frames).map(async ([v, f]) => { layers[l].im[v] = await loadImg(base + f); }));
+      layers[l] = { def: fv.layers[l].default, im: {} }; thumbs[l] = {};
+      await Promise.all(Object.entries(fv.layers[l].frames).map(async ([v, f]) => { layers[l].im[v] = await loadImg(base + f); thumbs[l][v] = cropThumb(layers[l].im[v], 38); }));
       face[l] = fv.layers[l].default;
     }
   } catch (e) { /* an older set: one head, no layers */ }
-  Object.assign(S, { rig, img, alpha, layers, face, key: 0, part: null, undo: [], shown: S.pet });
-  buildFaces(); refresh();
+  Object.assign(S, { rig, img, alpha, layers, face, thumbs, fv: fvj, fkey: 0, key: 0, part: null, hover: null, scrub: null, fscrub: null, undo: [], redo: [], shown: S.pet });
+  say(""); refresh();
+}
+function cropThumb(img, size) {     /* a layer's picture cropped to what it draws, for the picker */
+  const a = alphaOf(img); let x0 = a.width, y0 = a.height, x1 = -1, y1 = -1;
+  for (let y = 0; y < a.height; y++) for (let x = 0; x < a.width; x++) if (a.data[(y * a.width + x) * 4 + 3] > 127) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+  if (x1 < 0) { x0 = y0 = 0; x1 = a.width - 1; y1 = a.height - 1; }
+  const side = Math.max(x1 - x0, y1 - y0) + 5, mx = (x0 + x1 + 1) / 2, my = (y0 + y1 + 1) / 2;
+  const c = document.createElement("canvas"); c.width = c.height = size; const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
+  g.drawImage(img, mx - side / 2, my - side / 2, side, side, 0, 0, size, size); return c.toDataURL();
 }
 
 /* ---- the pose: as firmware/src/pm_rig.c pm_rig_solve ---- */
@@ -148,18 +428,28 @@ function poseAt(anim, t, phase) {   /* -> {root:[dx,dy], a:{part:deg}} blended b
   let i = 0; while (i + 1 < K.length && t >= K[i].ms) { t -= K[i].ms; i++; }
   const k0 = K[i], k1 = K[(i + 1) % K.length]; let f = t / k0.ms; f = f * f * (3 - 2 * f);
   const a = {}; for (const p of S.rig.parts) { const x = k0.a[p.name] || 0, y = k1.a[p.name] || 0; a[p.name] = x + shortest(x, y) * f; }
-  return { root: [lerp(k0.root[0], k1.root[0], f), lerp(k0.root[1], k1.root[1], f)], a };
+  const feet = {}; for (const n of new Set([...Object.keys(k0.feet || {}), ...Object.keys(k1.feet || {})])) {
+    const x = (k0.feet || {})[n] || [0, 0], y = (k1.feet || {})[n] || [0, 0]; feet[n] = [lerp(x[0], y[0], f), lerp(x[1], y[1], f)]; }
+  const tt = {}; for (const n of new Set([...Object.keys(k0.t || {}), ...Object.keys(k1.t || {})])) {
+    const x = (k0.t || {})[n] || [0, 0], y = (k1.t || {})[n] || [0, 0]; tt[n] = [lerp(x[0], y[0], f), lerp(x[1], y[1], f)]; }
+  return { root: [lerp(k0.root[0], k1.root[0], f), lerp(k0.root[1], k1.root[1], f)], a, feet, t: tt };
 }
-function solve(pose, extra, dip) {  /* -> {name: {x, y, a}} on the 240 px screen */
+function keyIndexAt(anim, t) {     /* which key the time falls in */
+  const K = anim.keys, total = K.reduce((s, k) => s + k.ms, 0); t = ((t % total) + total) % total;
+  let i = 0; while (i + 1 < K.length && t >= K[i].ms) { t -= K[i].ms; i++; } return i;
+}
+function solve(pose, extra, dip, xt) {  /* -> {name: {x, y, a}} on the 240 px screen; xt: screen px each part is pushed on top (the root: moved) */
   const P = {}, by = {}; for (const p of S.rig.parts) by[p.name] = p;
   const root = S.rig.parts.find(p => !p.parent), rx = 120, ry = 210 - S.rig.feet, pr = props();
   const todo = S.rig.parts.slice(), turn = (vx, vy, a) => [vx * Math.cos(rad(a)) - vy * Math.sin(rad(a)), vx * Math.sin(rad(a)) + vy * Math.cos(rad(a))];
   while (todo.length) for (let i = 0; i < todo.length; i++) {
     const p = todo[i], la = (pose.a[p.name] || 0) + ((extra || {})[p.name] || 0);
-    if (pr.includes(p.name)) P[p.name] = { x: rx + p.at[0] - root.pivot[0], y: ry + p.at[1] - root.pivot[1], a: 0 };
-    else if (!p.parent) P[p.name] = { x: rx + pose.root[0], y: ry + (dip || 0) + pose.root[1], a: la };
-    else if (P[p.parent]) { const q = by[p.parent], o = turn(p.at[0] - q.pivot[0], p.at[1] - q.pivot[1], P[p.parent].a);
-      P[p.name] = { x: P[p.parent].x + o[0], y: P[p.parent].y + o[1], a: P[p.parent].a + la }; }
+    if (pr.includes(p.name)) { const sl = (pose.t || {})[p.name] || [0, 0], xs = (xt || {})[p.name] || [0, 0];
+      P[p.name] = { x: rx + p.at[0] - root.pivot[0] + sl[0] + xs[0], y: ry + p.at[1] - root.pivot[1] + sl[1] + xs[1], a: la }; }
+    else if (!p.parent) { const sl = (xt || {})[p.name] || [0, 0]; P[p.name] = { x: rx + pose.root[0] + sl[0], y: ry + (dip || 0) + pose.root[1] + sl[1], a: la }; }
+    else if (P[p.parent]) { const q = by[p.parent], sl = (pose.t || {})[p.name] || [0, 0], xs = (xt || {})[p.name] || [0, 0],
+        o = turn(p.at[0] - q.pivot[0] + sl[0], p.at[1] - q.pivot[1] + sl[1], P[p.parent].a);
+      P[p.name] = { x: P[p.parent].x + o[0] + xs[0], y: P[p.parent].y + o[1] + xs[1], a: P[p.parent].a + la }; }
     else continue;
     todo.splice(i, 1); i--;
   }
@@ -167,6 +457,7 @@ function solve(pose, extra, dip) {  /* -> {name: {x, y, a}} on the 240 px screen
   for (const c of chains()) {       /* planted legs: the hip where the body has it, the ankle where it stands at rest */
     const up = by[c[0]]; if (!up || !P[c[0]]) continue;
     let fx = rx + up.at[0] - root.pivot[0], fy = ry + up.at[1] - root.pivot[1];
+    const off = (pose.feet || {})[c[c.length - 1]] || [0, 0]; fx += off[0]; fy += off[1];   /* the key may move the foot */
     if (c.length === 3) {
       const lo = by[c[1]], ft = by[c[2]], u = [lo.at[0] - up.pivot[0], lo.at[1] - up.pivot[1]], v = [ft.at[0] - lo.pivot[0], ft.at[1] - lo.pivot[1]];
       fx += u[0] + v[0]; fy += u[1] + v[1];
@@ -177,98 +468,320 @@ function solve(pose, extra, dip) {  /* -> {name: {x, y, a}} on the 240 px screen
       P[c[0]].a = dir - ang(u[0], u[1]);
       const kx = hx - l1 * Math.sin(rad(dir)), ky = hy + l1 * Math.cos(rad(dir));
       P[c[1]] = { x: kx, y: ky, a: ang(fx - kx, fy - ky) - ang(v[0], v[1]) };
-      P[c[2]] = { x: fx, y: fy, a: 0 };
+      P[c[2]] = { x: fx, y: fy, a: (pose.a[c[2]] || 0) + ((extra || {})[c[2]] || 0) };
     } else { fy += S.img[c[0]].height - 1 - up.pivot[1]; P[c[0]].a = ang(fx - P[c[0]].x, fy - P[c[0]].y); }
   }
   return P;
 }
-function texOf(name) { const l = S.layers[name]; return l ? (l.im[S.face[name]] || l.im[l.def]) : S.img[name]; }
+function texOf(name, face) { const l = S.layers[name]; if (!l) return S.img[name]; const v = ((face || S.faceNow).layers || {})[name]; return l.im[v] || l.im[l.def]; }
 
-/* what the firmware adds on top (pm_ui.c): a struck hand, the nod, the head's bob with the beat */
-function overlays(now, barPhase, moving) {
-  const x = {}, has = n => S.rig.parts.some(p => p.name === n), head = has("head_shape") ? "head_shape" : "head";
-  let nod = 0;
-  ["l", "r"].forEach((s, k) => { const v = S.strike[k], inn = (k ? v : -v) / 255;
-    if (has("forearm_" + s) && has("hand_" + s)) { x["forearm_" + s] = inn * 12.7; x["hand_" + s] = inn * 35.2; }
-    else if (has("arm_" + s) && has("hand_" + s)) { x["arm_" + s] = -inn * 7; x["hand_" + s] = inn * 36.6; }
-    else if (has("arm_" + s)) x["arm_" + s] = -inn * 64.7;
-    nod += k ? -v : v; });
-  let h = nod * ((has("upper_arm_l") || has("arm_l")) ? 6 : 20) / 255 * 1.406;
-  if ($("bob").checked && moving && $("beat").checked && S.anim !== "idle")
-    h += (Math.sin(2 * Math.PI * barPhase * 4) * 9 + Math.sin(2 * Math.PI * barPhase) * 6) * 1.406;
-  x[head] = h; if (has("neck")) x.neck = -h / 2;
-  return x;
+/* ---- the face: each expression has its own animation, apart from the body's (moves.json "faces") ---- */
+const EXPRS = ["neutral", "blink", "happy", "sing", "surprised", "sleepy"];
+const WHEN = { neutral: "at rest", blink: "150 ms every 3.9 s (not if neutral has keys of its own)", happy: "three keys held", sing: "a note held", surprised: "the pet arrives", sleepy: "20 s of nothing" };
+function faceDefault(e) { const ex = S.fv ? (S.fv.expressions[e] || S.fv.expressions.neutral) : {}; return { keys: [{ ms: 1000, layers: Object.assign({}, ex), a: {} }] }; }
+function curFace(make) { const m = moves(), own = ((m.faces || {})[S.pet] || {})[S.expr]; if (own) return own;
+  const d = faceDefault(S.expr); if (make) { m.faces = m.faces || {}; (m.faces[S.pet] = m.faces[S.pet] || {})[S.expr] = d; } return d; }
+function editFace(fn) { snap(); fn(curFace(true)); touch(); refresh(); }
+function faceAt(t) {                /* pictures of the key the time is in; the ears blended towards the next */
+  const K = curFace(false).keys, total = K.reduce((x, k) => x + k.ms, 0); t = ((t % total) + total) % total;
+  let i = 0; while (i + 1 < K.length && t >= K[i].ms) { t -= K[i].ms; i++; }
+  const k0 = K[i], k1 = K[(i + 1) % K.length]; let f = t / k0.ms; f = f * f * (3 - 2 * f); const a = {};
+  for (const n of ["ear_l", "ear_r"]) a[n] = lerp((k0.a || {})[n] || 0, (k1.a || {})[n] || 0, f);
+  return { layers: k0.layers || {}, a };
+}
+function bodyFace() { const k = curFace(false).keys[0]; return { layers: k.layers || {}, a: k.a || {} }; }   /* the Body editor: the chosen expression's first key, still */
+function earsExtra(face, extra) { for (const n of ["ear_l", "ear_r"]) if (face.a[n]) extra[n] = (extra[n] || 0) + face.a[n]; return extra; }
+
+/* ---- reactions: what the firmware adds on top (pm_ui.c), from moves.json "reactions" or these defaults
+ * (tools/gen_pm_rig.py default_reactions is the same) ---- */
+const REACTS = ["note_l", "note_r", "snare"];
+function defaultReactions() {
+  const has = n => S.rig.parts.some(p => p.name === n), planted = chains().length > 0, r = {};
+  for (const n of REACTS) r[n] = { a: {}, dip: 0 };
+  const head = has("head_shape") ? "head_shape" : has("head") ? "head" : null, arms = has("upper_arm_l") || has("arm_l");
+  for (const [s, sign] of [["l", -1], ["r", 1]]) { const a = r["note_" + s].a;
+    if (has("forearm_" + s) && has("hand_" + s)) { a["forearm_" + s] = sign * 13; a["hand_" + s] = sign * 35; }
+    else if (has("arm_" + s) && has("hand_" + s)) { a["arm_" + s] = -sign * 7; a["hand_" + s] = sign * 37; }
+    else if (has("arm_" + s)) a["arm_" + s] = -sign * 65;
+    if (head) { a[head] = -sign * (arms ? 8 : 28); if (has("neck")) a.neck = sign * (arms ? 4 : 14); }
+    r["note_" + s].dip = planted ? 4 : -5; }
+  r.snare.dip = planted ? 6 : -8; r.bob = defaultBob(13, 8, false, has("neck"));
+  return r;
+}
+function defaultBob(beat, bar, idle, neck) {   /* per animation, from the older three numbers (tools/gen_pm_rig.py default_bob) */
+  const one = on => ({ on, head: [beat, bar], neck: neck ? [-beat / 2, -bar / 2] : [0, 0], x: [0, 0], y: [0, 0] });
+  return { idle: one(!!idle), play: one(true), dance: one(true) };
+}
+function reactions(make) {          /* this pet's; make: written into moves.json's data so it can be edited */
+  const m = moves(), own = (m.reactions || {})[S.pet], d = defaultReactions();
+  const r = Object.assign(d, JSON.parse(JSON.stringify(own || {})));
+  if (r.bob && ("beat" in r.bob || "bar" in r.bob)) r.bob = defaultBob(r.bob.beat == null ? 13 : r.bob.beat, r.bob.bar == null ? 8 : r.bob.bar, r.bob.idle, !!byName("neck"));   /* the older shape */
+  for (const an of ANIMS) r.bob[an] = Object.assign({ on: an !== "idle", head: [0, 0], neck: [0, 0], x: [0, 0], y: [0, 0] }, r.bob[an] || {});
+  if (make) { (m.reactions = m.reactions || {})[S.pet] = r; }
+  return r;
+}
+function editRx(fn) { snap(); fn(reactions(true)); touch(); refresh(); }
+function overlays(now, barPhase, moving) {   /* -> [extra angles per part, px the body goes down, px each part is slid] */
+  const x = {}, xt = {}, rx = reactions(false); let dip = 0;
+  const slide = (pn, dx, dy) => { const o = xt[pn] || [0, 0]; xt[pn] = [o[0] + dx, o[1] + dy]; };
+  const posing = !S.playing && $("rxpose").checked ? S.rx : null;
+  REACTS.forEach((n, k) => { const r = rx[n], rise = r.rise || 0, hold = r.hold || 0, fade = Math.max(1, r.fade == null ? 250 : r.fade);
+    let v = 0; if (S.rxT[k]) { const t = now - S.rxT[k];
+      if (t < rise) v = t / rise; else if (t < rise + hold) v = 1; else if (t < rise + hold + fade) { const u = 1 - (t - rise - hold) / fade; v = u * u; } else S.rxT[k] = 0; }
+    if (n === posing) v = +$("rxamt").value / 100;
+    if (!v) return;
+    for (const [pn, deg] of Object.entries(rx[n].a || {})) x[pn] = (x[pn] || 0) + deg * v;
+    for (const [pn, o] of Object.entries(rx[n].t || {})) slide(pn, o[0] * v, o[1] * v);
+    dip += (rx[n].dip || 0) * v; });
+  const b = rx.bob[S.anim];
+  if ($("bob").checked && moving && $("beat").checked && b.on) {   /* as pm_ui.c: a sine each beat and one over the bar, scaled */
+    const sb = Math.sin(2 * Math.PI * barPhase * 4), sr = Math.sin(2 * Math.PI * barPhase), head = headName(), mix = v => sb * v[0] + sr * v[1];
+    x[head] = (x[head] || 0) + mix(b.head); if (byName("neck")) x.neck = (x.neck || 0) + mix(b.neck);
+    slide(head, mix(b.x), mix(b.y));
+  }
+  return [x, dip, xt];
 }
 
-function draw(P, alpha) {
-  cx.globalAlpha = alpha;
-  for (const n of order()) { const p = S.rig.parts.find(q => q.name === n), w = P[n]; if (!p || !w) continue;
-    cx.save(); cx.translate(Math.round(w.x), Math.round(w.y)); cx.rotate(rad(w.a)); cx.drawImage(texOf(n), -p.pivot[0], -p.pivot[1]); cx.restore(); }
-  cx.globalAlpha = 1;
+/* ---- drawing ---- */
+function drawTo(g, P, alpha, face) {
+  g.globalAlpha = alpha;
+  for (const n of order()) { const p = byName(n), w = P[n]; if (!p || !w) continue;
+    g.save(); g.translate(Math.round(w.x), Math.round(w.y)); g.rotate(rad(w.a)); g.drawImage(texOf(n, face), -p.pivot[0], -p.pivot[1]); g.restore(); }
+  g.globalAlpha = 1;
 }
+function draw(P, alpha) { drawTo(cx, P, alpha); }
 function scene() {
   const g = cx.createLinearGradient(0, 0, 0, 240); g.addColorStop(0, "#181042"); g.addColorStop(1, "#4e3080");
   cx.fillStyle = g; cx.fillRect(0, 0, 240, 240); cx.fillStyle = "#1e1448"; cx.fillRect(0, 200, 240, 40);
   cx.fillStyle = "#ffffff22"; cx.fillRect(0, 210, 240, 1);
 }
+const ringCache = new WeakMap();
+function ring(img, color) {         /* a one-pixel outline round the picture's silhouette, for highlighting a part */
+  let m = ringCache.get(img); if (!m) { m = {}; ringCache.set(img, m); } if (m[color]) return m[color];
+  const t = document.createElement("canvas"); t.width = img.width; t.height = img.height; const tg = t.getContext("2d");
+  tg.drawImage(img, 0, 0); tg.globalCompositeOperation = "source-in"; tg.fillStyle = color; tg.fillRect(0, 0, t.width, t.height);
+  const c = document.createElement("canvas"); c.width = img.width + 2; c.height = img.height + 2; const g = c.getContext("2d");
+  for (const [dx, dy] of [[2, 1], [0, 1], [1, 2], [1, 0]]) g.drawImage(t, dx, dy);
+  g.globalCompositeOperation = "destination-out"; g.drawImage(img, 1, 1);
+  return m[color] = c;
+}
+function outline(n, color) { const p = byName(n), w = lastP && lastP[n]; if (!p || !w) return;
+  cx.save(); cx.translate(Math.round(w.x), Math.round(w.y)); cx.rotate(rad(w.a)); cx.drawImage(ring(texOf(n), color), -p.pivot[0] - 1, -p.pivot[1] - 1); cx.restore(); }
+const TC = document.createElement("canvas"); TC.width = TC.height = 240; const tg = TC.getContext("2d");
+function poseThumb(P, face, size, headOnly) {   /* a small picture of a pose, cropped to the pet (or its head) */
+  tg.clearRect(0, 0, 240, 240); tg.imageSmoothingEnabled = false; drawTo(tg, P, 1, face);
+  let x0 = 240, y0 = 240, x1 = 0, y1 = 0;
+  if (headOnly) { const h = P[headName()]; if (h) { x0 = h.x - 30; x1 = h.x + 30; y0 = h.y - 46; y1 = h.y + 14; } }
+  else for (const n of order()) { const w = P[n], p = byName(n), im = S.img[n]; if (!w || !p) continue;
+    const c = Math.cos(rad(w.a)), s = Math.sin(rad(w.a));
+    for (const [u, v] of [[-p.pivot[0], -p.pivot[1]], [im.width - p.pivot[0], -p.pivot[1]], [-p.pivot[0], im.height - p.pivot[1]], [im.width - p.pivot[0], im.height - p.pivot[1]]]) {
+      const x = w.x + u * c - v * s, y = w.y + u * s + v * c; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); } }
+  const side = Math.max(x1 - x0, y1 - y0, 8) + 6, mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+  const c = document.createElement("canvas"); c.width = c.height = size; const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
+  g.drawImage(TC, mx - side / 2, my - side / 2, side, side, 0, 0, size, size); return c;
+}
+function stillPose() { const an = curAnim(false); if (S.scrub != null) return poseAt(an, S.scrub);
+  const k = an.keys[Math.min(S.key, an.keys.length - 1)]; return { root: k.root, a: k.a, feet: k.feet, t: k.t }; }
 let lastP = null;
+function handles() {               /* the Pose tool's rotate handles: a ring past the tip of each free hand and foot, and above the head */
+  if (!lastP) return []; const out = [];
+  for (const p of S.rig.parts) { const n = p.name, w = lastP[n]; if (!w || isAuto(n)) continue;
+    if (!(n === headName() || isThing(n) || !p.parent || (/^(hand|foot)_/.test(n) && limbFor(n)))) continue;
+    const im = S.img[n], a = rad(w.a);
+    if (!p.parent) { const left = -(p.pivot[0] + 5); out.push({ n, body: true, x: w.x + left * Math.cos(a), y: w.y + left * Math.sin(a) }); continue; }   /* the body's: just off its left edge */
+    const down = n === headName() || isThing(n) ? -(p.pivot[1] + 7) : (im.height - p.pivot[1] + 7);
+    out.push({ n, x: w.x - down * Math.sin(a), y: w.y + down * Math.cos(a) }); }
+  return out;
+}
 function render(now) {
   if (!S.rig || S.shown !== S.pet) return requestAnimationFrame(render);   /* (a pet is loading) */
   const an = curAnim(false); cx.imageSmoothingEnabled = false; scene();
-  let pose, bar = 0;
+  if (S.view === "face") {           /* the Face editor: the pet stands still in its rest pose, only the face plays */
+    const fk = curFace(false).keys, k = fk[Math.min(S.fkey, fk.length - 1)], T = fk.reduce((s, q) => s + q.ms, 0);
+    const t = S.playing ? (now - S.t0) % T : S.fscrub;
+    S.faceNow = t != null ? faceAt(t) : { layers: k.layers || {}, a: k.a || {} }; ftl.head(t);
+    lastP = solve({ root: [0, 0], a: {} }, earsExtra(S.faceNow, {}), 0);
+    const h = lastP[headName()], z = $("fzoom").checked && h ? 2.4 : 1;
+    cx.save(); if (z > 1) cx.setTransform(z, 0, 0, z, 120 - h.x * z, 138 - h.y * z);
+    draw(lastP, 1); cx.restore();
+    return requestAnimationFrame(render);
+  }
+  let pose, bar = 0, tlT = null; const T = an.keys.reduce((s, q) => s + q.ms, 0);
   if (S.playing) {
     const t = now - S.t0, beatMs = 60000 / (+$("bpm").value || 104); bar = (t / (beatMs * 4)) % 1;
-    pose = $("beat").checked && S.anim !== "idle" ? poseAt(an, 0, (t / (beatMs * an.beats)) % 1) : poseAt(an, t);
+    if ($("beat").checked && S.anim !== "idle") { const ph = (t / (beatMs * an.beats)) % 1; pose = poseAt(an, 0, ph); tlT = ph * T; }
+    else { pose = poseAt(an, t); tlT = t % T; }
   } else {
-    const k = an.keys[Math.min(S.key, an.keys.length - 1)]; pose = { root: k.root, a: k.a };
-    if ($("onion").checked && an.keys.length > 1) { const q = an.keys[(S.key + an.keys.length - 1) % an.keys.length]; draw(solve({ root: q.root, a: q.a }), 0.3); }
+    pose = stillPose(); if (S.scrub != null) tlT = S.scrub;
+    const on = $("onion").value, n = an.keys.length;
+    if (on && n > 1 && S.scrub == null) { const ghosts = [];
+      if (on !== "next") ghosts.push(an.keys[(S.key + n - 1) % n]); if (on !== "prev") ghosts.push(an.keys[(S.key + 1) % n]);
+      for (const q of ghosts) draw(solve({ root: q.root, a: q.a, feet: q.feet, t: q.t }), 0.3); }
   }
-  if (now - S.lastTick >= 50) { S.lastTick = now; S.strike = S.strike.map(v => Math.floor(v * 9 / 16)); S.hop = Math.max(0, S.hop - 2); }
-  lastP = solve(pose, overlays(now, bar, S.playing), chains().length ? S.hop * 0.75 : -S.hop);
+  tl.head(tlT);
+  const [extra, dip, xt] = overlays(now, bar, S.playing);
+  S.faceNow = bodyFace(); earsExtra(S.faceNow, extra);
+  lastP = solve(pose, extra, dip, xt);
   draw(lastP, 1);
-  if (!S.playing && S.mode === "ik") {      /* the body's handle: drag it (or the body) and the hands and feet stay */
-    const w = lastP[S.rig.parts.find(p => !p.parent).name]; cx.strokeStyle = "#60e0c8"; cx.lineWidth = 1;
-    cx.strokeRect(Math.round(w.x) - 3.5, Math.round(w.y) - 3.5, 7, 7); }
-  if (!S.playing && S.part && lastP[S.part]) { const w = lastP[S.part]; cx.strokeStyle = "#ffd65c"; cx.lineWidth = 1; cx.beginPath(); cx.arc(Math.round(w.x) + .5, Math.round(w.y) + .5, 3, 0, 7); cx.stroke(); }
+  if (!S.playing) {
+    if (S.hover && S.hover !== S.part && !drag) outline(S.hover, "#ffffffcc");
+    if (S.part && lastP[S.part]) { outline(S.part, "#2f8bec"); const w = lastP[S.part];
+      cx.fillStyle = "#2f8bec"; cx.fillRect(Math.round(w.x) - 1, Math.round(w.y) - 1, 3, 3); }
+    if (S.mode === "ik") {                /* the body's handle: drag it (or the body) and the hands and feet stay */
+      const w = lastP[S.rig.parts.find(p => !p.parent).name]; cx.strokeStyle = "#ff9a3c"; cx.lineWidth = 1;
+      cx.strokeRect(Math.round(w.x) - 3.5, Math.round(w.y) - 3.5, 7, 7);
+      for (const h of handles()) {        /* the rotate handles: a ring; drag one and the part turns in place */
+        cx.strokeStyle = h.n === S.hoverHandle ? "#fff" : "#ff9a3c"; cx.beginPath(); cx.arc(Math.round(h.x) + .5, Math.round(h.y) + .5, 3, 0, 7); cx.stroke(); } }
+  }
   requestAnimationFrame(render);
 }
 
+/* ---- the timeline: keys as a bar, proportioned by time; click to select, drag to scrub, drag an edge to retime ---- */
+function makeTimeline(el, cfg) {
+  const head = document.createElement("div"); head.className = "head"; let drag = null, segs = [];
+  const total = () => cfg.keys().reduce((s, k) => s + k.ms, 0);
+  function build() {
+    el.innerHTML = ""; segs = []; const K = cfg.keys(), T = total(), sel = cfg.sel(); let x = 0;
+    el.classList.toggle("off", !cfg.enabled());
+    const sels = cfg.sels ? cfg.sels() : [sel];
+    K.forEach((k, i) => { const d = document.createElement("div"); d.className = "seg-k" + (sels.includes(i) ? " sel" : "") + (i === sel ? " cur" : "");
+      d.style.left = (x / T * 100) + "%"; d.style.width = (k.ms / T * 100) + "%";
+      d.innerHTML = `<span>${i + 1}<small>${k.ms} ms</small></span><div class="h" title="Drag: how long key ${i + 1} takes"></div>`;
+      d.title = `Key ${i + 1}: ${k.ms} ms. Click to select, drag along the bar to scrub`;
+      d.onpointerdown = e => { e.preventDefault(); try { el.setPointerCapture(e.pointerId); } catch (err) { /* (not a live pointer) */ }
+        const r = el.getBoundingClientRect();
+        if (e.target.classList.contains("h")) { cfg.begin(); drag = { i, x0: e.clientX, ms0: k.ms, msPx: T / r.width }; }
+        else drag = { scrub: true, i, x0: e.clientX, moved: false, mods: { shiftKey: e.shiftKey, metaKey: e.metaKey, ctrlKey: e.ctrlKey } }; };
+      el.appendChild(d); segs.push(d); x += k.ms; });
+    const n = cfg.beats ? cfg.beats() : 0;
+    for (let b = 1; b < n; b++) { const t = document.createElement("div"); t.className = "tick"; t.style.left = (b / n * 100) + "%"; el.appendChild(t); }
+    el.appendChild(head);
+  }
+  function widths() { const K = cfg.keys(), T = total(); let x = 0;
+    K.forEach((k, i) => { if (segs[i]) { segs[i].style.left = (x / T * 100) + "%"; segs[i].style.width = (k.ms / T * 100) + "%"; segs[i].querySelector("small").textContent = k.ms + " ms"; } x += k.ms; }); }
+  const tAt = cxp => { const r = el.getBoundingClientRect(); return clamp((cxp - r.left) / r.width, 0, .9999) * total(); };
+  el.onpointermove = e => { if (!drag) return;
+    if (drag.scrub) { if (Math.abs(e.clientX - drag.x0) > 2) drag.moved = true; if (drag.moved) { cfg.scrub(tAt(e.clientX)); head.style.display = "block"; head.style.left = (tAt(e.clientX) / total() * 100) + "%"; } return; }
+    const ms = clamp(Math.round((drag.ms0 + (e.clientX - drag.x0) * drag.msPx) / 10) * 10, 20, 5000); cfg.resize(drag.i, ms); widths(); };
+  el.onpointerup = el.onpointercancel = e => { if (!drag) return; const d = drag; drag = null;
+    if (d.scrub) { if (!d.moved) cfg.select(d.i, d.mods); } else cfg.commit(); };
+  return { build, update: widths, head(t) { if (t == null) { head.style.display = "none"; return; } head.style.display = "block"; head.style.left = (t / total() * 100) + "%"; } };
+}
+const tl = makeTimeline($("tl"), { keys: () => curAnim(false).keys, sel: () => S.key, sels: () => S.sel, enabled: () => true,
+  beats: () => ($("beat").checked && S.anim !== "idle") ? curAnim(false).beats : 0,
+  select: selectKey, begin: snap,
+  resize: (i, ms) => { curAnim(true).keys[i].ms = ms; touch(); if (i === S.key) $("kms").value = ms; $("total").value = curAnim(false).keys.reduce((s, q) => s + q.ms, 0); },
+  commit: refresh, scrub: t => { stop(); S.scrub = t; } });
+const ftl = makeTimeline($("ftl"), { keys: () => curFace(false).keys, sel: () => S.fkey, sels: () => S.fsel, enabled: () => !!S.fv,
+  select: selectFaceKey, begin: snap,
+  resize: (i, ms) => { curFace(true).keys[i].ms = ms; touch(); if (i === S.fkey) $("fms").value = ms; },
+  commit: refresh, scrub: t => { stop(); S.fscrub = t; } });
+
 /* ---- the panels ---- */
 function refresh() {
+  if (!S.rig) return;
   const an = curAnim(false); S.key = Math.min(S.key, an.keys.length - 1); const k = an.keys[S.key];
-  $("beats").value = an.beats; $("kms").value = k.ms; $("rx").value = k.root[0]; $("ry").value = k.root[1];
-  $("kname").textContent = `${S.key + 1} of ${an.keys.length}`;
+  S.sel = S.sel.filter(i => i < an.keys.length); if (!S.sel.includes(S.key)) S.sel = [S.key];
+  $("beats").value = an.beats; $("kms").value = k.ms; $("total").value = an.keys.reduce((t, q) => t + q.ms, 0);
+  $("rx").value = k.root[0]; $("ry").value = k.root[1]; $("kname").textContent = `${S.pet} · ${S.anim} · key ${S.key + 1} of ${an.keys.length}` + (S.sel.length > 1 ? ` · ${S.sel.length} selected` : "");
+  $("undo").disabled = !S.undo.length; $("redo").disabled = !S.redo.length;
+  tl.build(); fillKeys(); fillSelected(); fillParts(); fillReactions(); fillRig(); fillFace(); hint();
+}
+function fillKeys() {
+  const an = curAnim(false), face = bodyFace(), box = $("keys"); box.innerHTML = "";
+  an.keys.forEach((q, i) => { const d = document.createElement("div"); d.className = "key" + (S.sel.includes(i) ? " sel" : "") + (i === S.key ? " cur" : "");
+    d.appendChild(poseThumb(solve({ root: q.root, a: q.a, feet: q.feet, t: q.t }, earsExtra(face, {}), 0), face, 56, false));
+    const s = document.createElement("span"); s.textContent = `${i + 1}`; d.appendChild(s); d.title = `Key ${i + 1}: ${q.ms} ms`;
+    d.onclick = e => selectKey(i, e); box.appendChild(d); });
+  const sel = box.querySelector(".key.cur"); if (sel) sel.scrollIntoView({ block: "nearest", inline: "nearest" });
+}
+const GROUPS = ["Body", "Head", "Left arm", "Right arm", "Left leg", "Right leg", "Other", "Face (Face editor)"];
+function groupOf(n) {
+  if (isFace(n)) return "Face (Face editor)";
+  if (/^(head|neck|eyes|nose|mouth|ear_)/.test(n)) return "Head";
+  if (/(arm|hand).*_l$/.test(n)) return "Left arm"; if (/(arm|hand).*_r$/.test(n)) return "Right arm";
+  if (/(leg|foot).*_l$/.test(n)) return "Left leg"; if (/(leg|foot).*_r$/.test(n)) return "Right leg";
+  if (/^(body|tail|collar|torso)/.test(n)) return "Body"; return "Other";
+}
+function fillParts() {
+  const k = curAnim(false).keys[S.key], box = $("parts"); box.innerHTML = "";
+  const groups = {}; for (const p of S.rig.parts) (groups[groupOf(p.name)] = groups[groupOf(p.name)] || []).push(p);
+  for (const gname of GROUPS) { const ps = groups[gname]; if (!ps) continue;
+    const h = document.createElement("div"); h.className = "grp"; h.textContent = gname; box.appendChild(h);
+    for (const p of ps) { const auto = isAuto(p.name), v = Math.round(k.a[p.name] || 0);
+      const d = document.createElement("div"); d.className = "prow" + (p.name === S.part ? " sel" : "") + (auto ? " auto" : ""); d.dataset.name = p.name;
+      d.innerHTML = auto ? `<span class="pn" title="${autoWhy(p.name)}">${p.name}</span><small style="text-align:right;padding-right:4px">${isFace(p.name) ? "face" : "auto"}</small>`
+                         : `<span class="pn" title="${p.name}">${p.name}</span><input type="number" min="-180" max="180" value="${v}">`;
+      d.onmouseenter = () => { S.hover = p.name; }; d.onmouseleave = () => { if (S.hover === p.name) S.hover = null; };
+      d.onclick = e => { if (e.target.tagName === "INPUT") return; S.part = auto ? S.part : p.name; refresh(); };
+      if (!auto) live(d.querySelector("input"), v => { S.part = p.name; S.scrub = null; curAnim(true).keys[S.key].a[p.name] = clamp(Math.round(v), -180, 180); const sp = $("spa"); if (sp && S.part === p.name) { sp.value = v; const r = $("spar"); if (r) r.value = v; } });
+      box.appendChild(d); } }
+  const sel = box.querySelector(".prow.sel"); if (sel) sel.scrollIntoView({ block: "nearest" });
+}
+function fillSelected() {
+  const k = curAnim(false).keys[S.key], n = S.part, p = n && byName(n), box = $("selp");
+  if (!p) { box.innerHTML = `<small class="note">Nothing selected. Click a part on the stage or in the list; hover to see its name.</small>`; return; }
+  const auto = isAuto(n), foot = plantedFoot(n), prop = isProp(n), canSlide = (p.parent && !auto && !foot) || prop, a = Math.round(k.a[n] || 0);
+  const thing = isThing(n);
+  const t = (k.t || {})[n] || [0, 0], f = (k.feet || {})[n] || [0, 0];
+  box.innerHTML = `<div class="row" style="margin-top:0;flex-wrap:nowrap"><span class="nm">${n}</span><small>${p.parent ? "on " + p.parent : "root"}</small><span class="grow"></span><button id="spreset" class="ic ghost" title="Angle 0, back on its joint, foot at rest"><svg class="i"><use href="#i-reset"/></svg></button></div>`
+    + (limbFor(n) ? `<div class="row" style="flex-wrap:nowrap"><button id="spflip" title="Bend the elbow or knee the other way; the hand or foot stays where it is"><svg class="i"><use href="#i-mirror"/></svg> Flip bend</button><small>drag the ${/leg/.test(n) ? "shin" : "forearm"} with the Pose tool to aim the ${/leg/.test(n) ? "knee" : "elbow"}</small></div>` : "")
+    + (auto ? `<small class="note">${autoWhy(n)}.</small>`
+            : `<div class="row" style="flex-wrap:nowrap"><label style="flex:1">Angle <input id="spar" type="range" min="-180" max="180" value="${a}"></label><input id="spa" type="number" min="-180" max="180" value="${a}"></div>`)
+    + (canSlide ? `<div class="row" style="flex-wrap:nowrap"><label title="${prop ? "Moved from its spot, screen px (drag it to move it)" : thing ? "Moved off its joint, px in its parent's frame (drag it to move it)" : "Slid off its joint, px in its parent's frame (the Slide tool drags it)"}">${prop || thing ? "Moved" : "Slide"} x <input id="sptx" type="number" min="-60" max="60" value="${t[0]}"></label><label>y <input id="spty" type="number" min="-60" max="60" value="${t[1]}"></label></div>` : "")
+    + (foot ? `<div class="row" style="flex-wrap:nowrap"><label title="Where this planted foot stands, px from its rest spot (drag it with the Pose tool)">Foot x <input id="spfx" type="number" min="-100" max="100" value="${f[0]}"></label><label>y <input id="spfy" type="number" min="-100" max="100" value="${f[1]}"></label></div>` : "");
+  $("spreset").onclick = () => edit(a => { const q = a.keys[S.key]; setAngle(q, n, 0); setSlide(q, n, 0, 0); setFoot(q, n, 0, 0); });
+  if (limbFor(n)) $("spflip").onclick = () => edit(a => { const q = a.keys[S.key], c = limbFor(n), P = solve({ root: q.root, a: q.a, feet: q.feet, t: q.t }), en = P[c[2]]; reach(q, c, en.x, en.y, en.a, "flip"); });
+  if (!auto) { const setA = v => { S.scrub = null; curAnim(true).keys[S.key].a[n] = clamp(Math.round(v), -180, 180); const row = $("parts").querySelector(`.prow[data-name="${n}"] input`); if (row) row.value = v; };
+    live($("spa"), v => { setA(v); $("spar").value = v; }); live($("spar"), v => { setA(v); $("spa").value = v; }); }
+  if (canSlide) for (const [id, i] of [["sptx", 0], ["spty", 1]]) live($(id), v => { const q = curAnim(true).keys[S.key], w = ((q.t || {})[n] || [0, 0]).slice(); w[i] = clamp(Math.round(v), -60, 60); setSlide(q, n, w[0], w[1]); });
+  if (foot) for (const [id, i] of [["spfx", 0], ["spfy", 1]]) live($(id), v => { const q = curAnim(true).keys[S.key], w = ((q.feet || {})[n] || [0, 0]).slice(); w[i] = clamp(Math.round(v), -100, 100); setFoot(q, n, w[0], w[1]); });
+}
+function fillRig() {
   $("planted").checked = chains().length > 0;
-  $("keys").innerHTML = ""; an.keys.forEach((q, i) => { const d = document.createElement("div"); d.className = "key" + (i === S.key ? " sel" : "");
-    d.textContent = `${i + 1}. ${q.ms} ms`; d.onclick = () => { S.key = i; stop(); refresh(); }; $("keys").appendChild(d); });
-  const box = $("parts"); box.innerHTML = "";
-  for (const p of S.rig.parts) { const auto = isPlanted(p.name) || props().includes(p.name), v = Math.round(k.a[p.name] || 0);
-    const d = document.createElement("div"); d.className = "part" + (p.name === S.part ? " sel" : "") + (auto ? " auto" : "");
-    d.innerHTML = `<span title="${p.name}">${p.name}${auto ? " (auto)" : ""}</span><input type="number" min="-180" max="180" value="${v}"><input type="range" min="-180" max="180" value="${v}">`;
-    d.querySelector("span").onclick = () => { S.part = p.name; refresh(); };
-    const set = (val, live) => { val = Math.max(-180, Math.min(180, +val || 0)); S.part = p.name;
-      if (live) { curAnim(true).keys[S.key].a[p.name] = val; d.querySelector("input[type=number]").value = val; touch(); } else edit(a => { setAngle(a.keys[S.key], p.name, val); }); };
-    d.querySelector("input[type=number]").onchange = e => set(e.target.value);
-    const r = d.querySelector("input[type=range]"); let pushed = false;
-    r.oninput = e => { if (!pushed) { S.undo.push(JSON.stringify(moves())); pushed = true; } set(e.target.value, true); };
-    r.onchange = () => { pushed = false; refresh(); };
-    box.appendChild(d); }
+  $("rigprops").textContent = props().length ? props().join(", ") : "none";
+  $("rigorder").textContent = order().join(" → ");
 }
+function setSlide(key, name, dx, dy) { key.t = key.t || {}; if (dx || dy) key.t[name] = [dx, dy]; else delete key.t[name];
+  if (!Object.keys(key.t).length) delete key.t; }
+function setFoot(key, name, dx, dy) { key.feet = key.feet || {}; if (dx || dy) key.feet[name] = [dx, dy]; else delete key.feet[name];
+  if (!Object.keys(key.feet).length) delete key.feet; }
 function setAngle(key, name, v) { v = Math.round(v); if (v) key.a[name] = v; else delete key.a[name]; }
-function buildFaces() {
-  const f = $("faces"); f.innerHTML = "";
-  for (const l of Object.keys(S.layers)) { const s = document.createElement("select"); s.title = l;
-    for (const v of Object.keys(S.layers[l].im)) { const o = document.createElement("option"); o.textContent = v; o.value = v; if (v === S.face[l]) o.selected = true; s.appendChild(o); }
-    s.onchange = () => { S.face[l] = s.value; }; const lab = document.createElement("label"); lab.textContent = l + " "; lab.appendChild(s); f.appendChild(lab); }
+function fillFace() {
+  const on = !!S.fv, fa = curFace(false); S.fkey = Math.min(S.fkey, fa.keys.length - 1); const k = fa.keys[S.fkey];
+  $("fwhen").textContent = on ? "shown " + WHEN[S.expr] : "one head picture per expression in this set: nothing to animate";
+  ftl.build();
+  const box0 = $("fkeys"); box0.innerHTML = "";
+  S.fsel = S.fsel.filter(i => i < fa.keys.length); if (!S.fsel.includes(S.fkey)) S.fsel = [S.fkey];
+  fa.keys.forEach((q, i) => { const d = document.createElement("div"); d.className = "key" + (S.fsel.includes(i) ? " sel" : "") + (i === S.fkey ? " cur" : ""); const face = { layers: q.layers || {}, a: q.a || {} };
+    d.appendChild(poseThumb(solve({ root: [0, 0], a: {} }, earsExtra(face, {}), 0), face, 56, true));
+    const s = document.createElement("span"); s.textContent = `${i + 1}`; d.appendChild(s); d.title = `Key ${i + 1}: ${q.ms} ms, ${Object.values(q.layers || {}).join(", ")}`;
+    d.onclick = e => selectFaceKey(i, e); box0.appendChild(d); });
+  $("fms").value = k.ms; $("fname").textContent = `${S.pet} · ${S.expr} · key ${S.fkey + 1} of ${fa.keys.length}` + (S.fsel.length > 1 ? ` · ${S.fsel.length} selected` : ""); $("fname2").textContent = `${S.fkey + 1} of ${fa.keys.length}`;
+  $("fel").value = Math.round((k.a || {}).ear_l || 0); $("fer").value = Math.round((k.a || {}).ear_r || 0);
+  $("expr").value = $("exprb").value = S.expr;
+  const box = $("flayers"); box.innerHTML = "";
+  for (const l of Object.keys(S.layers)) { const h = document.createElement("div"); h.className = "grp"; h.textContent = l; box.appendChild(h);
+    const pics = document.createElement("div"); pics.className = "pics"; const cur = (k.layers || {})[l] || S.layers[l].def;
+    for (const v of Object.keys(S.layers[l].im)) { const b = document.createElement("button"); b.className = "pic" + (v === cur ? " on" : ""); b.title = v;
+      const im = document.createElement("img"); im.src = S.thumbs[l][v]; im.alt = v; b.appendChild(im);
+      b.onclick = () => editFace(a => { const q = a.keys[S.fkey]; (q.layers = q.layers || {})[l] = v; }); pics.appendChild(b); }
+    box.appendChild(pics); }
+  for (const id of ["fadd", "fdel", "fup", "fdn", "freset", "fms", "fel", "fer"]) $(id).disabled = !on;
 }
-function stop() { S.playing = false; $("play").innerHTML = "&#9654; Play"; $("play").classList.remove("on"); }
-function togglePlay() { S.playing = !S.playing; S.t0 = performance.now(); $("play").innerHTML = S.playing ? "&#9632; Stop" : "&#9654; Play"; $("play").classList.toggle("on", S.playing); }
+function showPlay() { for (const id of ["play", "fplay"]) { $(id).innerHTML = S.playing ? ICON("stop") + " Stop" : ICON("play") + " Play"; $(id).classList.toggle("on", S.playing); } }
+function stop() { S.playing = false; showPlay(); }
+function togglePlay() { S.playing = !S.playing; S.t0 = performance.now(); if (S.playing) { S.scrub = S.fscrub = null; } showPlay(); }
+const HINTS = { ik: "Pose: drag a hand or foot and its limb follows; drag the head, drum or xylophone to move it; a ring turns a hand, foot, head or instrument in place; drag a forearm or shin to aim its elbow or knee; drag the body (orange square, or Alt+drag) and the hands and feet stay put; the body's ring, off its left edge, turns the body alone.",
+                rot: "Turn: drag any part to turn it about its own joint.", move: "Move: drag anywhere to slide the whole pet, planted feet and all.",
+                slide: "Slide: drag a part off its joint; what hangs from it comes along." };
+function hint() { $("hint").textContent = S.view === "face" ? "The pet stands still; only the face plays. Pick each layer's picture on the right." : HINTS[S.mode]; }
 
 /* ---- the stage: pick, turn, move ---- */
 function at(e) { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * 240 / r.width, (e.clientY - r.top) * 240 / r.height]; }
 function pick(x, y) {
-  const o = order(), pr = props(); for (let i = o.length - 1; i >= 0; i--) { const n = o[i], p = S.rig.parts.find(q => q.name === n), w = lastP && lastP[n];
-    if (!w || pr.includes(n)) continue;       /* (a prop is not posed: a click goes through it to the pet) */
+  const o = order(), pr = props(); for (let i = o.length - 1; i >= 0; i--) { const n = o[i], p = byName(n), w = lastP && lastP[n];
+    if (!w || !p || isFace(n)) continue;              /* (a face layer is not posed here: a click goes through it) */
     const dx = x - w.x, dy = y - w.y, c = Math.cos(rad(-w.a)), s = Math.sin(rad(-w.a));
     const u = Math.floor(dx * c - dy * s + p.pivot[0]), v = Math.floor(dx * s + dy * c + p.pivot[1]), im = S.alpha[n];
     if (u >= 0 && v >= 0 && u < im.width && v < im.height && im.data[(v * im.width + u) * 4 + 3] > 127) return n; }
@@ -280,32 +793,59 @@ function pick(x, y) {
  * it had on the screen. What is stored is still plain angles per part: the firmware plays them as any other key. */
 const norm = a => ((a + 180) % 360 + 360) % 360 - 180;
 const angOf = (dx, dy) => Math.atan2(-dx, dy) * 180 / Math.PI;      /* of a part that hangs down, pointing along (dx, dy) */
-function byName(n) { return S.rig.parts.find(p => p.name === n); }
 function limbOf(end) {             /* [upper, lower, end] for a hand or a foot, or null */
   if (!/^(hand|foot)_/.test(end)) return null;
   const e = byName(end), lo = e && byName(e.parent), up = lo && byName(lo.parent);
   return up && up.parent ? [up.name, lo.name, end] : null;
 }
+function limbFor(n) { return S.rig.parts.map(p => limbOf(p.name)).find(c => c && c.includes(n) && !c.some(isPlanted)) || null; }   /* the free limb a part belongs to */
 function limbs() { return S.rig.parts.map(p => limbOf(p.name)).filter(c => c && !c.some(isPlanted)); }
-function reach(key, c, tx, ty, endA) {   /* turn limb c so its end joint is at (tx, ty) and the end points as endA */
-  const P = solve({ root: key.root, a: key.a }), up = byName(c[0]), lo = byName(c[1]), en = byName(c[2]);
+function limbWith(n) { return S.rig.parts.map(p => limbOf(p.name)).find(c => c && c[1] === n && !c.some(isPlanted)) || null; }   /* the free limb whose middle bone this is */
+function reach(key, c, tx, ty, endA, pole) {   /* turn limb c so its end joint is at (tx, ty) and the end points as endA;
+                                                * pole [x, y]: the elbow / knee goes to the side nearer it; pole "flip": the other side */
+  const P = solve({ root: key.root, a: key.a, feet: key.feet, t: key.t }), up = byName(c[0]), lo = byName(c[1]), en = byName(c[2]);
   const u = [lo.at[0] - up.pivot[0], lo.at[1] - up.pivot[1]], v = [en.at[0] - lo.pivot[0], en.at[1] - lo.pivot[1]];
   const l1 = Math.hypot(...u) || 1, l2 = Math.hypot(...v) || 1, hx = P[c[0]].x, hy = P[c[0]].y;
   let d = Math.hypot(tx - hx, ty - hy); d = Math.min(Math.max(d, Math.abs(l1 - l2) + 0.5), l1 + l2 - 0.01);
   const phi = Math.acos(Math.min(1, Math.max(-1, (l1 * l1 + d * d - l2 * l2) / (2 * l1 * d)))) * 180 / Math.PI, base = angOf(tx - hx, ty - hy);
-  const parentA = P[up.parent].a, was = P[c[0]].a;
+  const parentA = P[up.parent].a, was = P[c[0]].a, wk = P[c[1]];
   let best = null;
-  for (const bend of [1, -1]) {     /* both elbows reach it: keep the one nearer the limb's pose now */
+  for (const bend of [1, -1]) {     /* both elbows reach it: the one nearer the pole, else nearer the limb's pose now */
     const dir = base + bend * phi, ua = dir - angOf(u[0], u[1]);
     const kx = hx - l1 * Math.sin(rad(dir)), ky = hy + l1 * Math.cos(rad(dir)), la = angOf(tx - kx, ty - ky) - angOf(v[0], v[1]);
-    const cost = Math.abs(norm(ua - was)); if (!best || cost < best.cost) best = { cost, ua, la };
+    const cost = pole === "flip" ? -Math.hypot(kx - wk.x, ky - wk.y) : pole ? Math.hypot(kx - pole[0], ky - pole[1]) : Math.abs(norm(ua - was));
+    if (!best || cost < best.cost) best = { cost, ua, la };
   }
   setAngle(key, c[0], norm(best.ua - parentA)); setAngle(key, c[1], norm(best.la - best.ua)); setAngle(key, c[2], norm(endA - best.la));
 }
 let drag = null;
-cv.onpointerdown = e => { stop(); const [x, y] = at(e), n = pick(x, y); try { cv.setPointerCapture(e.pointerId); } catch (err) { /* (not a live pointer) */ }
-  const k = curAnim(false).keys[S.key];
-  if (S.mode === "move") { S.undo.push(JSON.stringify(moves())); drag = { move: true, x, y, r0: k.root.slice() }; return; }
+function hoverLabel(e, n) {
+  const lab = $("hoverlab"); if (!n) { lab.style.display = "none"; return; }
+  const r = $("stagewrap").getBoundingClientRect(); lab.style.display = "block"; lab.style.left = (e.clientX - r.left + 14) + "px"; lab.style.top = (e.clientY - r.top + 14) + "px";
+  const auto = isAuto(n); lab.textContent = n + (auto ? " · " + (props().includes(n) ? "prop" : "auto") : plantedFoot(n) ? " · planted foot" : "");
+}
+cv.onpointerdown = e => { if (S.view === "face" || !lastP) return;      /* (the face is made of pictures and numbers: nothing to drag) */
+  stop(); if (S.scrub != null) { S.key = keyIndexAt(curAnim(false), S.scrub); S.scrub = null; refresh();   /* a scrubbed pose: go to its key first */
+    const [extra, dip, xt] = overlays(performance.now(), 0, false); lastP = solve(stillPose(), earsExtra(bodyFace(), extra), dip, xt); }
+  const [x, y] = at(e), n = pick(x, y); try { cv.setPointerCapture(e.pointerId); } catch (err) { /* (not a live pointer) */ }
+  const k = curAnim(false).keys[S.key]; cv.classList.add("grabbing");
+  if (S.mode === "ik") { const h = handles().find(q => Math.hypot(x - q.x, y - q.y) <= 4.5);   /* a rotate handle: the part turns in place */
+    if (h) { const w0 = lastP[h.n]; S.part = h.n; refresh(); snap();
+      if ($("rxpose").checked) { const rr = reactions(false)[S.rx]; drag = { rx: S.rx, n: h.n, a0: Math.atan2(y - w0.y, x - w0.x), v0: (rr.a || {})[h.n] || 0, px: w0.x, py: w0.y }; return; }
+      if (h.body) { /* the body alone: free hands and feet stay where they are (the limbs follow), the head and what
+                     * else hangs from the body keep their bearing, the tail goes with the body */
+        const inLimb = new Set(limbs().flat());
+        const kids = Object.fromEntries(S.rig.parts.filter(q => q.parent === h.n && !isAuto(q.name) && !isProp(q.name) && !isPlanted(q.name) && !inLimb.has(q.name) && !/^tail/.test(q.name)).map(q => [q.name, k.a[q.name] || 0]));   /* (a prop on the ground does not turn with the body) */
+        drag = { body: h.n, kids, a0: Math.atan2(y - w0.y, x - w0.x), v0: k.a[h.n] || 0, px: w0.x, py: w0.y,
+                 locks: limbs().map(c => ({ c, x: lastP[c[2]].x, y: lastP[c[2]].y, a: lastP[c[2]].a, k: [lastP[c[1]].x, lastP[c[1]].y] })) }; return; }
+      drag = { n: h.n, a0: Math.atan2(y - w0.y, x - w0.x), v0: k.a[h.n] || 0, px: w0.x, py: w0.y }; return; } }
+  if ($("rxpose").checked) {                /* a reaction is being posed: the drag is its, not the key's */
+    if (!n || isAuto(n)) return;
+    S.part = n; snap(); const w0 = lastP[n], rn = S.rx, rr = reactions(false)[rn];
+    if (S.mode === "slide" || (S.mode === "ik" && (n === headName() || isThing(n)))) { drag = { rxslide: rn, n, x, y, t0: ((rr.t || {})[n] || [0, 0]).slice() }; return; }
+    drag = { rx: rn, n, a0: Math.atan2(y - w0.y, x - w0.x), v0: (rr.a || {})[n] || 0, px: w0.x, py: w0.y }; return; }
+  if (S.mode === "move") { snap();      /* everything goes along: planted feet too */
+    drag = { move: true, x, y, r0: k.root.slice(), f0: Object.fromEntries(chains().filter(c => c.length === 3).map(c => [c[2], ((k.feet || {})[c[2]] || [0, 0]).slice()])) }; return; }
   const root = S.rig.parts.find(p => !p.parent).name, w = n && lastP[n];
   if (n) { S.part = n; refresh(); }
   const rw = lastP[root], onHandle = Math.hypot(x - rw.x, y - rw.y) <= 7;
@@ -313,74 +853,191 @@ cv.onpointerdown = e => { stop(); const [x, y] = at(e), n = pick(x, y); try { cv
                                                                     * for a pet whose body is behind a drum): it moves, every
                                                                     * free hand and foot stays where it is */
     S.part = root; refresh();
-    S.undo.push(JSON.stringify(moves()));
-    drag = { torso: true, x, y, r0: k.root.slice(), locks: limbs().map(c => ({ c, x: lastP[c[2]].x, y: lastP[c[2]].y, a: lastP[c[2]].a })) }; return; }
+    snap();
+    drag = { torso: true, x, y, r0: k.root.slice(), locks: limbs().map(c => ({ c, x: lastP[c[2]].x, y: lastP[c[2]].y, a: lastP[c[2]].a, k: [lastP[c[1]].x, lastP[c[1]].y] })) }; return; }
   if (!n) { S.part = null; refresh(); return; }
-  if (isPlanted(n) || props().includes(n)) { say(n + " is posed by the firmware (planted or a prop): untick 'feet planted' to pose the legs yourself"); return; }
-  const c = S.mode === "ik" && limbOf(n);
-  S.undo.push(JSON.stringify(moves()));
+  if (S.mode === "ik" && isPlanted(n)) {    /* a planted leg: its foot goes where it is dragged, the knee follows (the
+                                             * firmware's own solver); grabbing the thigh or shin drags that leg's foot */
+    const c = chains().find(q => q.includes(n));
+    if (c.length === 3) { snap(); S.part = c[2]; refresh();
+      drag = { pfoot: c[2], x, y, f0: ((k.feet || {})[c[2]] || [0, 0]).slice() }; return; } }
+  if (isProp(n) && S.mode !== "rot") { snap(); drag = { prop: n, x, y, t0: ((k.t || {})[n] || [0, 0]).slice() }; return; }   /* a prop: moved, screen px */
+  if (S.mode === "slide" || (S.mode === "ik" && (n === headName() || isThing(n)))) {   /* the part leaves its joint by the drag, measured in its parent's frame */
+    const p = byName(n); if (!p.parent || isAuto(n) || plantedFoot(n)) { say(p.parent ? n + " is placed by the firmware" : "the body is moved with the Move tool (3) or by dragging it with the Pose tool"); return; }
+    snap(); drag = { slide: n, x, y, t0: ((k.t || {})[n] || [0, 0]).slice(), pa: lastP[p.parent].a }; return; }
+  if (isAuto(n)) { say(n + " is posed by the firmware: drag its foot with the Pose tool"); return; }
+  const c = S.mode === "ik" && limbOf(n), pc = S.mode === "ik" && limbWith(n);
+  snap();
   if (c && !c.some(isPlanted)) { drag = { ik: c, ox: w.x - x, oy: w.y - y, a: w.a }; return; }
+  if (pc) { const en = solve({ root: k.root, a: k.a, feet: k.feet, t: k.t })[pc[2]]; drag = { pole: pc, ex: en.x, ey: en.y, ea: en.a }; return; }   /* the elbow / knee follows the cursor */
   drag = { n, a0: Math.atan2(y - w.y, x - w.x), v0: k.a[n] || 0, px: w.x, py: w.y }; };
-cv.onpointermove = e => { if (!drag) return; const [x, y] = at(e), k = curAnim(true).keys[S.key];
-  if (drag.move) k.root = [Math.round(drag.r0[0] + x - drag.x), Math.round(drag.r0[1] + y - drag.y)];
-  else if (drag.torso) { k.root = [Math.round(drag.r0[0] + x - drag.x), Math.round(drag.r0[1] + y - drag.y)]; for (const l of drag.locks) reach(k, l.c, l.x, l.y, l.a); }
+cv.onpointermove = e => {
+  if (!drag) { if (S.view === "face" || S.playing) { hoverLabel(e, null); return; }
+    const [x, y] = at(e), h = S.mode === "ik" ? handles().find(q => Math.hypot(x - q.x, y - q.y) <= 4.5) : null, n = h ? null : pick(x, y);
+    S.hover = n; S.hoverHandle = h ? h.n : null; hoverLabel(e, h ? h.n + " \u00b7 turn" : n); cv.className = h ? "grab" : n ? (isAuto(n) ? "" : "grab") : (S.mode === "move" ? "move" : ""); return; }
+  const [x, y] = at(e), k = curAnim(true).keys[S.key];
+  const lim = v => Math.max(-100, Math.min(100, Math.round(v)));
+  if (drag.rxslide) { const r = reactions(true)[drag.rxslide]; r.t = r.t || {};   /* screen px, whichever way the parent is turned */
+    r.t[drag.n] = [clamp(Math.round(drag.t0[0] + x - drag.x), -60, 60), clamp(Math.round(drag.t0[1] + y - drag.y), -60, 60)]; touch(); return; }
+  if (drag.rx) { const r = reactions(true)[drag.rx]; r.a = r.a || {};
+    r.a[drag.n] = Math.round(norm(drag.v0 + (Math.atan2(y - drag.py, x - drag.px) - drag.a0) * 180 / Math.PI)); touch(); return; }
+  if (drag.move) { k.root = [Math.round(drag.r0[0] + x - drag.x), Math.round(drag.r0[1] + y - drag.y)];
+    for (const [n, o] of Object.entries(drag.f0)) setFoot(k, n, lim(o[0] + x - drag.x), lim(o[1] + y - drag.y)); }
+  else if (drag.slide) { const c = Math.cos(rad(-drag.pa)), sn = Math.sin(rad(-drag.pa)), dx = x - drag.x, dy = y - drag.y;
+    setSlide(k, drag.slide, lim(drag.t0[0] + dx * c - dy * sn), lim(drag.t0[1] + dx * sn + dy * c)); }
+  else if (drag.pfoot) setFoot(k, drag.pfoot, lim(drag.f0[0] + x - drag.x), lim(drag.f0[1] + y - drag.y));
+  else if (drag.body) { const d = (Math.atan2(y - drag.py, x - drag.px) - drag.a0) * 180 / Math.PI; setAngle(k, drag.body, norm(drag.v0 + d));
+    for (const [n, a0] of Object.entries(drag.kids)) setAngle(k, n, norm(a0 - d)); for (const l of drag.locks) reach(k, l.c, l.x, l.y, l.a, l.k); }
+  else if (drag.prop) setSlide(k, drag.prop, clamp(Math.round(drag.t0[0] + x - drag.x), -60, 60), clamp(Math.round(drag.t0[1] + y - drag.y), -60, 60));
+  else if (drag.torso) { k.root = [Math.round(drag.r0[0] + x - drag.x), Math.round(drag.r0[1] + y - drag.y)]; for (const l of drag.locks) reach(k, l.c, l.x, l.y, l.a, l.k); }
   else if (drag.ik) reach(k, drag.ik, x + drag.ox, y + drag.oy, drag.a);
+  else if (drag.pole) reach(k, drag.pole, drag.ex, drag.ey, drag.ea, [x, y]);
   else { let v = drag.v0 + (Math.atan2(y - drag.py, x - drag.px) - drag.a0) * 180 / Math.PI; setAngle(k, drag.n, norm(v)); }
   touch(); };
-cv.onpointerup = () => { if (drag) { drag = null; refresh(); } };
+cv.onpointerup = cv.onpointercancel = () => { cv.classList.remove("grabbing"); if (drag) { drag = null; refresh(); } };
+cv.onpointerleave = () => { S.hover = null; hoverLabel(null, null); };
 
 /* ---- buttons ---- */
 $("play").onclick = togglePlay;
-for (const [id, m] of [["mik", "ik"], ["mrot", "rot"], ["mmove", "move"]])
-  $(id).onclick = () => { S.mode = m; for (const b of ["mik", "mrot", "mmove"]) $(b).classList.toggle("on", b === id); };
-$("beats").onchange = e => edit(a => { a.beats = Math.max(1, Math.min(16, Math.round(+e.target.value || 1))); });
-$("kms").onchange = e => edit(a => { a.keys[S.key].ms = Math.max(20, Math.min(5000, Math.round(+e.target.value || 200))); });
-$("rx").onchange = e => edit(a => { a.keys[S.key].root[0] = Math.max(-60, Math.min(60, Math.round(+e.target.value || 0))); });
-$("ry").onchange = e => edit(a => { a.keys[S.key].root[1] = Math.max(-60, Math.min(60, Math.round(+e.target.value || 0))); });
-$("kadd").onclick = () => edit(a => { a.keys.splice(S.key + 1, 0, JSON.parse(JSON.stringify(a.keys[S.key]))); S.key++; });
-$("kdel").onclick = () => { if (curAnim(false).keys.length < 2) return say("an animation needs at least one key", true); edit(a => { a.keys.splice(S.key, 1); S.key = Math.max(0, S.key - 1); }); };
-$("kup").onclick = () => { if (S.key > 0) edit(a => { const k = a.keys.splice(S.key, 1)[0]; a.keys.splice(--S.key, 0, k); }); };
-$("kdn").onclick = () => { if (S.key < curAnim(false).keys.length - 1) edit(a => { const k = a.keys.splice(S.key, 1)[0]; a.keys.splice(++S.key, 0, k); }); };
-$("kcopy").onclick = () => { S.clip = JSON.stringify(curAnim(false).keys[S.key]); say("pose copied"); };
-$("kpaste").onclick = () => { if (S.clip) edit(a => { const c = JSON.parse(S.clip); a.keys[S.key].a = c.a; a.keys[S.key].root = c.root; }); };
-$("kzero").onclick = () => edit(a => { a.keys[S.key].a = {}; a.keys[S.key].root = [0, 0]; });
-$("kmirror").onclick = () => edit(a => { const k = a.keys[S.key], o = {}; const sw = n => n.endsWith("_l") ? n.slice(0, -2) + "_r" : n.endsWith("_r") ? n.slice(0, -2) + "_l" : n;
-  for (const [n, v] of Object.entries(k.a)) o[S.rig.parts.some(p => p.name === sw(n)) ? sw(n) : n] = -v; k.a = o; k.root = [-k.root[0], k.root[1]]; });
-$("hitl").onclick = () => { S.strike[0] = 255; S.hop = 5; }; $("hitr").onclick = () => { S.strike[1] = 255; S.hop = 5; }; $("hits").onclick = () => { S.hop = 8; };
-$("undo").onclick = undo;
-function undo() { const u = S.undo.pop(); if (!u) return say("nothing to undo"); S.sets[S.set].moves = JSON.parse(u); touch(); refresh(); }
-$("planted").onchange = e => { S.undo.push(JSON.stringify(moves())); const m = moves(); m.planted = m.planted || {};
+function setMode(m) { S.mode = m; for (const b of $("modes").children) b.classList.toggle("on", b.dataset.mode === m); hint(); savePrefs(); }
+for (const b of $("modes").children) b.onclick = () => setMode(b.dataset.mode);
+function setAnim(a) { S.anim = a; S.key = 0; S.scrub = null; stop(); for (const b of $("anims").children) b.classList.toggle("on", b.dataset.anim === a); refresh(); savePrefs(); }
+for (const b of $("anims").children) b.onclick = () => setAnim(b.dataset.anim);
+function setTab(t) { S.tab = t; for (const b of document.querySelectorAll(".ph button[data-tab]")) b.classList.toggle("on", b.dataset.tab === t);
+  for (const d of document.querySelectorAll(".tab")) d.classList.toggle("on", d.id === "tab-" + t); savePrefs(); }
+for (const b of document.querySelectorAll(".ph button[data-tab]")) b.onclick = () => setTab(b.dataset.tab);
+$("beats").onchange = e => edit(a => { a.beats = clamp(Math.round(+e.target.value || 1), 1, 16); });
+live($("kms"), v => { curAnim(true).keys[S.key].ms = clamp(Math.round(v) || 200, 20, 5000); tl.update(); $("total").value = curAnim(false).keys.reduce((s, q) => s + q.ms, 0); });
+$("total").onchange = e => edit(a => {   /* stretch or squeeze every key together to the new total */
+  const T = a.keys.reduce((s, q) => s + q.ms, 0), want = clamp(Math.round(+e.target.value || T), 20 * a.keys.length, 60000);
+  a.keys.forEach(q => { q.ms = clamp(Math.round(q.ms * want / T / 10) * 10, 20, 5000); }); });
+live($("rx"), v => { S.scrub = null; curAnim(true).keys[S.key].root[0] = clamp(Math.round(v), -60, 60); });
+live($("ry"), v => { S.scrub = null; curAnim(true).keys[S.key].root[1] = clamp(Math.round(v), -60, 60); });
+$("kadd").onclick = () => edit(a => { [S.sel, S.key] = KEYOPS.dup(a.keys, S.sel); });
+$("kdel").onclick = () => { if (curAnim(false).keys.length < 2) return say("an animation needs at least one key", true); edit(a => { [S.sel, S.key] = KEYOPS.del(a.keys, S.sel); }); };
+$("kup").onclick = () => edit(a => { [S.sel, S.key] = KEYOPS.move(a.keys, S.sel, S.key, -1); });
+$("kdn").onclick = () => edit(a => { [S.sel, S.key] = KEYOPS.move(a.keys, S.sel, S.key, 1); });
+$("kcopy").onclick = () => { S.clip = JSON.stringify(S.sel.map(i => curAnim(false).keys[i])); say(S.sel.length > 1 ? S.sel.length + " keys copied: Paste puts them after the current key" : "pose copied: Paste puts it on the selected keys"); };
+$("kpaste").onclick = () => { if (!S.clip) return say("nothing copied yet"); const c = JSON.parse(S.clip);
+  if (c.length === 1) edit(a => { for (const i of S.sel) { const k = a.keys[i]; k.a = clone(c[0].a); k.root = clone(c[0].root); if (c[0].feet) k.feet = clone(c[0].feet); else delete k.feet; if (c[0].t) k.t = clone(c[0].t); else delete k.t; } });
+  else edit(a => { const at = Math.max(...S.sel) + 1; a.keys.splice(at, 0, ...clone(c)); S.sel = c.map((_, j) => at + j); S.key = at + c.length - 1; }); };
+$("kzero").onclick = () => edit(a => { for (const i of S.sel) { a.keys[i].a = {}; a.keys[i].root = [0, 0]; delete a.keys[i].feet; delete a.keys[i].t; } });
+$("kmirror").onclick = () => edit(a => { const sw = n => n.endsWith("_l") ? n.slice(0, -2) + "_r" : n.endsWith("_r") ? n.slice(0, -2) + "_l" : n;
+  for (const i of S.sel) { const k = a.keys[i], o = {};
+    for (const [n, v] of Object.entries(k.a)) o[S.rig.parts.some(p => p.name === sw(n)) ? sw(n) : n] = -v; k.a = o; k.root = [-k.root[0], k.root[1]];
+    if (k.t) { const f = {}; for (const [n, v] of Object.entries(k.t)) f[S.rig.parts.some(p => p.name === sw(n)) ? sw(n) : n] = [-v[0], v[1]]; k.t = f; }
+    if (k.feet) { const f = {}; for (const [n, v] of Object.entries(k.feet)) f[S.rig.parts.some(p => p.name === sw(n)) ? sw(n) : n] = [-v[0], v[1]]; k.feet = f; } } });
+for (const id of ["expr", "exprb"]) { const o = $(id); for (const e of EXPRS) { const x = document.createElement("option"); x.value = x.textContent = e; o.appendChild(x); }
+  o.onchange = () => { S.expr = o.value; S.fkey = 0; S.fscrub = null; refresh(); }; }
+function setView(v) { S.view = v; stop(); S.hover = null; document.body.classList.toggle("face", v === "face"); $("vbody").classList.toggle("on", v === "body"); $("vface").classList.toggle("on", v === "face"); refresh(); savePrefs(); }
+$("vbody").onclick = () => setView("body"); $("vface").onclick = () => setView("face");
+$("fplay").onclick = togglePlay;
+$("fadd").onclick = () => editFace(a => { [S.fsel, S.fkey] = KEYOPS.dup(a.keys, S.fsel); });
+$("fdel").onclick = () => { if (curFace(false).keys.length < 2) return say("a face animation needs at least one key", true); editFace(a => { [S.fsel, S.fkey] = KEYOPS.del(a.keys, S.fsel); }); };
+$("fup").onclick = () => editFace(a => { [S.fsel, S.fkey] = KEYOPS.move(a.keys, S.fsel, S.fkey, -1); });
+$("fdn").onclick = () => editFace(a => { [S.fsel, S.fkey] = KEYOPS.move(a.keys, S.fsel, S.fkey, 1); });
+$("freset").onclick = () => { snap(); const m = moves(); if ((m.faces || {})[S.pet]) delete m.faces[S.pet][S.expr]; S.fkey = 0; S.fscrub = null; touch(); refresh(); };
+live($("fms"), v => { curFace(true).keys[S.fkey].ms = clamp(Math.round(v) || 1000, 20, 10000); ftl.update(); });
+for (const [id, n] of [["fel", "ear_l"], ["fer", "ear_r"]]) live($(id), v => { S.fscrub = null; const q = curFace(true).keys[S.fkey]; q.a = q.a || {}; v = clamp(Math.round(v), -90, 90); if (v) q.a[n] = v; else delete q.a[n]; });
+function fire(i) { S.rxT[i] = performance.now(); }
+$("hitl").onclick = () => fire(0); $("hitr").onclick = () => fire(1); $("hits").onclick = () => fire(2);
+$("rxfire").onclick = () => { $("rxpose").checked = false; fire(REACTS.indexOf(S.rx)); };
+for (const b of $("rxseg").children) b.onclick = () => { S.rx = b.dataset.rx; refresh(); };
+$("rxamt").oninput = e => { $("rxamtv").textContent = e.target.value; $("rxpose").checked = true; };
+liveRx($("rxdip"), v => { reactions(true)[S.rx].dip = clamp(Math.round(v), -30, 30); });
+for (const [id, key, lo, hi] of [["rxrise", "rise", 0, 2000], ["rxhold", "hold", 0, 5000], ["rxfade", "fade", 10, 5000]])
+  live($(id), v => { reactions(true)[S.rx][key] = clamp(Math.round(v), lo, hi); });
+$("rxpose").onchange = () => { S.rxAuto = false; refresh(); };
+$("bobon").onchange = e => editRx(r => { r.bob[S.anim].on = e.target.checked; });
+for (const [id, key, i, lim] of [["bobh0", "head", 0, 60], ["bobh1", "head", 1, 60], ["bobn0", "neck", 0, 60], ["bobn1", "neck", 1, 60], ["bobx0", "x", 0, 30], ["bobx1", "x", 1, 30], ["boby0", "y", 0, 30], ["boby1", "y", 1, 30]])
+  live($(id), v => { reactions(true).bob[S.anim][key][i] = clamp(Math.round(v), -lim, lim); });
+$("rxaddb").onclick = () => { const n = $("rxadd").value; if (n) editRx(r => { const a = r[S.rx].a = r[S.rx].a || {}; if (!(n in a)) a[n] = 0; }); };
+$("rxreset").onclick = () => editRx(r => { r[S.rx] = defaultReactions()[S.rx]; });
+function fillReactions() {
+  const rx = reactions(false), n = S.rx, cur = rx[n], box = $("rxrows"); box.innerHTML = "";
+  for (const b of $("rxseg").children) b.classList.toggle("on", b.dataset.rx === n);
+  const parts = [...new Set([...Object.keys(cur.a || {}), ...Object.keys(cur.t || {})])];
+  for (const pn of parts) { const d = document.createElement("div"); d.className = "prow rx" + (pn === S.part ? " sel" : ""); const t = (cur.t || {})[pn] || [0, 0];
+    d.innerHTML = `<button class="x" title="Remove ${pn} from this reaction">&times;</button><span class="pn">${pn}</span><input type="number" min="-180" max="180" value="${Math.round((cur.a || {})[pn] || 0)}" title="turned, degrees"><input type="number" min="-60" max="60" value="${t[0]}" title="pushed on screen, x px (right)"><input type="number" min="-60" max="60" value="${t[1]}" title="pushed on screen, y px (down)">`;
+    d.onmouseenter = () => { S.hover = pn; }; d.onmouseleave = () => { if (S.hover === pn) S.hover = null; };
+    d.onclick = e => { if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return; S.part = pn; refresh(); };
+    const [ia, ix, iy] = d.querySelectorAll("input");
+    liveRx(ia, v => { const r = reactions(true)[n]; r.a = r.a || {}; r.a[pn] = clamp(Math.round(v), -180, 180); });
+    for (const [el, i] of [[ix, 0], [iy, 1]]) liveRx(el, v => { const r = reactions(true)[n], o = ((r.t || {})[pn] || [0, 0]).slice(); o[i] = clamp(Math.round(v), -60, 60); (r.t = r.t || {})[pn] = o; });
+    d.querySelector("button").onclick = () => editRx(r => { delete r[n].a[pn]; if (r[n].t) { delete r[n].t[pn]; if (!Object.keys(r[n].t).length) delete r[n].t; } }); box.appendChild(d); }
+  if (!parts.length) box.innerHTML = "<small class='note' style='padding:0 6px'>No part moves for this one yet: add one below, or tick “hold on stage” and drag a part.</small>";
+  $("rxadd").innerHTML = ""; for (const p of S.rig.parts) if (!parts.includes(p.name) && !isAuto(p.name)) { const o = document.createElement("option"); o.textContent = p.name; $("rxadd").appendChild(o); }
+  $("rxdip").value = cur.dip || 0;
+  for (const [id, key, dflt] of [["rxrise", "rise", 0], ["rxhold", "hold", 0], ["rxfade", "fade", 250]]) $(id).value = cur[key] == null ? dflt : cur[key];
+  const b = rx.bob[S.anim]; $("bobanim").textContent = "\u00b7 " + S.anim; $("bobon").checked = !!b.on; $("bobneckrow").style.display = byName("neck") ? "" : "none";
+  for (const [id, key, i] of [["bobh0", "head", 0], ["bobh1", "head", 1], ["bobn0", "neck", 0], ["bobn1", "neck", 1], ["bobx0", "x", 0], ["bobx1", "x", 1], ["boby0", "y", 0], ["boby1", "y", 1]]) $(id).value = Math.round(b[key][i]);
+}
+$("undo").onclick = undo; $("redo").onclick = redo;
+$("planted").onchange = e => { snap(); const m = moves(); m.planted = m.planted || {};
   if (e.target.checked) { const has = n => S.rig.parts.some(p => p.name === n);
     m.planted[S.pet] = has("upper_leg_l") ? [["upper_leg_l", "lower_leg_l", "foot_l"], ["upper_leg_r", "lower_leg_r", "foot_r"]] : has("leg_l") ? [["leg_l"], ["leg_r"]] : [];
     if (!m.planted[S.pet].length) { delete m.planted[S.pet]; say("this pet has no pair of legs to plant", true); } }
   else delete m.planted[S.pet];
   touch(); refresh(); };
 async function save() {
+  if (!S.set) return;
   try { const r = await fetch("/api/save/" + S.set, { method: "POST", body: JSON.stringify(moves()) }), j = await r.json();
-    if (!r.ok) throw new Error(j.error); S.dirty = false; $("dirty").textContent = ""; say("saved " + j.saved + " — rebuild the emulator to see it: sh tools/emu/build_pm.sh"); }
+    if (!r.ok) throw new Error(j.error); clean(); say("saved " + j.saved + " — rebuild the emulator to see it: sh tools/emu/build_pm.sh", false, 12000); }
   catch (e) { say(String(e.message || e), true); }
 }
-$("save").onclick = save;
+async function revert() {
+  if (S.dirty && !confirm("Throw away the unsaved changes to this art set and reload its moves.json?")) return;
+  try { const sets = await (await fetch("/api/sets")).json(); S.sets[S.set].moves = sets[S.set].moves; S.undo = []; S.redo = []; clean(); refresh(); say("reloaded moves.json"); }
+  catch (e) { say("could not reload: " + e.message, true); }
+}
+$("save").onclick = save; $("revert").onclick = revert;
+$("help").onclick = () => $("helpdlg").showModal(); $("helpclose").onclick = () => $("helpdlg").close();
+for (const id of ["bpm", "beat", "onion", "fzoom"]) $(id).onchange = () => { if (id === "beat") tl.build(); savePrefs(); };
+/* Space always plays / stops, whatever has the focus: it is caught before a focused list, slider or button sees it */
+addEventListener("keydown", e => { if (e.key === " " && !e.metaKey && !e.ctrlKey && !$("helpdlg").open && !(e.target instanceof HTMLInputElement && e.target.type === "number")) { e.preventDefault(); e.stopPropagation(); if (!e.repeat) togglePlay(); } }, true);
+addEventListener("keyup", e => { if (e.key === " " && !(e.target instanceof HTMLInputElement && e.target.type === "number")) { e.preventDefault(); e.stopPropagation(); } }, true);
 addEventListener("keydown", e => {
-  if ((e.metaKey || e.ctrlKey) && e.key === "s") { e.preventDefault(); return save(); }
-  if ((e.metaKey || e.ctrlKey) && e.key === "z") { e.preventDefault(); return undo(); }
+  const mod = e.metaKey || e.ctrlKey, key = e.key.toLowerCase();
+  if (mod && key === "s") { e.preventDefault(); return save(); }
+  if (mod && key === "z") { e.preventDefault(); return e.shiftKey ? redo() : undo(); }
+  if (mod && key === "y") { e.preventDefault(); return redo(); }
+  if ($("helpdlg").open) return;
+  if (mod && key === "a" && !/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) { e.preventDefault();   /* every key */
+    if (S.view === "face") S.fsel = curFace(false).keys.map((_, i) => i); else S.sel = curAnim(false).keys.map((_, i) => i); return refresh(); }
+  if ((e.key === "Backspace" || e.key === "Delete") && !/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) { e.preventDefault(); return $(S.view === "face" ? "fdel" : "kdel").click(); }
+  if (e.key === "Escape") { if (/INPUT|SELECT/.test(e.target.tagName)) return e.target.blur(); S.part = null; S.scrub = S.fscrub = null; return refresh(); }
   if (/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
-  if (e.key === " ") { e.preventDefault(); return togglePlay(); }
-  const d = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1 }[e.key];
-  if (d && S.part && !isPlanted(S.part) && !props().includes(S.part)) { e.preventDefault(); const step = d * (e.shiftKey ? 5 : 1);
-    edit(a => { const k = a.keys[S.key]; setAngle(k, S.part, Math.max(-180, Math.min(180, (k.a[S.part] || 0) + step))); }); }
+  if (e.key === "?") return $("helpdlg").showModal();
+  if (S.view === "body" && !mod && !e.altKey) {
+    if ("1234".includes(e.key)) return setMode(MODES[+e.key - 1]);
+    const f = { l: 0, r: 1, s: 2 }[key]; if (f != null) return fire(f);
+  }
+  if (e.key === "ArrowLeft" || e.key === "ArrowRight") {     /* the key pose before / after this one, round the loop */
+    if (e.altKey && S.view === "body") { e.preventDefault(); return edit(a => { a.keys[S.key].root[0] = clamp(a.keys[S.key].root[0] + (e.key === "ArrowRight" ? 1 : -1), -60, 60); }); }
+    e.preventDefault(); stop(); const step = e.key === "ArrowRight" ? 1 : -1;
+    if (S.view === "face") { const n = curFace(false).keys.length; S.fkey = (S.fkey + step + n) % n; S.fsel = [S.fkey]; S.fscrub = null; }
+    else { const n = curAnim(false).keys.length; S.key = (S.key + step + n) % n; S.sel = [S.key]; S.scrub = null; }
+    return refresh(); }
+  if (S.view === "face") return;
+  const d = { ArrowDown: -1, ArrowUp: 1 }[e.key]; if (!d) return;
+  if (e.altKey) { e.preventDefault(); return edit(a => { a.keys[S.key].root[1] = clamp(a.keys[S.key].root[1] - d, -60, 60); }); }
+  if (S.part && !isAuto(S.part)) { e.preventDefault(); const step = d * (e.shiftKey ? 5 : 1);
+    edit(a => { const k = a.keys[S.key]; setAngle(k, S.part, clamp((k.a[S.part] || 0) + step, -180, 180)); }); }
 });
 addEventListener("beforeunload", e => { if (S.dirty) { e.preventDefault(); e.returnValue = ""; } });
 function leave() { return !S.dirty || confirm("Unsaved changes in this art set will stay in the page only until you save. Switch anyway?"); }
-$("anim").onchange = e => { S.anim = e.target.value; S.key = 0; stop(); refresh(); };
-$("pet").onchange = async e => { S.pet = e.target.value; S.shown = null; stop(); await loadPet(); };
-$("set").onchange = async e => { if (!leave()) { e.target.value = S.set; return; } S.set = e.target.value; S.shown = null; S.dirty = false; $("dirty").textContent = ""; fillPets(); await loadPet(); };
-function fillPets() { $("pet").innerHTML = ""; for (const p of S.sets[S.set].pets) { const o = document.createElement("option"); o.textContent = p; $("pet").appendChild(o); }
-  S.pet = S.sets[S.set].pets.includes("cat") ? "cat" : S.sets[S.set].pets[0]; $("pet").value = S.pet; }
+$("pet").onchange = async e => { S.pet = e.target.value; S.shown = null; stop(); savePrefs(); await loadPet(); };
+$("set").onchange = async e => { if (!leave()) { e.target.value = S.set; return; } S.set = e.target.value; S.shown = null; clean(); fillPets(); savePrefs(); await loadPet(); };
+function fillPets(want) { $("pet").innerHTML = ""; for (const p of S.sets[S.set].pets) { const o = document.createElement("option"); o.textContent = p; $("pet").appendChild(o); }
+  const ps = S.sets[S.set].pets; S.pet = ps.includes(want) ? want : ps.includes("cat") ? "cat" : ps[0]; $("pet").value = S.pet; }
 (async () => {
-  try { S.sets = await (await fetch("/api/sets")).json(); const names = Object.keys(S.sets);
+  try { S.sets = await (await fetch("/api/sets")).json(); const names = Object.keys(S.sets), p = prefs();
     for (const n of names) { const o = document.createElement("option"); o.textContent = n; $("set").appendChild(o); }
-    S.set = names[0]; fillPets(); await loadPet(); requestAnimationFrame(render); }
+    S.set = names.includes(p.set) ? p.set : names[0]; $("set").value = S.set; fillPets(p.pet);
+    if (p.bpm) $("bpm").value = p.bpm; if (p.beat != null) $("beat").checked = p.beat; if (p.onion != null) $("onion").value = p.onion; if (p.fzoom != null) $("fzoom").checked = p.fzoom;
+    await loadPet();
+    if (ANIMS.includes(p.anim)) setAnim(p.anim); if (MODES.includes(p.mode)) setMode(p.mode); if (["pose", "rx", "rig"].includes(p.tab)) setTab(p.tab); if (p.view === "face") setView("face");
+    showPlay(); refresh(); requestAnimationFrame(render); }
   catch (e) { say("could not load the rigs: " + e.message, true); }
 })();
 </script>

@@ -145,7 +145,7 @@ Device build, JieLi toolchain, `./build.sh`, 2026-10-08 (not installed):
 
 | | PurpleMonkey | ChoralRoot `44453d0` (same tree, `FM1_UNIT=choralroot`) | Limit |
 | --- | --- | --- | --- |
-| Flash (XIP: `.text` + `.ram_text` + `.data`) | 299,396 B (51.5 %) | 354,692 B (61.0 %) | 581,564 B |
+| Flash (XIP: `.text` + `.ram_text` + `.data`) | 302,700 B (52.0 %) | 354,692 B (61.0 %) | 581,564 B |
 | RAM (`.data` + `.bss`) | 39,812 B (40.5 %) | 79,420 B (80.8 %) | 98,304 B |
 | POOL (big buffers) | 264,300 B (76.8 %) | 317,536 B (92.3 %) | 344,064 B |
 
@@ -203,8 +203,12 @@ clock, not measured, and if the real panel is slower the animation rate or the p
 All four pets are rigs: body parts turned about joints by the firmware (`firmware/src/pm_rig.c`), built from the
 articulated set `assets/purplemonkey/rig-64-modular/` (its README has the art's own notes). Monkey and cat have 21
 parts, the dog 20, the llama 22: upper and lower limbs, hands, feet, and a head made of a blank shape with separate
-ears, eyes, nose and mouth. The earlier sets (`rig-64/`, `rig/`, the placeholder doll) stay in the repository and
-still export when named on the generator's command line; they are not in the image.
+ears, eyes, nose and mouth. The cat's head comes from `assets/purplemonkey/rig-64-cat-v4/` (the cute face-only
+revision: new head shape, ears, eyes, nose and mouth on the same body, tail, limbs and xylophone; `OVERRIDES` in
+`tools/gen_pm_rig.py` looks there before the sets), and its choreography is still `rig-64-modular/moves.json`,
+the two having the same parts. The earlier sets (`rig-64/`, `rig/`, the placeholder doll, the rejected
+`rig-64-cat-v2/`) stay in the repository and still export when named on the generator's command line; they are not
+in the image.
 
 - **Capacity.** 24 parts a rig (`MAXP` in `tools/gen_pm_rig.py`, `PM_RIG_MAXP`); a key pose is 24 angles and an
   offset (28 bytes). A pose on the stack is about 130 bytes; the renderer holds one and builds one.
@@ -228,9 +232,26 @@ still export when named on the generator's command line; they are not in the ima
   stands still on the ground in front of it. A note lifts one forearm a little at the elbow and whips its mallet
   up 35 degrees at the wrist, then both fall back on the bar; the low half of the keyboard is the left hand's,
   the high half the right's, and the upper arm reaches along the bars for the note.
+- **The face has its own animations**, apart from the body's (`moves.json` "faces"): each expression (neutral,
+  blink, happy, sing, surprised, sleepy) is a loop of keys, each a picture per layer shown for its time and the
+  ears' angles blended to the next; it runs on its own clock from when the expression comes on. Not given: one
+  key, the expression as the art has it. A pet whose neutral face has several keys does its own blinking.
+- **Reactions have timing**: each comes on over `rise`, stays for `hold` and dies away over `fade` ms. A
+  reaction can also slide a part off its joint (`"t"` in a reaction: the head pushed forward at a snare).
+- **The head's bob is per animation** (`moves.json` "reactions" `bob` {idle, play, dance}): a sine each beat and
+  one over the bar, scaled into the head's turn, the neck's turn, and the head pushed sideways and up and down;
+  on or off per animation (the older three-number bob is still read).
+- **A key can slide a part off its joint** (`"t"` in a key: the head pushed forward or sunk into the shoulders);
+  what hangs from the part goes with it. A prop on the ground (the cat's xylophone) is moved from its spot
+  the same way, by a key or by a reaction's push, and turned only as the key or reaction says.
+- **A key can move a planted foot** from its rest spot (`"feet"` in a key of `moves.json`: a step, a kick) and
+  turn it; the knee follows. **Reactions are data** (`moves.json` "reactions"): what a note by the left hand, by
+  the right, and a snare add on top of the animation (parts turned, the body dipped or hopped), and how far the
+  head tips with each beat and turns over the bar, per pet; the built-in ones apply where a pet has none.
 - **Other motion** as before: play and dance loops locked to the beat (`moves.json`, `beats`), heads tipping
   with each beat and turning over the bar, the dog's and llama's bar-long breakdance.
-- **Cost.** 54,156 B of part pixels and 23,478 B of variants for the four pets.
+- **Cost.** 54,555 B of part pixels and 23,436 B of variants for the four pets (the cat: 13,898 B and 5,184 B,
+  29 of its 31 colours used).
 - **LCD.** Only the parts that moved, turned or changed picture are repainted, at most 112 tiles (about 38 ms of
   SPI by calculation) a frame. Still the first number to measure on a unit.
 

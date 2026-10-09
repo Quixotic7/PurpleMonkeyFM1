@@ -1,5 +1,9 @@
 # Claude Opus handoff: integrate the extracted pet rigs
 
+> LATEST CAT: `assets/purplemonkey/rig-64-cat-v4/cat/` fixes the viewer-left ear. Only the four ear_l sprites and its attachment y (+2px) differ from v3. All other sprite pixels are unchanged. Read the v4 README and preserve current unrelated work when applying this focused update.
+
+> LATEST CAT CORRECTION: use `assets/purplemonkey/rig-64-cat-v3/cat/` for the cute face-only revision. The user rejected realistic v2 and its body/tail changes. v3 preserves all original modular cartoon non-face pixels. See v3 README and head-review.png; older cat revision notes below are historical.
+
 > Cat likeness update: a photo-based asymmetric revision is available at `assets/purplemonkey/rig-64-cat-v2/cat/`. See its parent README and head-review.png; use that complete cat folder for the new likeness, keeping the other three pets from rig-64-modular. Its facial canvases/registration differ from the original cat.
 
 > CURRENT REQUEST: use `assets/purplemonkey/rig-64-modular/README.md`. This latest version adds separate upper arms/forearms/hands, upper legs/lower legs/feet, and modular head shape/ears/eyes/nose/mouth. It needs 20–22 parts per pet and per-part texture swaps; the current 12-part limit and old single-head expression pathway are insufficient. Earlier variant notes below are historical.

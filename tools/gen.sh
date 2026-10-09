@@ -19,7 +19,7 @@ done
 [ build/gen/pm_drumkits.h -nt tools/gen_drumkits.py ] && [ build/gen/pm_drumkits.h -nt tools/drumkit_levels.json ] ||
     "$PY" tools/gen_drumkits.py build/gen/pm_drumkits.h --kits VINTAGE,LATIN,808,JAZZ
 [ build/gen/pm_fm6.h -nt tools/gen_pm_patches.py ] || "$PY" tools/gen_pm_patches.py build/gen/pm_fm6.h
-[ build/gen/pm_rig.h -nt tools/gen_pm_rig.py ] && [ -z "$(find assets/purplemonkey/rig assets/purplemonkey/rig-64 assets/purplemonkey/rig-64-modular -newer build/gen/pm_rig.h \( -name '*.png' -o -name '*.json' \) 2>/dev/null | head -1)" ] ||
+[ build/gen/pm_rig.h -nt tools/gen_pm_rig.py ] && [ -z "$(find assets/purplemonkey/rig assets/purplemonkey/rig-64 assets/purplemonkey/rig-64-modular assets/purplemonkey/rig-64-cat-v3 assets/purplemonkey/rig-64-cat-v4 -newer build/gen/pm_rig.h \( -name '*.png' -o -name '*.json' \) 2>/dev/null | head -1)" ] ||
     "$PY" tools/gen_pm_rig.py build/gen/pm_rig.h
 [ build/gen/pm_sprites.h -nt tools/gen_pm_sprites.py ] ||
     "$PY" tools/gen_pm_sprites.py build/gen/pm_sprites.h --names-only

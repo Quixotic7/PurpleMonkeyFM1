@@ -66,7 +66,9 @@ static struct {
     uint16_t a_phase;                             /* the ripple's */
     uint32_t a_accent_t;
     uint8_t face, hello_done;                     /* the rigged pet's face (pm_face) */
-    uint8_t strike[2], strike_i;                  /* each arm's strike, 255 = just thrown up, dying away; whose turn */
+    uint32_t rx_t[3];                             /* when each reaction was set off (0: it is over) */
+    uint8_t strike[3], strike_i;                  /* the rig's reactions (PM_RR_*: a note by the left hand, by the right,
+                                                   * a snare): how strong each is now, 0 .. 255; whose turn a drum hit is */
     int8_t aim[2];                                /* where along its instrument each arm last played */
     uint32_t face_t, hello_t, awake_t;            /* when it was put on; when the pet arrived; the last sign of life */
     uint32_t last_anim, last_sound, title_t0, gauge_t0, star_t0;
@@ -349,8 +351,10 @@ static uint32_t pm_face(uint32_t now, uint32_t party, uint32_t playing)
         want = PM_RF_SING;
     else if (now - pu.awake_t >= PM_FACE_SLEEP_MS)
         want = PM_RF_SLEEPY;
-    else
-        want = now % PM_FACE_BLINK_EVERY_MS < PM_FACE_BLINK_MS ? PM_RF_BLINK : PM_RF_NEUTRAL;
+    else {                                        /* (a pet whose neutral face is an animation blinks in it, if it does) */
+        const pm_rig_t *R = pm_rig_for(pu.s_pet);
+        want = !(R && R->face[PM_RF_NEUTRAL].n > 1u) && now % PM_FACE_BLINK_EVERY_MS < PM_FACE_BLINK_MS ? PM_RF_BLINK : PM_RF_NEUTRAL;
+    }
     if (want == pu.face)
         return want;
     if (want != PM_RF_SURPRISED && want != PM_RF_BLINK && pu.face != PM_RF_BLINK && now - pu.face_t < PM_FACE_HOLD_MS)
@@ -379,54 +383,88 @@ static void pm_pet_move(uint32_t now)
          * at rest, they run on their own time */
         uint32_t beats = R->anim[anim].beats ? R->anim[anim].beats : 1u;
         int32_t ph = pu.s_beat && anim != PM_RA_IDLE ? (int32_t)((pm_snap.bar_q16 * 4u / beats) & 0xFFFFu) : -1;
-        int8_t add[PM_RIG_MAXP] = {0};
+        int8_t add[PM_RIG_MAXP] = {0}, addx[PM_RIG_MAXP] = {0}, addy[PM_RIG_MAXP] = {0};
+        int16_t acc[PM_RIG_MAXP] = {0}, accx[PM_RIG_MAXP] = {0}, accy[PM_RIG_MAXP] = {0};
         uint8_t var[PM_RIG_NLAYER];
-        int32_t nod = 0, planted = R->leg[0][0] >= 0;
-        /* a note or a hit: a hand strikes its instrument (the cat's mallet on a bar, the monkey's stick on its
-         * drum, the dog's maraca); a pet with no arms nods */
-        for (k = 0; k < 2u; k++) {
-            int32_t v = pu.strike[k], in = k ? v : -v;                       /* in: towards the pet's middle */
-            if (R->fore[k] >= 0 && R->hand[k] >= 0) {
-                /* elbows and wrists: the play pose holds the hands in over the instrument; a strike lifts the
-                 * forearm a little at the elbow and whips the hand up at the wrist, then both fall back on the
-                 * bar. The upper arm only reaches along the instrument for the note (aim) */
-                add[R->arm[k]] = pu.aim[k];
-                add[R->fore[k]] = (int8_t)(in * 9 / 255);                    /* 13 degrees */
-                add[R->hand[k]] = (int8_t)(in * 25 / 255);                   /* 35 degrees */
-            } else if (R->arm[k] >= 0 && R->hand[k] >= 0) {                  /* (one-piece arms with hands) */
-                add[R->arm[k]] = (int8_t)(-in * 5 / 255 + pu.aim[k]);
-                add[R->hand[k]] = (int8_t)(in * 26 / 255);
-            } else if (R->arm[k] >= 0) {
-                add[R->arm[k]] = (int8_t)(-in * 46 / 255);                   /* (whole arms: up to 65 degrees outwards) */
+        int32_t dip = 0;
+        /* reactions (pm_rig_t.react, from moves.json): a note by the left hand, by the right, a snare. Each is a
+         * pose on top of the animation (the mallet whipped up, the head nodding, the body dipping) that is put on
+         * at once and dies away; several add up */
+        for (k = 0; k < PM_RIG_NREACT; k++) {     /* how strong each is now: on over rise, full for hold, away over fade */
+            uint32_t t = now - pu.rx_t[k], rise = R->react[k].rise, hold = R->react[k].hold, fade = R->react[k].fade;
+            int32_t v = 0, i;
+            if (!pu.rx_t[k])
+                v = 0;
+            else if (t < rise)
+                v = (int32_t)(255u * t / rise);
+            else if (t < rise + hold)
+                v = 255;
+            else if (t < rise + hold + fade) {
+                int32_t u = (int32_t)(255u - 255u * (t - rise - hold) / fade);
+                v = u * u / 255;                  /* (quickly at first, then settling) */
+            } else
+                pu.rx_t[k] = 0;
+            pu.strike[k] = (uint8_t)v;
+            if (!v)
+                continue;
+            for (i = 0; i < (int32_t)R->npart; i++) {
+                acc[i] = (int16_t)(acc[i] + R->react[k].a[i] * v / 255);
+                accx[i] = (int16_t)(accx[i] + R->react[k].tx[i] * v / 255);
+                accy[i] = (int16_t)(accy[i] + R->react[k].ty[i] * v / 255);
             }
-            nod += k ? -v : v;
+            dip += R->react[k].dip * v;
         }
-        /* the head: with the beat it tips to one side and back each beat and turns left and right over the bar;
-         * every strike nods it; the neck (the llama's) follows at half */
-        if (R->head >= 0) {
-            int32_t h = nod * (R->arm[0] >= 0 ? 6 : 20) / 255;
-            if (pu.s_beat && anim != PM_RA_IDLE)
-                h += (sine_i((uint32_t)pm_snap.bar_q16 << 18) * 9 + sine_i((uint32_t)pm_snap.bar_q16 << 16) * 6) >> 15;
-            add[R->head] = (int8_t)h;
+        for (k = 0; k < 2u; k++)                  /* the arm reaches along its instrument for the note */
+            if (R->arm[k] >= 0)
+                acc[R->arm[k]] = (int16_t)(acc[R->arm[k]] + pu.aim[k]);
+        /* the head with the beat (pm_rig_t.bob, one per animation, from moves.json): a sine each beat and one over
+         * the bar, each scaled into the head's turn, the neck's turn, and the head pushed sideways and up and down */
+        if (R->head >= 0 && pu.s_beat && R->bob[anim % PM_RIG_NANIM].on) {
+            const pm_rbob_t *b = &R->bob[anim % PM_RIG_NANIM];
+            int32_t sb = sine_i((uint32_t)pm_snap.bar_q16 << 18), sr = sine_i((uint32_t)pm_snap.bar_q16 << 16);
+            acc[R->head] = (int16_t)(acc[R->head] + ((sb * b->head[0] + sr * b->head[1]) >> 15));
+            accx[R->head] = (int16_t)(accx[R->head] + ((sb * b->x[0] + sr * b->x[1]) >> 15));
+            accy[R->head] = (int16_t)(accy[R->head] + ((sb * b->y[0] + sr * b->y[1]) >> 15));
             if (R->neck >= 0)
-                add[R->neck] = (int8_t)(-h / 2);
+                acc[R->neck] = (int16_t)(acc[R->neck] + ((sb * b->neck[0] + sr * b->neck[1]) >> 15));
+        }
+        for (k = 0; k < R->npart; k++) {
+            add[k] = (int8_t)clamp(acc[k], -127, 127);
+            addx[k] = (int8_t)clamp(accx[k], -127, 127);
+            addy[k] = (int8_t)clamp(accy[k], -127, 127);
         }
         /* the face: the expression's picture for each layer, then the layers that answer on their own: an ear
-         * flicks on the side that just struck, the nose scrunches at a big hit (a snare) */
-        e = pm_face(now, party, playing);
-        for (k = 0; k < PM_RIG_NLAYER; k++)
-            var[k] = R->expr[e % PM_RIG_NEXPR][k];
+         * flicks on the side that just played, the nose scrunches at a snare */
+        e = pm_face(now, party, playing) % PM_RIG_NEXPR;
+        {   /* the expression's own animation, on its own clock from when the face was put on: its key's picture
+             * for each layer, the ears turned (blended towards the next key) on top of what the body gives them */
+            const pm_rfkey_t *K = R->face[e].key, *k0, *k1;
+            uint32_t n = R->face[e].n, total = 0, t, i, f;
+            for (i = 0; i < n; i++)
+                total += K[i].ms;
+            t = (now - pu.face_t) % (total ? total : 1u);
+            for (i = 0; i + 1u < n && t >= K[i].ms; i++)
+                t -= K[i].ms;
+            k0 = &K[i];
+            k1 = &K[(i + 1u) % n];
+            f = k0->ms ? t * 256u / k0->ms : 0u;
+            f = (f * f * (768u - 2u * f)) >> 16;
+            for (k = 0; k < PM_RIG_NLAYER; k++)
+                var[k] = k0->var[k];
+            for (k = 0; k < 2u; k++)
+                if (R->layer[PM_RL_EAR_L + k] >= 0) {
+                    int32_t p = R->layer[PM_RL_EAR_L + k];
+                    add[p] = (int8_t)clamp(add[p] + k0->ear[k] + (((int8_t)(k1->ear[k] - k0->ear[k]) * (int32_t)f) >> 8), -127, 127);
+                }
+        }
         for (k = 0; k < 2u; k++)
             if (pu.strike[k] > 110u && e != PM_RF_SLEEPY)
                 var[PM_RL_EAR_L + k] = PM_RV_EAR_FLICK;
-        if (pu.s_hop >= 6)
+        if (pu.strike[2] > 110u)
             var[PM_RL_NOSE] = PM_RV_NOSE_SCRUNCH;
-        for (k = 0; k < 2u; k++)
-            pu.strike[k] = (uint8_t)(pu.strike[k] * 9u / 16u);
         if (hop > 0)
             pu.s_hop = (int8_t)(hop > 2 ? hop - 2 : 0);
-        /* a hit moves the whole pet: one with planted feet sinks into its knees (its feet stay), another hops */
-        pm_rig_tick(R, anim, var, now, ph, 120, planted ? PM_GROUND + pu.s_hop * 3 / 4 : PM_GROUND - pu.s_hop, PM_GROUND, add);
+        pm_rig_tick(R, anim, var, now, ph, 120, PM_GROUND + dip / 255, PM_GROUND, add, addx, addy);
         return;
     }
     if (party) {
@@ -749,6 +787,7 @@ static void pm_ui_frame(void)
             hop = hop > 4 ? hop : 4;
         } else if (i == PM_L_SNARE || i == PM_L_SNARE2 || i == PM_L_CLAP) {
             hop = 8;                              /* a snare: the big hop */
+            pu.rx_t[2] = now | 1u;
         } else if (i == PM_L_CHH || i == PM_L_OHH || i == PM_L_SHAKER || i == PM_L_RIDE) {
             if (pu.star_t0)                       /* a hat: one star twinkles */
                 pm_dirty(PM_STAR[pu.star_i][0] - 4, PM_STAR[pu.star_i][1] - 4, 9, 9);
@@ -798,7 +837,7 @@ static void pm_ui_frame(void)
         } else {
             pu.strike_i ^= 1u;
         }
-        pu.strike[pu.strike_i] = 255;
+        pu.rx_t[pu.strike_i] = now | 1u;
     }
     if (hop) {                                    /* a hit: down into its knees (the spring throws it back up) */
         pm_pet_dirty();

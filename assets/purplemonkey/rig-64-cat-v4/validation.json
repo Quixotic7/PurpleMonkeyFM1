@@ -1,0 +1,7 @@
+{
+  "updated_sprites": 4,
+  "other_sprite_pixels_unchanged": true,
+  "max_cell": 64,
+  "palette_colors": 30,
+  "attachment_change": "ear_l.at.y + 2"
+}

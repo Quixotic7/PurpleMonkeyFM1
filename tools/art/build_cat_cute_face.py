@@ -31,6 +31,9 @@ def build():
   for state,im in zip(states,raw):
    small=art.solid(im.resize((max(1,round(im.width*s)),max(1,round(im.height*s))),Image.Resampling.LANCZOS));xy=[round(w*cx-small.width/2),round(h*cy-small.height/2)];cv=Image.new('RGBA',(w,h));cv.paste(small,xy);variants[name+'_'+state]=cv;layer['registration'][state]={'source_cell':indices[states.index(state)],'offset':xy,'scale':s}
   p=next(p for p in rig['parts'] if p['name']==name);p.update(pivot=hp,at=hp);parts[name]=variants[name+'_'+layer['default']]
+ # Retain the original closed-eye ink for a clear blink; align its visible bounds.
+ oldblink=Image.open(OLD/'eyes_blink.png').convert('RGBA');oldblink=oldblink.crop(oldblink.getchannel('A').getbbox())
+ sm=fit(oldblink,(round(w*.57),round(h*.24)));cv=Image.new('RGBA',(w,h));cv.paste(sm,(round(w*.5-sm.width/2),round(h*.45-sm.height/2)));variants['eyes_blink']=cv
  # Left and right ears are separately drawn, never mirrored.
  rawears=[cells[i] for i in (1,2,3,4,6,7,8,9)];es=min(26/max(im.width for im in rawears),30/max(im.height for im in rawears))
  for side,indices in [('l',[1,3,6,8]),('r',[2,4,7,9])]:
@@ -44,6 +47,8 @@ def build():
  preserved=[p['name'] for p in rig['parts'] if p['name'] not in ('head_shape','eyes','nose','mouth','ear_l','ear_r')]
  rgb=np.concatenate([np.array(parts[n])[np.array(parts[n])[:,:,3]>0,:3] for n in preserved])
  colors=sorted(set(map(tuple,rgb.tolist())))
+ for c in [(255,190,70),(235,157,44),(250,171,160)]:
+  if c not in colors:colors.append(c)
  # Fill remaining slots with face colors selected from the generated revision.
  facepix=np.concatenate([np.array(im)[np.array(im)[:,:,3]>0,:3] for im in [head]+list(variants.values())])
  extra=Image.fromarray(facepix.reshape(1,-1,3)).quantize(max(1,31-len(colors)),method=Image.Quantize.MEDIANCUT).getpalette()

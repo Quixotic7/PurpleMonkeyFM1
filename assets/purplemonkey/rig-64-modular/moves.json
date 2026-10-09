@@ -419,6 +419,58 @@
      }
     }
    ]
+  },
+  "idle": {
+   "beats": 2,
+   "keys": [
+    {
+     "ms": 1200,
+     "root": [
+      0,
+      3
+     ],
+     "a": {
+      "head_shape": -2,
+      "lower_leg_near_l": -61,
+      "foot_near_l": 16,
+      "upper_leg_far_l": 35,
+      "lower_leg_far_l": -68,
+      "foot_far_l": 36,
+      "lower_leg_near_r": -48,
+      "upper_leg_near_r": 35,
+      "upper_leg_far_r": 26,
+      "lower_leg_far_r": -56,
+      "foot_far_r": 32,
+      "upper_leg_near_l": 48,
+      "foot_near_r": -10,
+      "body": -2,
+      "neck": 2
+     }
+    },
+    {
+     "ms": 1200,
+     "root": [
+      -1,
+      1
+     ],
+     "a": {
+      "lower_leg_near_l": -62,
+      "foot_near_l": 16,
+      "upper_leg_far_l": 38,
+      "lower_leg_far_l": -65,
+      "foot_far_l": 35,
+      "lower_leg_near_r": -3,
+      "upper_leg_near_r": 15,
+      "upper_leg_far_r": 9,
+      "lower_leg_far_r": -12,
+      "foot_far_r": 10,
+      "upper_leg_near_l": 53,
+      "foot_near_r": -31,
+      "body": -7,
+      "head_shape": 9
+     }
+    }
+   ]
   }
  },
  "cat": {
@@ -478,7 +530,8 @@
       "hand_l": -78,
       "upper_arm_r": -30,
       "forearm_r": 22,
-      "hand_r": 78
+      "hand_r": 78,
+      "ear_r": 61
      }
     },
     {
@@ -540,23 +593,262 @@
     {
      "ms": 1400,
      "root": [
-      0,
-      0
+      -1,
+      5
      ],
      "a": {
-      "head_shape": -2,
-      "tail": -4
+      "tail": -4,
+      "forearm_l": -79,
+      "forearm_r": 86,
+      "upper_arm_r": -57,
+      "upper_arm_l": 55,
+      "body": 4,
+      "hand_l": 47,
+      "hand_r": -20,
+      "head_shape": -4,
+      "ear_r": 92
+     },
+     "t": {
+      "xylophone": [
+       2,
+       36
+      ],
+      "head_shape": [
+       1,
+       0
+      ]
      }
     },
     {
      "ms": 1400,
      "root": [
-      0,
+      -2,
+      3
+     ],
+     "a": {
+      "tail": -4,
+      "forearm_l": -84,
+      "forearm_r": 70,
+      "upper_arm_r": -49,
+      "upper_arm_l": 59,
+      "hand_l": 53,
+      "head_shape": 7,
+      "body": -12,
+      "hand_r": -4,
+      "ear_r": 85
+     },
+     "t": {
+      "xylophone": [
+       2,
+       36
+      ],
+      "head_shape": [
+       1,
+       1
+      ]
+     }
+    },
+    {
+     "ms": 1400,
+     "root": [
+      -1,
+      5
+     ],
+     "a": {
+      "tail": -4,
+      "forearm_l": -79,
+      "forearm_r": 86,
+      "upper_arm_r": -57,
+      "upper_arm_l": 55,
+      "head_shape": -3,
+      "body": 4,
+      "hand_l": 47,
+      "hand_r": -20,
+      "ear_r": 87
+     },
+     "t": {
+      "xylophone": [
+       2,
+       36
+      ],
+      "head_shape": [
+       1,
+       0
+      ]
+     }
+    },
+    {
+     "ms": 550,
+     "root": [
+      -2,
+      3
+     ],
+     "a": {
+      "tail": -4,
+      "forearm_l": -84,
+      "forearm_r": 70,
+      "upper_arm_r": -49,
+      "upper_arm_l": 59,
+      "hand_l": 53,
+      "head_shape": 7,
+      "body": -12,
+      "hand_r": -4,
+      "ear_r": 83
+     },
+     "t": {
+      "xylophone": [
+       2,
+       36
+      ],
+      "head_shape": [
+       4,
+       1
+      ]
+     }
+    },
+    {
+     "ms": 420,
+     "root": [
+      -1,
       1
      ],
      "a": {
-      "head_shape": 2,
-      "tail": 4
+      "tail": -4,
+      "forearm_l": -54,
+      "forearm_r": -57,
+      "upper_arm_r": -116,
+      "upper_arm_l": 40,
+      "body": 4,
+      "hand_l": 37,
+      "ear_r": 87,
+      "head_shape": -21,
+      "hand_r": -24
+     },
+     "t": {
+      "xylophone": [
+       2,
+       36
+      ],
+      "head_shape": [
+       1,
+       -3
+      ]
+     }
+    },
+    {
+     "ms": 460,
+     "root": [
+      2,
+      2
+     ],
+     "a": {
+      "tail": -4,
+      "forearm_l": -53,
+      "forearm_r": -67,
+      "upper_arm_r": -106,
+      "upper_arm_l": 46,
+      "body": 4,
+      "hand_l": 25,
+      "ear_r": 87,
+      "hand_r": 16,
+      "head_shape": -3
+     },
+     "t": {
+      "xylophone": [
+       2,
+       36
+      ],
+      "head_shape": [
+       1,
+       0
+      ]
+     }
+    },
+    {
+     "ms": 420,
+     "root": [
+      -1,
+      1
+     ],
+     "a": {
+      "tail": -4,
+      "forearm_l": -54,
+      "forearm_r": -57,
+      "upper_arm_r": -116,
+      "upper_arm_l": 40,
+      "body": 4,
+      "hand_l": 37,
+      "ear_r": 87,
+      "head_shape": -21,
+      "hand_r": -24
+     },
+     "t": {
+      "xylophone": [
+       2,
+       36
+      ],
+      "head_shape": [
+       0,
+       -4
+      ]
+     }
+    },
+    {
+     "ms": 460,
+     "root": [
+      2,
+      2
+     ],
+     "a": {
+      "tail": -4,
+      "forearm_l": -53,
+      "forearm_r": -67,
+      "upper_arm_r": -106,
+      "upper_arm_l": 46,
+      "body": 4,
+      "hand_l": 25,
+      "ear_r": 87,
+      "hand_r": 16,
+      "head_shape": -3
+     },
+     "t": {
+      "xylophone": [
+       2,
+       36
+      ],
+      "head_shape": [
+       1,
+       0
+      ]
+     }
+    },
+    {
+     "ms": 610,
+     "root": [
+      -1,
+      3
+     ],
+     "a": {
+      "tail": -4,
+      "forearm_l": -51,
+      "forearm_r": -37,
+      "upper_arm_r": -38,
+      "upper_arm_l": 44,
+      "body": 4,
+      "ear_r": 87,
+      "head_shape": -3,
+      "hand_r": 15,
+      "hand_l": 23
+     },
+     "t": {
+      "xylophone": [
+       2,
+       36
+      ],
+      "head_shape": [
+       1,
+       0
+      ]
      }
     }
    ]
@@ -617,5 +909,102 @@
    "forearm_r",
    "hand_r"
   ]
+ },
+ "reactions": {
+  "cat": {
+   "note_l": {
+    "a": {
+     "forearm_l": -13,
+     "hand_l": -35,
+     "head_shape": 8
+    },
+    "dip": 4
+   },
+   "note_r": {
+    "a": {
+     "forearm_r": 13,
+     "hand_r": 35,
+     "head_shape": -8
+    },
+    "dip": 4
+   },
+   "snare": {
+    "a": {
+     "head_shape": -48,
+     "upper_arm_l": 42,
+     "upper_arm_r": -49,
+     "forearm_l": 33,
+     "forearm_r": -34,
+     "foot_r": -61
+    },
+    "dip": 10,
+    "t": {
+     "head_shape": [
+      -2,
+      3
+     ]
+    },
+    "fade": 410
+   },
+   "bob": {
+    "idle": {
+     "on": false,
+     "head": [
+      13,
+      8
+     ],
+     "neck": [
+      0,
+      0
+     ],
+     "x": [
+      0,
+      0
+     ],
+     "y": [
+      0,
+      0
+     ]
+    },
+    "play": {
+     "on": true,
+     "head": [
+      13,
+      8
+     ],
+     "neck": [
+      0,
+      0
+     ],
+     "x": [
+      0,
+      0
+     ],
+     "y": [
+      0,
+      0
+     ]
+    },
+    "dance": {
+     "on": true,
+     "head": [
+      13,
+      8
+     ],
+     "neck": [
+      0,
+      0
+     ],
+     "x": [
+      0,
+      0
+     ],
+     "y": [
+      0,
+      0
+     ]
+    }
+   }
+  }
  }
 }

@@ -1,2 +1,1 @@
-pm rigs: 4 (rig-64-modular/monkey, rig-64-modular/cat, rig-64-modular/dog, rig-64-modular/llama), 54156 B of part pixels + 23478 B of variants -> /Volumes/Q7Media-2025/Projects/Github/PurpleMonkeyFM1/PurpleMonkeyFM1/build/gen/pm_rig.h
-size: .text 284476 B, .ram_text 2888 B, .data 12032 B, .bss 27780 B; XIP 299396 B of 581564 (51.5%), RAM 39812 B of 98304 (40.5%), POOL 264300 B of 344064 (76.8%), NOINIT 216 B of 15696 (1.4%)
+size: .text 287780 B, .ram_text 2888 B, .data 12032 B, .bss 27796 B; XIP 302700 B of 581564 (52.0%), RAM 39828 B of 98304 (40.5%), POOL 264300 B of 344064 (76.8%), NOINIT 216 B of 15696 (1.4%)
