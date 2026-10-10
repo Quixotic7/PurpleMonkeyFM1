@@ -5,6 +5,7 @@
 "use strict";
 (() => {
   const { KEYMAP, BTN_ROLE, ENC_ROLE, CHORD, noteName } = globalThis.FM1;
+  const APP = globalThis.FM1.APP || {};   // another firmware's page (pm_keymap.js): its module, its store, its words
   const $ = (id) => document.getElementById(id);
   const NS = "http://www.w3.org/2000/svg";
   const C = { cream: "#F6F2EE", red: "#E63829", orange: "#F67918", yellow: "#F6B600", blue: "#2950CD", green: "#29B27B",
@@ -44,7 +45,7 @@
   rect([484, 162, 338, 124], 8, C.bed);
   rect([77, 243, 127, 36], 6, C.bed);
   rect([247, 59, 201, 201], 10, "#000");
-  text(150, 300, "CHORDS", 9, C.grey, svg, 900);
+  if (APP.block !== "") text(150, 300, APP.block || "CHORDS", 9, C.grey, svg, 900);
   const keyEl = [], btnEl = [], encEl = [];
   for (let k = 0; k < 27; k++) {
     const r = KEYR[k], cx = r[0] + 21, g = el("g", { "data-c": "k" + k });
@@ -246,7 +247,7 @@
 
   // ------------------------------------------------------------------------- the flash (IndexedDB) ---
   const db = () => new Promise((ok, no) => {
-    const r = indexedDB.open("choralroot-fm1", 1);
+    const r = indexedDB.open(APP.db || "choralroot-fm1", 1);
     r.onupgradeneeded = () => r.result.createObjectStore("kv");
     r.onsuccess = () => ok(r.result);
     r.onerror = () => no(r.error);
@@ -278,7 +279,7 @@
         x.send();
       })
     : fetch(url).then((r) => { if (!r.ok) throw new Error(url + ": " + r.status); return r.arrayBuffer(); });
-  const wasmP = getBytes("choralroot.wasm");
+  const wasmP = getBytes(APP.wasm || "choralroot.wasm");
 
   // before Start: the device boots here, silently, to show its screen (?demo: MAJ + D4 held, for screenshots)
   (async () => {
@@ -343,7 +344,7 @@
       $("gate").hidden = true;
       sentK = sentB = -1;
       publish();
-      status(m.version + " is running. Hold a chord key and press a root.");
+      status(m.version + " is running. " + (APP.running || "Hold a chord key and press a root."));
     } else if (m.type === "midi") midiOut(m.pkts);
     else if (m.type === "flash") flashSave(m.data);
     else if (m.type === "error") status("The emulator failed: " + m.message);

@@ -14,6 +14,12 @@
   src/                        not touched
 
   web/make_site.py build/choralroot.fwsc VERSION OUT_DIR [EMU_DIR]     (or build/choralroot-X.Y.fwsc X.Y)
+  web/make_site.py build/purplemonkey-X.Y.fwsc X.Y OUT_DIR [EMU_DIR]   PurpleMonkey's site: see below
+
+Which firmware's site it is follows from the package's file name. purplemonkey*.fwsc: the landing page is
+web/pm_site/**, the installer web/pm_index_pkg.html (PurpleMonkey's words; no Sounds, no restore offered), the
+emulator build/emu-web-pm/ (sh tools/emu/web/build_pm_web.sh), the package firmware/purplemonkey-VER.fwsc.
+Anything else is ChoralRoot's, as before.
 
 No web editor: Felucca's editor protocol is not in ChoralRoot, so webapp/editor/ is not written (an old one in
 OUT_DIR is left as it is). The package must be one made by tools/fm1pkg_make.py (Felucca's own loader, no
@@ -29,6 +35,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 SITE = HERE / "site"
+# per firmware: the landing page's folder, the installer's template, the emulator's build, the display name
+UNITS = {"choralroot": ("site", "index_pkg.html", "emu-web", "ChoralRoot"),
+         "purplemonkey": ("pm_site", "pm_index_pkg.html", "emu-web-pm", "PurpleMonkey")}
 BLOCKS, BLK, KEEP = 20, 0x30, 0x2F
 
 
@@ -70,8 +79,12 @@ def landing(out, index):
 
 
 def main(pkg, version, out, emu=None):
+    global SITE
     pkg, out = Path(pkg), Path(out)
-    emu = Path(emu or os.environ.get("EMU_DIR") or HERE.parent / "build" / "emu-web")
+    unit = "purplemonkey" if pkg.name.startswith("purplemonkey") else "choralroot"
+    site_dir, installer, emu_dir, title = UNITS[unit]
+    SITE = HERE / site_dir
+    emu = Path(emu or os.environ.get("EMU_DIR") or HERE.parent / "build" / emu_dir)
     raw = pkg.read_bytes()
     product = product_of(raw)
     if not re.fullmatch(r"FM-1_9\d\d", product):
@@ -79,22 +92,22 @@ def main(pkg, version, out, emu=None):
     if b"FELUCCA-LOADER-1" not in raw:              # Felucca loader marker: never publish a package with vendor files
         raise SystemExit(f"{pkg}: no Felucca loader in it; the site ships only fm1pkg_make.py packages "
                          "(a package patched from an official one carries vendor files)")
-    html = (HERE / "index_pkg.html").read_text(encoding="utf-8")
+    html = (HERE / installer).read_text(encoding="utf-8")
     lib = strip_module((HERE / "fm1pkg.js").read_text(encoding="utf-8")) + "\n" + \
         strip_module((HERE / "fm1ota.js").read_text(encoding="utf-8")) + "\n" + \
         strip_module((HERE / "fm1backup.js").read_text(encoding="utf-8")) + "\n" + \
         strip_module((HERE / "fm1sounds.js").read_text(encoding="utf-8"))
-    name = f"choralroot-{re.sub(r'[^A-Za-z0-9.-]', '-', version)}.fwsc"
+    name = f"{unit}-{re.sub(r'[^A-Za-z0-9.-]', '-', version)}.fwsc"
     meta = json.dumps({"version": version, "product": product, "pkg": "../../firmware/" + name})
     for mark in ("/*LIB*/", "/*META*/"):
         if html.count(mark) != 1:
-            raise SystemExit(f"index_pkg.html must contain {mark} once; update make_site.py")
+            raise SystemExit(f"{installer} must contain {mark} once; update make_site.py")
     index = fill({"VERSION": version, "PKG": name, "PKG_URL": "firmware/" + name, "PRODUCT": product})
     html = html.replace("/*LIB*/", lib).replace("/*META*/", meta)
     inst, fw = out / "webapp" / "installer", out / "firmware"
     for d in (inst, fw):
         d.mkdir(parents=True, exist_ok=True)
-    for old in [*fw.glob("choralroot-*.fwsc"), *fw.glob("felucca-*.fwsc")]:   # one package: the current one
+    for old in [*fw.glob("choralroot-*.fwsc"), *fw.glob("purplemonkey-*.fwsc"), *fw.glob("felucca-*.fwsc")]:   # one package: the current one
         old.unlink()
     (inst / "index.html").write_text(html, encoding="utf-8")
     shutil.copy(pkg, fw / name)
@@ -104,7 +117,7 @@ def main(pkg, version, out, emu=None):
     for n in names:
         shutil.copy(lic / n, fw / "LICENSES" / n)
     (fw / "LICENSES" / "index.html").write_text(    # the pages link this folder: Pages lists no folders
-        '<!doctype html><meta charset="utf-8"><title>ChoralRoot FM-1 licences</title><h1>Licence texts</h1><ul>'
+        f'<!doctype html><meta charset="utf-8"><title>{title} FM-1 licences</title><h1>Licence texts</h1><ul>'
         + "".join(f'<li><a href="{n}">{n}</a></li>' for n in names)
         + '</ul><p><a href="../LICENSING.md">LICENSING.md</a> · <a href="../LICENSE">LICENSE (GPL-3.0)</a></p>\n',
         encoding="utf-8")
@@ -120,7 +133,8 @@ def main(pkg, version, out, emu=None):
     else:
         emu_note = "no emu/"
         print(f"warning: {emu}/index.html missing: the site is made without the browser emulator (emu/), so the "
-              "landing page's 'Try it in the browser' link has no target; build it with sh tools/emu/web/build_web.sh",
+              "landing page's 'Try it in the browser' link has no target; build it with sh tools/emu/web/"
+              + ("build_pm_web.sh" if unit == "purplemonkey" else "build_web.sh"),
               file=sys.stderr)
     print(f"site: {out}: {', '.join(site)}; webapp/installer/index.html ({len(html)} B); "
           f"firmware/{name} ({len(raw)} B, {product}), firmware/LICENSE, firmware/LICENSING.md, "

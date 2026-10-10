@@ -93,9 +93,9 @@ export function classifyFirmware(identity, info) {
   if (/^felucca\b/i.test(v)) return { verdict: "refuse", kind: "felucca-beta", name: `a Felucca beta or a firmware based on one (${v})` };
   return { verdict: "refuse", kind: "unknown", name: v ? `an unknown firmware (${identity}, ${v})` : `an unknown Felucca-based firmware (${identity})` };
 }
-export function refusalText(name) {
+export function refusalText(name, what = "ChoralRoot") {   // what: the firmware this page installs
   return `Installing over ${name} is not supported: ${REFUSE_REASON} ` +
-    `Return to the official V15 firmware with the installer you used for ${name} first, then install ChoralRoot. ` +
+    `Return to the official V15 firmware with the installer you used for ${name} first, then install ${what}. ` +
     `If an FM-1 is already dark (black screen, a "WL82 UBOOT1.00" USB disk): ${RECOVERY_URL}`;
 }
 export const REFUSE_REASON = "An install over it has left an FM-1 that no longer starts, and the data it leaves in the flash is not known to be safe for ChoralRoot.";

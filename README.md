@@ -11,6 +11,12 @@ screen that moves with the music. No menus, nothing to save, nothing to break.
 
 ![screens](docs/img/pm_screens.png)
 
+## Try it in the browser
+
+<https://quixotic7.github.io/PurpleMonkeyFM1/> (the site, once a release is published): the same firmware compiled
+to WebAssembly under "Try it first", the browser installer, the manual. Releases, and how one is made:
+[BUILDING.md, "Releasing"](BUILDING.md#releasing); the notes are in [docs/releases/](docs/releases/).
+
 ## Try it (Mac, no FM-1 needed)
 
 ```

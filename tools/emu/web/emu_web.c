@@ -55,7 +55,11 @@ static int web_fflush(FILE *f) { return f == WEB_FLASH_F ? 0 : fflush(f); }
 #define fseek web_fseek
 #define fflush web_fflush
 
+#ifdef EMU_PM
+#include "../pm_emu_fw.c"                          /* PurpleMonkey's firmware side (build_pm_web.sh) */
+#else
 #include "../emu_fw.c"
+#endif
 
 #undef fopen
 #undef fread

@@ -82,5 +82,51 @@ The build prints a size line and fails if RAM or POOL overflows. **It installs n
 deliberate step with `tools/fm1_install.py` or the web installer, and for PurpleMonkey it has open points: read
 [docs/PURPLEMONKEY.md](docs/PURPLEMONKEY.md#install-rollback-for-later-nothing-has-been-installed) first.
 
+## The browser emulator and the site
+
+```
+sh tools/emu/web/build_pm_web.sh          # -> build/emu-web-pm/ (needs the Emscripten SDK, ~/emsdk)
+node tools/emu/web/test_pm_web_emu.mjs    # boots it headless: draws, plays, talks, changes pet
+python3 web/make_site.py build/purplemonkey-X.Y.fwsc X.Y build/site
+python3 -m http.server 8765 --directory build/site      # then http://localhost:8765/
+```
+
+`build_pm_web.sh` is ChoralRoot's `build_web.sh` with PurpleMonkey's firmware side (`emu_web.c -DEMU_PM`) and page
+(`pm_index.html`, `pm_keymap.js`; `emu.js` and `worklet.js` are shared). `web/make_site.py` makes PurpleMonkey's
+site when the package is named `purplemonkey*.fwsc`: the landing page `web/pm_site/`, the installer
+`web/pm_index_pkg.html` (ChoralRoot's with PurpleMonkey's words: no Sounds, and no restore offered after an install,
+because PurpleMonkey stores nothing), the emulator as `emu/`. The landing page's screens are the emulator's own
+(`web/pm_site/img/`).
+
+## Releasing
+
+A release is a tag `vX.Y`; GitHub Actions builds it and publishes the site.
+
+1. Write the notes: `docs/releases/X.Y.md` (they head the GitHub release's text).
+2. Check locally: `sh tests/run_pm_tests.sh`, `./build.sh --release X.Y` (it makes `build/release-X.Y/`), the site
+   as above.
+3. A dry run on GitHub, the first time and after changing a workflow: Actions → release → Run workflow, with the
+   version. It runs the host tests and the build and keeps the package as a workflow artifact; nothing is released.
+4. Tag the commit on `main` and push the tag:
+
+   ```
+   git tag vX.Y && git push origin vX.Y
+   ```
+
+   `.github/workflows/release.yml` runs the host tests, builds the package on ubuntu (the JieLi toolchain runs
+   natively there, fetched with `tools/get_toolchain.sh` and cached; the three SDK files are `tools/sdk/`), creates
+   the GitHub release `vX.Y` (a pre-release for 0.x and for `X.Y-suffix`) and attaches `purplemonkey-X.Y.fwsc`,
+   `purplemonkey-X.Y-app.bin`, `SHA256SUMS`, `LICENSE`, `LICENSING.md` and `LICENSES.zip`.
+5. Then it starts `.github/workflows/pages.yml`, which downloads `purplemonkey-X.Y.fwsc` from the release, builds
+   the browser emulator, runs `web/make_site.py` and deploys the site to
+   <https://quixotic7.github.io/PurpleMonkeyFM1/>. A release published by hand starts it too. Versions with a
+   suffix (`0.11-rc1`) leave the site as it is.
+
+Once, before the first release: Settings → Pages → Build and deployment → Source: **GitHub Actions**.
+
+When CI cannot fetch the toolchain (pkgman.jieliapp.com): build locally with `./build.sh --release X.Y`, create the
+release `vX.Y` on GitHub by hand and upload every file of `build/release-X.Y/` (zip `LICENSES/` as `LICENSES.zip`),
+publish it, and the site follows; or run pages.yml from the Actions tab (Run workflow, version `X.Y`).
+
 Build options are fixed in `firmware/src/purplemonkey.c` (no flash stores, no console; USB audio recording and TRS MIDI in are on;
 `FM6_POLY 8`). `FELUCCA_SIZE=0` builds everything at `-Os` as upstream.
