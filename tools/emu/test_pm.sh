@@ -101,7 +101,7 @@ echo "random playing for 60 s, then hands off (pm_mash.txt)"
 run mash "$OUT/pm_mash.txt"
 quiet mash
 cpu mash 70 "$OUT/pm_mash.txt"
-grep 'pm: mode' "$OUT/mash.log" | tail -1 | grep -q 'speed 0 busy 2 bounce 0 squish 0 bright 0 length 0' \
+grep 'pm: mode' "$OUT/mash.log" | tail -1 | grep -q 'speed 0 busy 2 bounce 0 squish 0 sound \(0\|4\|8\|12\) tone 0 wobble 0 space 0 length 0 world [0-5]' \
     && ok "HOME: every knob back at its familiar setting" || bad "HOME left a knob turned"
 
 echo "the heaviest load (pm_load.txt): FM6 voices at their cap with the phrase, the busiest beat, 13 drum keys repeating"

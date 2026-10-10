@@ -50,7 +50,9 @@ static void t_drum(void *ud, uint8_t lane, int8_t semi, uint8_t vel, uint8_t src
             step_hits_max = step_hits;
     }
 }
-static const pm_out_t OUT = {t_on, t_off, t_drum};
+static uint32_t n_say; static uint8_t last_said;
+static void t_say(void *ud, uint8_t word) { (void)ud; n_say++; last_said = word; }
+static const pm_out_t OUT = {t_on, t_off, t_drum, t_say};
 static pm_t pm;
 
 static void reset(void)
@@ -135,9 +137,9 @@ static void test_phrase(void)
     uint32_t a;
     printf("synth: held keys grow a phrase\n");
     reset();
-    pm_key(&pm, 7, 1);                           /* one key: no phrase however long */
+    pm_key(&pm, 7, 1);                           /* one key: no phrase however long; the echo sings it back once */
     run_ms(3000);
-    CHECK(n_on == 1u, "a single held key played %u notes", n_on);
+    CHECK(n_on == 2u, "a single held key played %u notes (the note and its echo a bar later)", n_on);
     pm_key(&pm, 11, 1);
     pm_key(&pm, 14, 1);
     a = n_on;
@@ -150,8 +152,10 @@ static void test_phrase(void)
     CHECK(nsounding() >= 5u && nsounding() <= 6u, "%u notes on: three keys, the bass, one or two phrase notes", nsounding());
     pm_set_beat(&pm, 1);
     a = n_on;
-    run_ms(4000);                                /* beat on: eighths, about 14 */
-    CHECK(n_on - a >= 12u && n_on - a <= 15u, "the phrase played %u notes in 4 s with the beat", n_on - a);
+    run_ms(4000);                                /* beat on: a motif of 5 .. 7 eighths a bar, the song's bass twice a bar */
+    CHECK(n_on - a >= 10u && n_on - a <= 18u, "the phrase played %u notes in 4 s with the beat", n_on - a);
+    CHECK(sounding[36u + pm_chord_root(&pm)] || nsounding() <= 5u, "the song's bass is not the bar's chord root");
+    pm_set_beat(&pm, 0);
     pm_key(&pm, 7, 0);
     pm_key(&pm, 11, 0);
     a = n_on;
@@ -161,6 +165,138 @@ static void test_phrase(void)
     pm_key(&pm, 14, 0);
     run_ms(700);
     CHECK(nsounding() == 0, "a note left after the phrase");
+}
+
+static void test_song(void)
+{
+    uint32_t a, roots = 0, i;
+    printf("synth: the echo sings a bar back; the song's bass under the beat; SOUND is the pet's own at HOME\n");
+    reset();
+    pm_key(&pm, 3, 1);                           /* two taps a beat apart .. */
+    run_ms(80);
+    pm_key(&pm, 3, 0);
+    run_ms(500);
+    pm_key(&pm, 9, 1);
+    run_ms(80);
+    pm_key(&pm, 9, 0);
+    a = n_on;
+    run_ms(1400);                                /* .. nothing for the rest of the bar */
+    CHECK(n_on == a, "something played before the echo was due (%u notes)", n_on - a);
+    run_ms(1600);                                /* a bar (2308 ms at 104 BPM) after each tap: its echo */
+    CHECK(n_on - a == 2u, "the echo played %u notes for two taps", n_on - a);
+    run_ms(4000);
+    CHECK(n_on - a == 2u, "the echo went on: %u notes (it is sung back once)", n_on - a);
+    CHECK(nsounding() == 0, "an echo note left on");
+    pm_set_beat(&pm, 1);                         /* the song: a bass note on beats 1 and 3, the chord going round */
+    for (i = 0; i < 8u; i++) {                   /* eight half bars */
+        run_ms(100);
+        if (sounding[36u + pm_chord_root(&pm)])
+            roots++;
+        run_ms(1054);
+    }
+    CHECK(roots >= 7u, "the song's bass was on its root in %u of 8 half bars", roots);
+    CHECK(pm.bar >= 3u, "the bars did not go round (%u)", pm.bar);
+    pm_set_beat(&pm, 0);
+    run_ms(200);
+    CHECK(nsounding() == 0, "the song's bass outlived the beat");
+    pm_set_knob(&pm, PM_K_WORLD, 3);
+    for (i = 0; i < PM_NPET; i++) {
+        int8_t w0 = pm.knob[PM_K_WORLD];
+        pm_set_pet(&pm, i);
+        CHECK(pm.knob[PM_K_SOUND] == (int8_t)pm_preset_home(i), "pet %u: SOUND %d, not its own %u", i, pm.knob[PM_K_SOUND], pm_preset_home(i));
+        CHECK(pm.knob[PM_K_WORLD] == w0, "pet %u changed the world to %d", i, pm.knob[PM_K_WORLD]);
+        pm_set_knob(&pm, PM_K_SOUND, PM_NPRESET);          /* round and round */
+        CHECK(pm.knob[PM_K_SOUND] == 0, "SOUND past the bank: %d, not round to 0", pm.knob[PM_K_SOUND]);
+        pm_set_knob(&pm, PM_K_SOUND, -1);
+        CHECK(pm.knob[PM_K_SOUND] == PM_NPRESET - 1, "SOUND before the bank: %d, not round to the last", pm.knob[PM_K_SOUND]);
+        pm_set_knob(&pm, PM_K_WORLD, PM_NWORLD + 1);
+        CHECK(pm.knob[PM_K_WORLD] == 1, "WORLD past the last: %d", pm.knob[PM_K_WORLD]);
+        pm_set_knob(&pm, PM_K_WORLD, 3);
+        pm_home(&pm);
+        CHECK(pm.knob[PM_K_SOUND] == (int8_t)pm_preset_home(i), "pet %u: HOME did not bring its own sound back", i);
+        CHECK(pm.knob[PM_K_WORLD] == 3, "HOME changed the world to %d", pm.knob[PM_K_WORLD]);
+    }
+}
+
+static void test_tune_and_runs(void)
+{
+    uint32_t a, i, n0;
+    const pm_tune_t *t;
+    printf("synth: TUNE plays the pet's nursery tune a note a press; a mash runs up the scale\n");
+    reset();
+    pm_set_style(&pm, PM_ST_TUNE);
+    t = pm_tune(&pm);
+    a = n_on;
+    for (i = 0; i < 7u; i++) {                   /* seven presses of one key: the first seven notes of the tune */
+        pm_key(&pm, 5, 1);
+        run_ms(60);
+        pm_key(&pm, 5, 0);
+        run_ms(200);
+        CHECK(n_on - a == i + 1u, "press %u of one key played %u notes", i + 1u, n_on - a);
+        CHECK(nsounding() <= 1u, "%u tune notes on at once", nsounding());
+    }
+    CHECK(pm.song_note == 0 || pm.song_note == t->note[6].note, "the seventh note is %u, the tune's is %u", pm.song_note, t->note[6].note);
+    run_ms(3000);
+    CHECK(n_on - a == 7u, "the echo or a phrase played in TUNE (%u notes)", n_on - a);
+    CHECK(nsounding() == 0, "a tune note left on");
+    n0 = n_on;
+    pm_key(&pm, 20, 1);                          /* a high key: the next note an octave up */
+    run_ms(50);
+    CHECK(pm.song_note == t->note[7].note + 12u, "a high key played %u, not the tune's note an octave up", pm.song_note);
+    pm_key(&pm, 20, 0);
+    for (i = 8; i < (uint32_t)t->n + 2u; i++) {   /* to the end and over: the tune comes round */
+        pm_key(&pm, 3, 1);
+        run_ms(40);
+        pm_key(&pm, 3, 0);
+        run_ms(40);
+    }
+    CHECK(pm.tune_i == 0u && pm.tune_pos == 2u, "after the tune's end: tune %u at %u", pm.tune_i, pm.tune_pos);
+    CHECK(n_on - n0 == (uint32_t)t->n - 7u + 2u, "%u notes for the rest of the tune and two round again", n_on - n0);
+    pm_set_style(&pm, PM_ST_TUNE);               /* TUNE again: the next of the three tunes here, from its start */
+    CHECK(pm.tune_i == 1u && pm.tune_pos == 0u && pm_tune(&pm) != t, "TUNE again: tune %u at %u", pm.tune_i, pm.tune_pos);
+    pm_set_style(&pm, PM_ST_TUNE);
+    pm_set_style(&pm, PM_ST_TUNE);
+    CHECK(pm.tune_i == 0u, "three TUNEs did not come round (%u)", pm.tune_i);
+    pm_set_knob(&pm, PM_K_WORLD, 2);              /* another world: other tunes */
+    CHECK(pm_tune(&pm) != t && pm_tune_of(PM_CAT, 2, 0) != pm_tune_of(PM_CAT, 0, 0), "the world did not change the tunes");
+    {   /* a held key: the tune plays on by itself, at the tempo */
+        const pm_tune_t *u = pm_tune(&pm);
+        uint32_t m0 = n_on, steps = 0;
+        for (i = 0; i < 8u; i++)
+            steps += u->note[i].len;
+        pm_key(&pm, 4, 1);
+        run_ms(steps * 144u + 100u);             /* eight notes' worth at 104 BPM (a sixteenth = 144 ms) */
+        CHECK(n_on - m0 >= 8u && n_on - m0 <= 10u, "a held key played %u tune notes in eight notes' time", n_on - m0);
+        pm_key(&pm, 4, 0);
+        run_ms(1500);
+        CHECK(nsounding() == 0, "the tune went on after the key was let go");
+    }
+    pm_set_knob(&pm, PM_K_WORLD, 0);
+    pm_set_style(&pm, PM_ST_KEYS);
+    run_ms(500);
+    CHECK(nsounding() == 0, "a note left after leaving TUNE");
+    a = n_on;                                    /* a mash: three keys within a quarter second, then a run of PM_RUN_N */
+    pm_key(&pm, 2, 1); run_ms(50); pm_key(&pm, 2, 0);
+    pm_key(&pm, 5, 1); run_ms(50); pm_key(&pm, 5, 0);
+    pm_key(&pm, 9, 1); run_ms(50); pm_key(&pm, 9, 0);
+    CHECK(pm.run_left >= PM_RUN_N - 1u && pm.run_dir == 1, "no run after a rising mash (left %u dir %d)", pm.run_left, pm.run_dir);
+    run_ms(1200);
+    CHECK(n_on - a == 3u + PM_RUN_N, "the mash and its run played %u notes (3 + %u expected)", n_on - a, PM_RUN_N);
+    CHECK(pm.run_left == 0, "the run did not end");
+    pm_key(&pm, 9, 1); run_ms(50); pm_key(&pm, 9, 0);
+    pm_key(&pm, 5, 1); run_ms(50); pm_key(&pm, 5, 0);
+    pm_key(&pm, 2, 1); run_ms(50); pm_key(&pm, 2, 0);
+    CHECK(pm.run_left == 0, "a second run within the bar");
+    run_ms(4000);
+    CHECK(nsounding() == 0, "a note left after the runs");
+    pm_set_style(&pm, PM_ST_TALK);
+    a = n_on;
+    pm_key(&pm, 7, 1); run_ms(100); pm_key(&pm, 7, 0);
+    CHECK(n_on == a, "TALK played a note");
+    CHECK(n_say == 1u && last_said == 7u, "TALK said %u words, the last %u (one, H, expected)", n_say, last_said);
+    pm_key(&pm, 26, 1); run_ms(100); pm_key(&pm, 26, 0);
+    CHECK(last_said == 26u, "the 27th key said %u, not yay", last_said);
+    pm_set_style(&pm, PM_ST_KEYS);
 }
 
 static void test_drum_keys(void)
@@ -279,9 +415,9 @@ static void test_knobs(void)
     reset();
     for (i = 0; i < PM_NKNOB; i++) {
         pm_set_knob(&pm, i, 1000);
-        CHECK(pm.knob[i] == PM_KNOB[i].max, "knob %u: %d above its range", i, pm.knob[i]);
+        CHECK(PM_KNOB[i].wrap ? pm.knob[i] >= PM_KNOB[i].min && pm.knob[i] <= PM_KNOB[i].max : pm.knob[i] == PM_KNOB[i].max, "knob %u: %d above its range", i, pm.knob[i]);
         pm_set_knob(&pm, i, -1000);
-        CHECK(pm.knob[i] == PM_KNOB[i].min, "knob %u: %d below its range", i, pm.knob[i]);
+        CHECK(PM_KNOB[i].wrap ? pm.knob[i] >= PM_KNOB[i].min && pm.knob[i] <= PM_KNOB[i].max : pm.knob[i] == PM_KNOB[i].min, "knob %u: %d below its range", i, pm.knob[i]);
         CHECK(PM_KNOB[i].def >= PM_KNOB[i].min && PM_KNOB[i].def <= PM_KNOB[i].max, "knob %u: default outside", i);
     }
     CHECK(pm_bpm(&pm) == 72u, "the slowest tempo is %u", pm_bpm(&pm));
@@ -306,7 +442,7 @@ static void test_knobs(void)
     }
     pm_home(&pm);
     for (i = 0; i < PM_NKNOB; i++)
-        CHECK(pm.knob[i] == PM_KNOB[i].def, "HOME left knob %u at %d", i, pm.knob[i]);
+        CHECK(i == PM_K_WORLD || pm.knob[i] == pm_knob_def(i, pm.pet), "HOME left knob %u at %d", i, pm.knob[i]);
     CHECK(pm.beat == 1 && pm.mode == PM_DRUMS, "HOME changed the beat or the mode");
 }
 
@@ -446,6 +582,8 @@ int main(void)
     test_synth_keys();
     test_synth_bounds();
     test_phrase();
+    test_song();
+    test_tune_and_runs();
     test_drum_keys();
     test_beat();
     test_knobs();

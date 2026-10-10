@@ -18,10 +18,14 @@ build/host/pm_emu --front       # the emulator in a window, with sound
 
 | Header | Generator | From |
 | --- | --- | --- |
-| `pm_fm6.h` | `tools/gen_pm_patches.py` | the four FM6 voices, written there as operator settings |
+| `pm_fm6.h` | `tools/gen_pm_patches.py` | the bank of 16 FM6 voices (four a pet), each with its MORPH recipe and its world, written there as operator settings |
 | `pm_drumkits.h` | `tools/gen_drumkits.py --kits VINTAGE,LATIN,808,JAZZ` | SLOOP's kits, four of its 32 |
 | `pm_sprites.h` | `tools/gen_pm_sprites.py` | `assets/purplemonkey/concept/band-friends-midnight-v3.png`; also writes the review sheet `docs/img/pm_sprites.png` |
 | `pm_rig.h` | `tools/gen_pm_rig.py` | the pets' rigs: monkey, dog and llama from `assets/purplemonkey/rig-64-modular/`, the cat from `assets/purplemonkey/rig-64-cat-v4/` (the cute face-only revision; its choreography is still `rig-64-modular/moves.json`). Remade when a PNG or JSON in those folders (or `rig/`, `rig-64/`) is newer than the header |
+
+The voice's words are not made by `tools/gen.sh`: `firmware/src/pm_speech_data.h` is in the tree, made by
+`python3 tools/gen_pm_speech.py` (macOS `say`, or `--src DIR` for your own recordings; numpy). Run it again after
+changing the words or the voice, then `sh tests/run_pm_tests.sh` and listen to `build/host/pm_speech.wav`.
 
 `tools/emu/test_pm.sh` writes its logs, WAVs and screenshots to `build/emu/pm/` (overwritten each run).
 `tools/pm_contact.py OUT.png SHOT.ppm ...` makes a contact sheet of screenshots.

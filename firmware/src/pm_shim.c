@@ -49,7 +49,7 @@ static void persist_boot(void)         /* as cr_shim.c's, without the stores */
 static void pm_splash(void)
 {
     palette_set(PM_PALETTE);
-    lcd_fill(0, 0, 240, 240, PM_WORLD[PM_CAT][0]);
+    lcd_fill(0, 0, 240, 240, PM_WORLDS[pm_world_home(PM_CAT)].top);   /* the Cat's own world: its sky */
     draw_text_box(0, 100, 240, &AF_M, "PURPLEMONKEY", PM_C_CREAM, 1);
     draw_text_box(0, 130, 240, &AF_S, FELUCCA_VERSION, PM_C_STAR, 1);
 }

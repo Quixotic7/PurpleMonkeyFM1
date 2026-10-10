@@ -114,7 +114,7 @@ def generate():
             [tools / "gen_fm6_patches.py", GEN / "felucca_fm6.h"],
             [tools / "gen_cz1_factory.py", GEN / "melodee_cz1.h"],   # CZ-1: Casio's 64 tones (Melodee's)
             [tools / "gen_samples.py", GEN / "felucca_samples.h"],
-            # PurpleMonkey's: SLOOP's synthesised kits (a curated few), the pets' FM6 voices, the pets' sprites
+            # PurpleMonkey's: SLOOP's synthesised kits (a curated few), the bank of FM6 voices, the pets' sprites
             [tools / "gen_drumkits.py", GEN / "pm_drumkits.h", "--kits", "VINTAGE,LATIN,808,JAZZ"],
             [tools / "gen_pm_patches.py", GEN / "pm_fm6.h"],
             [tools / "gen_pm_sprites.py", GEN / "pm_sprites.h", "--names-only"],

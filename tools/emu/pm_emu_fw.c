@@ -227,9 +227,9 @@ void emu_fw_dump(void)
     for (c = 0; c < FM1_NCOL; c++)
         printf(" %02X/%02X", fm1_led[c], fm1_led_dim[c]);
     printf("  (lit/dim per column)\n");
-    printf("  pm: mode %s pet %s beat %u step %u bpm %u knobs speed %d busy %d bounce %d squish %d bright %d length %d\n",
+    printf("  pm: mode %s pet %s beat %u step %u bpm %u style %u knobs speed %d busy %d bounce %d squish %d sound %d tone %d wobble %d space %d length %d world %d\n",
            pm.mode == PM_DRUMS ? "drums" : "synth", PET[pm.pet % PM_NPET], (unsigned)pm.beat, (unsigned)pm.step,
-           (unsigned)pm_bpm(&pm), pm.knob[0], pm.knob[1], pm.knob[2], pm.knob[3], pm.knob[4], pm.knob[5]);
+           (unsigned)pm_bpm(&pm), (unsigned)pm.style, pm.knob[0], pm.knob[1], pm.knob[2], pm.knob[3], pm.knob[4], pm.knob[5], pm.knob[6], pm.knob[7], pm.knob[8], pm.knob[9]);
     {
         uint32_t i, sv = 0, dv = 0;
         for (i = 0; i < NVOICE; i++)

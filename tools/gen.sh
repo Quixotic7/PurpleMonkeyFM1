@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # The generated headers of a host build (build/gen), made when missing or older than what makes them:
 #   Felucca's / ChoralRoot's (fonts, palettes, tables, FM6 patches ..): tools/build.py's generate step
-#   PurpleMonkey's: pm_drumkits.h (SLOOP's kits, a curated few), pm_fm6.h (the pets' FM6 voices), pm_sprites.h
+#   PurpleMonkey's: pm_drumkits.h (SLOOP's kits, a curated few), pm_fm6.h (the bank of FM6 voices), pm_sprites.h
 #   (the pets cut out of the approved concept sheet; also docs/img/pm_sprites.png, the review sheet)
 # No device toolchain, no Docker and no SDK needed.
 set -e

@@ -7,7 +7,7 @@ screen that moves with the music. No menus, nothing to save, nothing to break.
 > **Status: an emulator-verified first slice. It has never been installed on an FM-1.**
 > Do not install the built package without reading
 > [docs/PURPLEMONKEY.md, "Install, rollback"](docs/PURPLEMONKEY.md#install-rollback-for-later-nothing-has-been-installed).
-> The sounds were tuned by measurement, not yet by ear, and there is no speech. Update mode is OCT- + OCT+ + HOME held 5 s.
+> The sounds were tuned by measurement, not yet by ear; the voice (TALK) is LPC speech analysed from a macOS system voice, to be replaced by your own recordings before a release. Update mode is OCT- + OCT+ + HOME held 5 s.
 
 ![screens](docs/img/pm_screens.png)
 
@@ -28,7 +28,7 @@ build/host/pm_emu --front
 | `-` | PLAY | BEAT on / off |
 | `7` | HOME | knobs back to normal |
 | Page Up / Page Down, then Up / Down | select a knob of SELECT, KNOB 1..4; turn it | PET, SPEED, BUSY, BOUNCE, SQUISH |
-| mouse wheel over a knob | any knob, PRESETS and ALGORITHM too | BRIGHT, LENGTH |
+| mouse wheel over a knob | any knob, PRESETS and ALGORITHM too | SOUND, WORLD |
 
 Every key and button can also be clicked. `build/host/pm_emu --help` has the full map and options
 (`tools/emu/README.md` describes the emulator; it is ChoralRoot's, with PurpleMonkey's firmware in it).

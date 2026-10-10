@@ -16,16 +16,19 @@ with a host HAL) and by a device build that was compiled, linked and packaged bu
 | FX | DRUMS | lit in DRUMS, a glow otherwise |
 | SEL | SYNTH | lit in SYNTH, a glow otherwise |
 | PLAY | BEAT: the backing pattern on / off | orange LED lit while it plays, the green one on each beat |
-| HOME | every knob back to its familiar setting | pet, mode and beat stay |
+| HOME | every knob but WORLD back to its familiar setting | pet, mode, beat and world stay |
 | SELECT | PET: Monkey, Cat, Dog, Llama, round and round | its name shows for a second |
-| PRESETS | BRIGHT | the synth's brightness, 17 steps |
-| ALGORITHM | LENGTH | the synth's decay and release, 17 steps |
-| KNOB 1 | SPEED | 72 .. 136 BPM, 104 at HOME |
-| KNOB 2 | BUSY | 7 levels of the pattern |
-| KNOB 3 | BOUNCE | straight .. a 2 : 1 shuffle |
-| KNOB 4 | SQUISH | the drums: woody and short .. round and rubbery |
+| ENV | KEYS | the keys play the scale (the echo, blooms, runs): lit when so |
+| LFO | TUNE | any key plays the next note of a nursery tune; lit when so. Pressed again: the next of the three tunes the pet has in this world |
+| PRESETS | SOUND | the synth's sound: a bank of 16, four a pet (the pet's own first), round and round; its name shows; HOME and a pet change go to the pet's own |
+| ALGORITHM | WORLD | the environment: night, sea, balloons, space, meadow, snow, round and round; neither HOME nor a pet change touches it |
+| KNOB 1 | SPEED in DRUMS and TUNE, TONE in SYNTH keys | 72 .. 136 BPM, 104 at HOME; the sound's own morph (soft .. bright, dry .. wide ..), 17 steps |
+| KNOB 2 | BUSY in DRUMS, WOBBLE in SYNTH | 7 levels of the pattern; vibrato, none .. a lot |
+| KNOB 3 | BOUNCE in DRUMS, SPACE in SYNTH | straight .. a 2 : 1 shuffle; dry .. reverb and delay |
+| KNOB 4 | SQUISH in DRUMS, LENGTH in SYNTH | the drums: woody and short .. round and rubbery; the notes' decay and release |
 | MASTER | volume | |
-| ENV LFO EDIT GLO SAVE ARP SEQ REC OCT- OCT+ | nothing | dark |
+| EDIT | TALK | a key says its letter (A .. Z, the 27th "yay") in a synthesized voice and shows it big; lit when so |
+| GLO SAVE ARP SEQ REC OCT- OCT+ | nothing | dark |
 | OCT- + OCT+ + HOME held 5 s | the platform's update mode | three buttons, not upstream's two; a countdown shows from 2 s, letting go cancels |
 | a MIDI keyboard on USB or the TRS jack | plays the pet's synth voice chromatically; channel 10 plays its kit (GM map) | changes nothing else; CC 120 / 123 let go |
 | USB audio to a computer | records the master (channels 1-2) and the synth alone (3-4) | upstream's recording device, still named "ChoralRoot In" |
@@ -33,12 +36,52 @@ with a host HAL) and by a device build that was compiled, linked and packaged bu
 It powers on as the Cat in SYNTH with the beat stopped. There is no menu, nothing to save, nothing to erase.
 
 **SYNTH.** The white keys climb C major pentatonic from C3 to C6 (16 notes, three octaves); a black key plays the
-note of the white key on its left. A press is a note at once. At most five notes sound from held keys (a sixth
-releases the oldest; its key stays lit); each further note is a little softer. Two or more keys held for half a second
-bloom: the lowest held note sounds an octave down under the rest (an open voicing; it stays until the keys go and
-does not chase the fingers), and a phrase walks up and down the held notes an octave above them: short eighths while
-the beat plays; without it, long soft quarter notes that overlap, a texture more than a tune. Letting go ends it.
-Five keys, the bass and two phrase notes are the eight FM6 voices.
+note of the white key on its left. A press is a note at once, and the pet sings it back: a bar later, softly, on
+the step it was played on (the echo; once), so random tapping comes round as a phrase. Two or more keys held for
+half a second bloom. With the beat on, the bloom is a motif a bar long in eighths over the held notes and the
+octave above them (four shapes, one a bar, each ending on the lowest held note). Without the beat, the lowest held
+note sounds an octave down under the rest (an open voicing; it stays until the keys go and does not chase the
+fingers) and long soft quarter notes walk up and down the held notes an octave up, overlapping: a texture more than
+a tune. Letting go ends it. At most five notes sound from held keys (a sixth releases the oldest; its key stays
+lit); each further note is a little softer. Five keys, the bass and two phrase notes are the eight FM6 voices.
+
+**SONG.** With the beat on, a chord a bar goes round, four bars long and the pet's own (Monkey I IV I V, Cat I vi
+IV V, Dog I V vi IV, Llama I IV vi IV in C), and a bass note plays the chord's root on beats 1 and 3 (C2 .. A2).
+Every note of the pentatonic scale fits every one of those chords, so whatever bar a key lands in, it belongs.
+
+**TALK (EDIT).** Each key says the name of its letter, A to Z from the lowest key up, the 27th says "yay"; the
+letter shows big for a moment and the pet mouths it. The voice is linear predictive speech, the way the talking
+toys of 1978 spoke: each word was said once and analysed by `tools/gen_pm_speech.py` into a frame of numbers every
+12.5 ms (how loud, the pitch or "no pitch: a hiss", ten reflection coefficients for the shape of the mouth), and
+`pm_speech.c` plays the frames back at 8 kHz: a chirp once a pitch period (or noise) through a ten-stage lattice
+filter, the numbers moving in straight lines between frames, the pitch in 31 steps. That is where the sound of
+those toys comes from: the buzz, the stepped pitch, nothing above 4 kHz. The 33 words (the 26 letters, YAY,
+MONKEY, CAT, DOG, LLAMA, HELLO, BYE) are 6.7 KB in `firmware/src/pm_speech_data.h`; the voice costs about a tenth
+of an FM voice and goes into the mix dry (no reverb: a word in a room is harder to make out). The toys' frames
+were 25 ms; at half that the consonants of a short word stay apart from its vowels, and the words are spoken
+slower than the letters (`--word-rate`). The same voice says the pet's name when a pet is chosen (a quarter
+second after the turning stops) and at power-on. A new word is a line in the tool's `WORDS`; `--pitch`, `--bend`
+(how much of the spoken rise and fall is kept) and `--preemph` (brightness) change the voice; `--src DIR` takes
+your own recordings instead. `tests/pm_speech_test.c` renders every word on the host to `build/host/pm_speech.wav`
+(bounded, ending in silence, no step when one word cuts another, any bits at all a word that ends).
+
+**Where the spoken words came from, and what that means.** The header in the tree was analysed from macOS's
+`say` (the voice Reed, US English; the letters at 150 words a minute, the words at 80), because no recordings exist yet. What ships is the analysis (pitch, loudness
+and filter numbers), not Apple's audio, but Apple's licence for its system voices has limits on use, and nobody
+has checked that a release may carry numbers derived from one. **Before a release, record the 33 words yourself
+(or have someone do it who gives permission) and run `tools/gen_pm_speech.py --src DIR`.** Nothing from a Speak &
+Spell is in here: no ROM, no table of its chip; the frame layout follows the TMS5100's, the numbers are the tool's.
+
+**RUNS.** Three keys within a quarter second (a mash, nothing held) start a run: six sixteenths up the scale from
+the last key if the keys climbed, down if they fell; one a bar at most.
+
+**TUNE (LFO).** Any key plays the next note of a nursery tune, so mashing one key plays the whole melody; a held
+key plays it on by itself at SPEED (KNOB 1 in TUNE); the high half of the keyboard an octave up. The tune's
+name takes the mode word's place; at its end it comes round. Each pet has three tunes in each world (24
+combinations, drawn from a library of twelve: Twinkle, Mary Had a Little Lamb, Row Your Boat, Frère Jacques,
+Old MacDonald, London Bridge, Hot Cross Buns, Itsy Bitsy Spider, Three Blind Mice, Ode to Joy, Jingle Bells,
+Skip to My Lou); TUNE again steps to the next, a new world starts at its first. The song's bass follows the
+tune's own chords. KEYS (ENV) brings the scale back. There is no echo and no bloom in TUNE.
 
 **DRUMS.** Nine sounds three times over (kick, hat, snare, low tom, rim, high tom, conga, shaker, cowbell; the second
 and third groups vary them and tune the toms and congas higher). A press is a hit at once, never moved to the grid.
@@ -50,18 +93,36 @@ hits share a step. The repeats run whether or not the beat does.
 anchor (kick and backbeat); each level adds hits and removes none; a change waits for the next beat. The clock is
 never restarted by a mode or pet change.
 
-**Pets.** Each has an FM6 voice and a drum kit: Monkey a thumb-piano pluck and the LATIN kit, Cat its xylophone and
-the VINTAGE (rhythm box) kit, Dog a music-box bell and the 808 kit, Llama pipes that hold and the JAZZ kit. Each has
-its own night colours and its own pattern.
+**Pets and sounds.** Each pet has a drum kit and a pattern: Monkey the LATIN kit, Cat the VINTAGE (rhythm box) kit,
+Dog the 808 kit, Llama the JAZZ kit. The synth's sound is one of a bank of 16 (`tools/gen_pm_patches.py`), four
+a pet with the pet's own first: Monkey a kalimba, marimba, toy piano, steel pan; Cat its xylophone, a glockenspiel,
+a toy organ, a harp; Dog a music box, wind chimes, vibes, a rubbery bass; Llama pipes, a soft pad, a flute, a small
+choir. SOUND steps through all sixteen, round and round; a pet change and HOME go to the pet's own. In SYNTH the four
+KNOBs are the sound's: TONE is one knob per sound with its own recipe of FM6's bounded macros (modulator level,
+ratio and envelope, feedback, detune spread, decay and release), so at either end the sound is still the sound;
+WOBBLE adds vibrato; SPACE moves the reverb around the pet's own and adds a delay past the middle; LENGTH shortens
+or lengthens every note. In DRUMS the same knobs are the beat's (SPEED, BUSY, BOUNCE, SQUISH).
 
-**Screen.** The pet stands on a hill under a moon and is never still. Its three drawn poses are key frames: HELLO
+**Worlds (ALGORITHM).** Six environments, round and round, each the pet's: NIGHT (hills, a moon and stars,
+fireflies; a note is a bubble), SEA (a sandy floor, seaweed swaying, fish crossing; a note an air bubble),
+BALLOONS (green hills under a sun, clouds; a note a balloon on a string), SPACE (the moon's cratered surface, a
+ringed planet, shooting stars; a note a twinkling star), MEADOW (hills under a sun, butterflies; a note a flower
+growing by the pet), SNOW (snowy hills, falling flakes; a note a puff). In SPACE a note also sends a shooting star
+across, and a snare or clap is a firework; in BALLOONS confetti, in MEADOW a burst of petals, in SEA bubbles up
+from the floor, in SNOW puffs. The sky of each drifts slowly towards an accent colour. The Cat's own is NIGHT, the
+Dog's BALLOONS, the Llama's SPACE, the Monkey's MEADOW.
+
+**Screen.** The pet stands in its world and is never still. Its face is exactly what the Face editor makes it
+(the firmware swaps nothing of its own: no ear flick on a note, no nose scrunch on a snare). Its three drawn poses are key frames: HELLO
 at rest; PLAY while anything sounds, with TOGETHER as a flourish every fourth accent; TOGETHER and PLAY in turn,
 turning round every four accents, with three keys held or a bloom running. Between the key frames it is moved, not
 redrawn: every hit squashes it into its knees and a spring throws it back up past its height; it leans to the other
 side on each beat; a ripple runs up its body while it plays; at rest it breathes and waves every six seconds. It also
 hops on every hit (highest for a snare); a bubble rises for each synth
 note; a ripple under its feet for a kick; a star twinkles for a hat; a coloured pop for the other drums; four dots
-count the beat; a knob shows its name and position for 1.3 s.
+count the beat; a knob shows its name and position for 1.3 s (SOUND: the sound's name, WORLD: the world's). Behind
+it the world: its sky drifts a tile row at a time, and its movers (clouds, fish, shooting stars, butterflies, snow,
+fireflies) drift in a few particle slots the sounds' notes and pops never take.
 
 **LEDs.** White, three levels as the hardware has them (off, glow, lit): every key glows and is lit while it is held
 and playing; the mode's button is lit; PLAY as above; unassigned buttons are dark.
@@ -74,7 +135,7 @@ One compilation unit as upstream: [`firmware/src/purplemonkey.c`](../firmware/sr
 keys, buttons, knobs ─ pm_ui.c (main loop) ── pm_post ──▶ ring ──▶ pm_out.c (audio ISR, every 32 samples)
                           ▲    │                                    │  pm_engine.c: keys, clock, pattern,
                  pm_snap  │    └─ pm_sound.c: pet's patch,          │              repeats, phrase
-              (IRQ off)   │       BRIGHT, LENGTH ─▶ FM6 part 0      ├─ notes ─▶ voice.c ─▶ FM6 (eng_fm6.c)
+              (IRQ off)   │       SOUND, TONE .. ─▶ FM6 part 0     ├─ notes ─▶ voice.c ─▶ FM6 (eng_fm6.c)
                           └────────────────────────────────────────┤
    LCD ◀─ pm_ui.c scene, 16 px tiles, ≤ 44 a frame                   └─ hits ──▶ pm_drum_synth.c, 6 voices
    LEDs ◀─ pm_ui.c                                                     both ─▶ fx.c mix, reverb, limiter ─▶ I2S
@@ -85,7 +146,8 @@ keys, buttons, knobs ─ pm_ui.c (main loop) ── pm_post ──▶ ring ─�
 | `pm_engine.c/.h` | the musical rules; plain C, no hardware | new |
 | `pm_out.c` | the engine in the audio ISR; the drum voices and their mix; `events_block` | new, after ChoralRoot's `cr_out.c` |
 | `pm_drum_synth.c` | the drum models | SLOOP's `drum_synth.c`, three marked changes |
-| `pm_sound.c` | the pets' FM6 patches, BRIGHT, LENGTH | new |
+| `pm_sound.c` | the bank of FM6 patches (SOUND), TONE, WOBBLE, SPACE, LENGTH | new |
+| `pm_speech.c`, `pm_speech_data.h` | the voice (TALK, the pets' names): an LPC-10 player and its 33 words as frames, generated by `tools/gen_pm_speech.py` | new |
 | `pm_ui.c` | input, LEDs, the scene and its tile renderer | new |
 | `pm_shim.c` | the names `main.c` expects | new, after `cr_shim.c` |
 | everything else in `firmware/` | boot, boot guard, LCD, input scan, audio ISR, voices, FM6, FX, USB, flash driver, update loader | ChoralRoot at `44453d0`, unchanged except `main.c` (one `#if` for the splash) |
@@ -220,7 +282,8 @@ in the image.
   repaints just that part. `face-variants.json`'s six combinations give the expressions (surprised on arrival,
   happy with three keys or a bloom, sing on a held note, sleepy after 20 s, a blink every 3.9 s, neutral; a face
   holds 350 ms before a lesser one replaces it), and on top of them single layers answer on their own: the ear on
-  the side that just struck flicks, the nose scrunches at a snare.
+  the side that just struck flicked and the nose scrunched at a snare, until the Face editor made those its own: the
+  firmware now shows only what the face animations say.
 - **One palette a pet**, parts and every variant reduced together (index 0 clear, at most 31 colours);
   `palette.json` is not read. A part's pictures are cropped together to the box their opaque pixels share (the
   ears arrive on 64 x 64 canvases) and its pivot and its children's pins move with the crop.

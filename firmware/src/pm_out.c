@@ -126,6 +126,8 @@ static void pmd_mix(int32_t *ml, int32_t *mr, int32_t *rev, uint32_t n)
 }
 
 /* ------------------------------------------------------------ the engine --- */
+#include "pm_speech.c"                           /* the voice: owned by the audio ISR too */
+static struct { uint32_t n; uint8_t word; } pm_said;   /* what the UI posted to be said (counted for its snapshot) */
 static pm_t pm;                                  /* owned by the audio ISR */
 static volatile uint8_t pm_ready;                /* initialised (the ISR may run before the UI's power-on) */
 static volatile uint32_t pm_samples;             /* audio samples since power-on (wraps) */
@@ -148,7 +150,12 @@ static void pm_cb_drum(void *ud, uint8_t lane, int8_t semi, uint8_t vel, uint8_t
     (void)src;
     pmd_hit(PM_PET_KIT[pm.pet % PM_NPET], lane, semi, vel, pm.knob[PM_K_SQUISH]);
 }
-static const pm_out_t PM_OUT = {pm_cb_note_on, pm_cb_note_off, pm_cb_drum};
+static void pm_cb_say(void *ud, uint8_t word)
+{
+    (void)ud;
+    pm_speech_say(word);
+}
+static const pm_out_t PM_OUT = {pm_cb_note_on, pm_cb_note_off, pm_cb_drum, pm_cb_say};
 
 /* ------------------------------------------------------------- MIDI in --- */
 /* A bigger keyboard on USB or the TRS jack plays the same sounds (the audio ISR; usb.c's and midi_uart.c's queue of
@@ -209,7 +216,7 @@ static void pm_midi_in(void)
 
 /* the UI's events (main loop -> ISR). A full ring loses the event: a lost key-up would be a stuck note, so the UI
  * retries key events until they fit (pm_ui.c) */
-enum { PME_KEY, PME_MODE, PME_BEAT, PME_PET, PME_KNOB, PME_HOME, PME_PANIC };
+enum { PME_KEY, PME_MODE, PME_BEAT, PME_PET, PME_KNOB, PME_HOME, PME_PANIC, PME_STYLE, PME_SAY };
 typedef struct { uint8_t op, a; int16_t v; } pm_ev_t;
 #define PM_EVQ 64u                               /* a power of two */
 static pm_ev_t pm_evq[PM_EVQ];
@@ -239,6 +246,8 @@ static void pm_apply(const pm_ev_t *e)
     case PME_PET: pm_set_pet(&pm, e->a); break;
     case PME_KNOB: pm_set_knob(&pm, e->a, e->v); break;
     case PME_HOME: pm_home(&pm); break;
+    case PME_STYLE: pm_set_style(&pm, e->a); break;
+    case PME_SAY: pm_speech_say(e->a); pm_said.n++; pm_said.word = (uint8_t)e->a; break;
     case PME_PANIC:
         pm_panic(&pm);
         pm_midi_forget();
@@ -266,6 +275,14 @@ static void events_block(uint32_t n)
         engine_block(&trk[i]);                   /* (voice.c: a part's engine switch) */
     }
     pmd_mix(mix_l, mix_r, send_r, n);
+    if (pm_speech_busy()) {                      /* the voice: into the dry mix only (a word in a room is harder to make out) */
+        memset(pmd_buf, 0, n * sizeof pmd_buf[0]);
+        pm_speech_render(pmd_buf, n);
+        for (i = 0; i < n; i++) {
+            mix_l[i] += pmd_buf[i];
+            mix_r[i] += pmd_buf[i];
+        }
+    }
 }
 
 static void pm_out_init(void)                    /* power-on (the audio ISR may already run: IRQ off) */
@@ -273,6 +290,8 @@ static void pm_out_init(void)                    /* power-on (the audio ISR may 
     fm1_irq_off();
     pm_ready = 0;
     pm_init(&pm, &PM_OUT, 0);
+    pm_speech_init();
+    memset(&pm_said, 0, sizeof pm_said);
     memset(&pmd, 0, sizeof pmd);
     memset(pm_midi_on, 0, sizeof pm_midi_on);
     voice_fade_steal = 1;                        /* voice.c: a stolen voice fades out, its new note waits a block */
@@ -299,12 +318,12 @@ static void pm_audio_block(uint32_t n)
 
 /* ------------------------------------------------------- what the UI reads --- */
 typedef struct {
-    uint8_t mode, pet, beat, step;
+    uint8_t mode, pet, beat, step, style, tune_i;
     uint16_t bar_q16;                            /* where the clock is in the four beats (a bar) it is in, / 65536 */
     int8_t knob[PM_NKNOB];
     uint32_t held, voiced;                       /* the keys the engine holds, and those whose note sounds */
-    uint32_t n_note_on, n_drum, n_step, samples;
-    uint8_t last_note, ph_note;
+    uint32_t n_note_on, n_drum, n_step, samples, n_say;
+    uint8_t last_note, ph_note, last_say, talking;
     uint8_t lane_hits[PM_NLANE];
     uint8_t synth_voices, drum_voices;
     int32_t drum_peak;
@@ -319,6 +338,8 @@ static void pm_snapshot(void)
     pm_snap.pet = pm.pet;
     pm_snap.beat = pm.beat;
     pm_snap.step = pm.step;
+    pm_snap.style = pm.style;
+    pm_snap.tune_i = pm.tune_i;
     pm_snap.bar_q16 = (uint16_t)(((pm.step % 16u) * 256u + pm.pos / (pm_step_len(&pm, pm.step) / 256u + 1u)) * 16u);
     memcpy(pm_snap.knob, pm.knob, sizeof pm_snap.knob);
     pm_snap.held = pm.held;
@@ -328,6 +349,9 @@ static void pm_snapshot(void)
     pm_snap.n_step = pm.n_step;
     pm_snap.samples = pm_samples;
     pm_snap.last_note = pm.last_note;
+    pm_snap.n_say = pm.n_say + pm_said.n;        /* letters from the keys and words the UI asked for */
+    pm_snap.last_say = spk.word;                 /* the word said last (or being said) */
+    pm_snap.talking = (uint8_t)pm_speech_busy();
     pm_snap.ph_note = pm.ph_note[0] | pm.ph_note[1] | pm.ph_bass;
     memcpy(pm_snap.lane_hits, pm.lane_hits, sizeof pm_snap.lane_hits);
     pm_snap.synth_voices = pm_snap.drum_voices = 0;

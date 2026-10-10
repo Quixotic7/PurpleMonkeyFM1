@@ -10,6 +10,10 @@ CC=${CC:-cc}
 $CC -std=c99 -O1 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wno-sign-conversion -Werror \
     -fsanitize=address,undefined -fno-sanitize-recover=undefined -o build/host/pm_engine_test tests/pm_engine_test.c
 build/host/pm_engine_test
+# the voice (tests/pm_speech_test.c): every word bounded and ending in silence, no step at a cut; build/host/pm_speech.wav
+$CC -std=c99 -O1 -Wall -Wextra -Wshadow -Wconversion -Wno-sign-conversion -Werror \
+    -fsanitize=address,undefined -fno-sanitize-recover=undefined -o build/host/pm_speech_test tests/pm_speech_test.c
+build/host/pm_speech_test build/host/pm_speech.wav | tail -1
 # the installers' safety check: PurpleMonkey says what it is, and the installer's classifier accepts that text and
 # still refuses the firmwares upstream refuses (docs/INSTALL-COMPAT.md)
 $CC -std=c99 -O1 -Wall -Wextra -Werror -o build/host/pm_info_test tests/pm_info_test.c
