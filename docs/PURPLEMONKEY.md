@@ -5,8 +5,9 @@ turning knobs and playing drums. FM6 synthesis, synthesised drums, four animal f
 music. The brief is [`CLAUDE_HANDOFF.md`](../CLAUDE_HANDOFF.md); this file says what was built from it, where it
 differs, and what has and has not been checked.
 
-**Nothing here has run on an FM-1.** Everything below was verified on the Mac emulator (the same firmware sources
-with a host HAL) and by a device build that was compiled, linked and packaged but not installed.
+**On hardware:** the 0.10 package was installed on the owner's FM-1 on 2026-10-09 and runs there; the sounds and
+the voice were judged by ear by the owner. Everything else below was verified on the Mac emulator (the same
+firmware sources with a host HAL); nothing has been measured on the device (see "Not verified").
 
 ## What it does now (stages 2 and 3 of the brief, with parts of 4 and 5)
 
@@ -65,11 +66,11 @@ second after the turning stops) and at power-on. A new word is a line in the too
 your own recordings instead. `tests/pm_speech_test.c` renders every word on the host to `build/host/pm_speech.wav`
 (bounded, ending in silence, no step when one word cuts another, any bits at all a word that ends).
 
-**Where the spoken words came from, and what that means.** The header in the tree was analysed from macOS's
-`say` (the voice Reed, US English; the letters at 150 words a minute, the words at 80), because no recordings exist yet. What ships is the analysis (pitch, loudness
-and filter numbers), not Apple's audio, but Apple's licence for its system voices has limits on use, and nobody
-has checked that a release may carry numbers derived from one. **Before a release, record the 33 words yourself
-(or have someone do it who gives permission) and run `tools/gen_pm_speech.py --src DIR`.** Nothing from a Speak &
+**Where the spoken words came from.** The header in the tree was analysed from macOS's `say` (the voice Reed, US
+English; the letters at 150 words a minute, the words at 80). What ships is the analysis (pitch, loudness and
+filter numbers every 12.5 ms, re-pitched and played through a chirp at 8 kHz), not Apple's audio, and it does not
+sound like that voice; the project's owner's judgement is that this raises no licensing issue, and 0.10 ships
+with it. To use another voice, record the 33 words and run `tools/gen_pm_speech.py --src DIR`. Nothing from a Speak &
 Spell is in here: no ROM, no table of its chip; the frame layout follows the TMS5100's, the numbers are the tool's.
 
 **RUNS.** Three keys within a quarter second (a mash, nothing held) start a run: six sixteenths up the scale from
@@ -198,8 +199,8 @@ upstream DSP file was edited for it.
   any of the four recordings (its third check, "clicks", fires on every drum attack and is not used).
 - **Upstream's own emulator suite** (`sh tools/emu/test.sh`, ChoralRoot) still passes in this tree.
 
-Not verified: anything on hardware (timing, LED brightness, LCD colours and tearing, key feel, speaker tone and
-level, battery, the update). How it sounds. Whether a child likes it.
+Not verified: measurements on hardware (the audio block's real cost, LED brightness, LCD tearing, battery), the
+browser installer over real USB, an install over each of the other firmwares. Whether a child likes it.
 
 ## Budgets
 
@@ -237,16 +238,17 @@ spends more than half its time feeding the LCD; the keys are scanned between til
 interrupt, but **this is the number most in need of a hardware measurement**: the 29 ms is computed from the SPI
 clock, not measured, and if the real panel is slower the animation rate or the pet's size has to come down.
 
-## Install, rollback (for later; nothing has been installed)
+## Install, rollback
 
-`./build.sh` writes `build/purplemonkey.fwsc`, identity `FM-1_927`. **Do not install it yet without reading this.**
+`./build.sh` writes `build/purplemonkey.fwsc`, identity `FM-1_927`. It has been installed on one FM-1 (the owner's,
+2026-10-09). **Read this before installing it on another.**
 
 - **The installers' safety check.** Every Felucca-based firmware reports an `FM-1_9xx` identity, which does not tell
   them apart, so upstream's installers ask the running firmware for its version text and refuse to install over one
   they cannot name (an FM-1 was bricked by an install over SLOOP). PurpleMonkey answers that query
   (`firmware/src/pm_info.c`: "PurpleMonkey <version>"), and `tools/fm1_install.py` and `web/fm1ota.js` in this tree
   accept it; they refuse the same firmwares upstream refuses. Tested on the host: the reply byte for byte, and the
-  classifier on ten identities. **Not tested: the exchange over real USB.** An installer from another tree
+  classifier on ten identities. **Not tested: the browser installer over real USB.** An installer from another tree
   (ChoralRoot's released web page, Felucca's) does not know the name and will refuse to install over PurpleMonkey
   unless forced; returning to the official V15 is never refused by any of them.
 - Kept from upstream and unchanged: the boot guard (two crashes within 30 s of boot are counted; four enter the ROM

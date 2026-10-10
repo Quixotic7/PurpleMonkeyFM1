@@ -80,7 +80,7 @@ FM1_UNIT=choralroot ./build.sh  # the ChoralRoot unit this tree was forked from,
 
 The build prints a size line and fails if RAM or POOL overflows. **It installs nothing.** Installing is a separate,
 deliberate step with `tools/fm1_install.py` or the web installer, and for PurpleMonkey it has open points: read
-[docs/PURPLEMONKEY.md](docs/PURPLEMONKEY.md#install-rollback-for-later-nothing-has-been-installed) first.
+[docs/PURPLEMONKEY.md](docs/PURPLEMONKEY.md#install-rollback) first.
 
 ## The browser emulator and the site
 

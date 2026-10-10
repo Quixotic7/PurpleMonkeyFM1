@@ -4,10 +4,10 @@ A firmware for the **M-VAVE FM-1** for a small child: press any key and somethin
 notes on a pentatonic scale, synthesised drums, a backing beat, four animal friends (Monkey, Cat, Dog, Llama) on a
 screen that moves with the music. No menus, nothing to save, nothing to break.
 
-> **Status: an emulator-verified first slice. It has never been installed on an FM-1.**
-> Do not install the built package without reading
-> [docs/PURPLEMONKEY.md, "Install, rollback"](docs/PURPLEMONKEY.md#install-rollback-for-later-nothing-has-been-installed).
-> The sounds were tuned by measurement, not yet by ear; the voice (TALK) is LPC speech analysed from a macOS system voice, to be replaced by your own recordings before a release. Update mode is OCT- + OCT+ + HOME held 5 s.
+> **Status: a first public beta.** It has been installed and runs on the owner's FM-1 (2026-10-09); most of what is
+> checked was checked on the emulator. Before installing, read
+> [docs/PURPLEMONKEY.md, "Install, rollback"](docs/PURPLEMONKEY.md#install-rollback).
+> Installing firmware is at your own risk. Update mode is OCT- + OCT+ + HOME held 5 s.
 
 ![screens](docs/img/pm_screens.png)
 

@@ -1,119 +1,154 @@
 <!doctype html>
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 <!-- The landing page and manual of PurpleMonkey FM-1. web/make_site.py copies it to the site's root and fills
-     {{VERSION}} {{PKG}} {{PKG_URL}} {{PRODUCT}}; no other templating. The screens are the emulator's
-     (build/host/pm_emu, 240 x 240). -->
+     {{VERSION}} {{PKG}} {{PKG_URL}} {{PRODUCT}}; no other templating. A picture book on top (the rhymes are this
+     page's own), the grown-up's manual below. The screens are the emulator's (build/host/pm_emu, 240 x 240); the
+     pets are the rigs' assembled pictures with the ground keyed out (assets/purplemonkey/rig-64-*). -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PurpleMonkey FM-1</title>
 <meta name="description" content="PurpleMonkey FM-1: a firmware that turns the M-VAVE FM-1 into a first instrument for a small child. Every key plays, four animal friends dance, a toy voice says the letters. Version {{VERSION}}, GPL-3.0.">
-<meta name="theme-color" content="#130D2B">
+<meta name="theme-color" content="#8A4FFF">
 <link rel="preload" href="InterTight.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="site.css">
 </head>
 <body>
 
-<header class="title">
+<header class="cover">
   <div class="wrap">
-    <h1><span>Purple</span> <span>Monkey</span></h1>
-    <p class="lede">A first instrument for a small child, on the M-VAVE FM-1. Press any key and something nice happens.</p>
-    <p class="ver">Version {{VERSION}}. GPL-3.0.</p>
+    <h1 aria-label="Purple Monkey"><span class="word" aria-hidden="true"><i>P</i><i>u</i><i>r</i><i>p</i><i>l</i><i>e</i></span><span class="word" aria-hidden="true"><i>M</i><i>o</i><i>n</i><i>k</i><i>e</i><i>y</i></span></h1>
+    <p class="rhyme">Press a key. Any key!<br>A plink, a <em>boom</em>, a one-two-three!</p>
+    <p class="say">A first instrument for small hands, on the M-VAVE FM-1.</p>
+    <p class="ver">Version {{VERSION}} · free, GPL-3.0</p>
   </div>
-  <div class="stripes" aria-hidden="true"><i class="s-orange"></i><i class="s-red"></i><i class="s-cream"></i></div>
+  <div class="band">
+    <div class="pets">
+      <img src="img/pet-monkey.png" width="83" height="125" style="--h:125" alt="the Monkey with its drum">
+      <img src="img/pet-cat.png" width="62" height="135" style="--h:135" alt="the Cat at its xylophone">
+      <img src="img/pet-dog.png" width="87" height="136" style="--h:136" alt="the Dog with its microphone">
+      <img src="img/pet-llama.png" width="82" height="165" style="--h:165" alt="the Llama with its bells">
+    </div>
+    <svg viewBox="0 0 1200 150" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 150 V86 C90 30 190 26 300 70 S500 128 640 62 S900 14 1030 64 S1160 96 1200 60 V150 Z" fill="#8A4FFF"/>
+      <path d="M0 86 C90 30 190 26 300 70 S500 128 640 62 S900 14 1030 64 S1160 96 1200 60" fill="none" stroke="#2A1650" stroke-width="7" stroke-linecap="round"/>
+    </svg>
+  </div>
 </header>
 
 <main>
 
-<section class="shots" aria-labelledby="h-screen">
+<section class="hill" aria-labelledby="h-does">
   <div class="wrap">
-    <h2 id="h-screen">No menus. Nothing to break.</h2>
-    <p class="intro">Every key plays at once. Four animal friends dance to what is played. Nothing is saved, so nothing can be lost.</p>
-    <figure class="shot">
-      <img src="img/screen-cat.png" width="240" height="240" alt="the Cat at its xylophone under a moon, bubbles rising for the notes held">
-      <figcaption><b>SYNTH.</b> Every key is a note that fits. The pet plays along, and sings what was tapped back a bar later.</figcaption>
-    </figure>
-    <figure class="shot">
-      <img src="img/screen-monkey.png" width="240" height="240" alt="the Monkey with its drum, the beat running">
-      <figcaption><b>DRUMS.</b> Every key is a drum. <span class="c-green">BEAT</span> starts a backing pattern to play over.</figcaption>
-    </figure>
-    <figure class="shot">
-      <img src="img/screen-talk.png" width="240" height="240" alt="TALK: a big letter M on the screen above the Cat">
-      <figcaption><b>TALK.</b> Each key says its letter in a talking-toy voice, and shows it <span class="c-yellow">BIG</span>.</figcaption>
-    </figure>
-    <figure class="shot">
-      <img src="img/screen-dog.png" width="240" height="240" alt="the Dog, its name DOG across the top of the screen">
-      <figcaption><b>Friends.</b> One knob turns Monkey, Cat, Dog and Llama round. Each says its name and brings its own sound, drum kit and beat.</figcaption>
-    </figure>
+    <h2 id="h-does">What does it do?</h2>
+    <p class="rhyme">No menus to find, no settings to mind,<br>and no wrong notes of <em>any</em> kind.</p>
+    <div class="pages">
+      <div class="page">
+        <figure><img src="img/screen-cat.png" width="240" height="240" alt="the Cat at its xylophone under a moon, bubbles rising for the notes held"></figure>
+        <div>
+          <span class="tag">SYNTH</span>
+          <p class="rhyme">Tap up high, tap down low:<br>every note's a note to <em>know</em>.</p>
+          <p class="say">Every key plays a note that fits with all the others. The pet plays along, and sings what was tapped back a bar later.</p>
+        </div>
+      </div>
+      <div class="page">
+        <figure><img src="img/screen-monkey.png" width="240" height="240" alt="the Monkey with its drum, the beat running"></figure>
+        <div>
+          <span class="tag">DRUMS</span>
+          <p class="rhyme">Boom goes this one, tick goes that.<br>Hold two down: a beat, like <em>that!</em></p>
+          <p class="say">Every key is a drum. A held key keeps its own rhythm going, and BEAT starts a backing pattern to play over.</p>
+        </div>
+      </div>
+      <div class="page">
+        <figure><img src="img/screen-talk.png" width="240" height="240" alt="TALK: a big letter M on the screen above the Cat"></figure>
+        <div>
+          <span class="tag">TALK</span>
+          <p class="rhyme">A says A and B says B,<br>all the way to <em>yay</em> past Z.</p>
+          <p class="say">Each key says its letter in a talking-toy voice and shows it big. TUNE does the same with nursery tunes: every tap is the next note of the song.</p>
+        </div>
+      </div>
+      <div class="page">
+        <figure><img src="img/screen-dog.png" width="240" height="240" alt="the Dog, its name DOG across the top of the screen"></figure>
+        <div>
+          <span class="tag">FRIENDS</span>
+          <p class="rhyme">Turn the knob and who comes round?<br>Each new friend, a brand-new <em>sound</em>.</p>
+          <p class="say">Monkey, Cat, Dog and Llama. Each says its name and brings its own sound, drum kit, beat and tunes, in a night, a sea, a meadow or the snow.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
+<div class="candy" aria-hidden="true"></div>
 
 <section class="get" aria-labelledby="h-get">
   <div class="wrap">
     <h2 id="h-get">Get it</h2>
-    <div class="try">
-      <a class="btn b-green" href="emu/">Try it first</a>
-      <p class="note">The same firmware, running in your browser. No FM-1 needed. Chrome, Edge and Firefox.</p>
-    </div>
+    <p class="rhyme">Try it here or take it <em>home</em>.</p>
     <div class="buttons">
+      <div class="cell big">
+        <a class="btn b-try" href="emu/">Play it right now</a>
+        <p class="note">The same firmware, running in your browser. No FM-1 needed. Chrome, Edge and Firefox.</p>
+      </div>
       <div class="cell">
-        <a class="btn b-red" href="webapp/installer/">Install on an FM-1</a>
+        <a class="btn b-install" href="webapp/installer/">Put it on an FM-1</a>
         <p class="note">From Chrome or Edge, over the USB cable.</p>
       </div>
       <div class="cell">
-        <a class="btn b-cream" href="{{PKG_URL}}" download>Download <span class="pkg">{{PKG}}</span></a>
+        <a class="btn b-get" href="{{PKG_URL}}" download>Download <span class="pkg">{{PKG}}</span></a>
         <p class="note">For the command-line installer:<br><code class="cmd">python3 tools/fm1_install.py <span class="nw">{{PKG}}</span></code></p>
       </div>
       <div class="cell">
-        <a class="btn b-blue" href="https://github.com/Quixotic7/PurpleMonkeyFM1">Source</a>
+        <a class="btn b-src" href="https://github.com/Quixotic7/PurpleMonkeyFM1">Source</a>
         <p class="note">On GitHub, GPL-3.0. By Quixotic7, on ChoralRoot FM-1 and Felucca by Hügelton Instruments.</p>
       </div>
       <div class="cell">
-        <a class="btn b-yellow" href="#playing">Manual</a>
-        <p class="note">For the grown-up. The child will not need it.</p>
+        <a class="btn b-read" href="#playing">The grown-up page</a>
+        <p class="note">The small one needn't read it.</p>
       </div>
     </div>
-    <p class="warn">A first public beta. It replaces the firmware on the FM-1: read <a href="#recovery">Recovery</a> before you install, and install at your own risk.</p>
+    <p class="warn">A first public beta. It replaces the firmware on the FM-1: read <a href="#recovery">How to get back</a> before you install, and install at your own risk.</p>
     <p>The installer talks to the FM-1 over Web MIDI. The firmware it runs now (stock, Felucca, ChoralRoot or PurpleMonkey) stages the update loader, the loader writes the whole image, then the FM-1 restarts and reports {{PRODUCT}}. Do not unplug it while it writes. An interrupted install resumes when you press Install again: the FM-1 stays in update mode.</p>
     <p>If the FM-1 runs Felucca or ChoralRoot, the installer first saves what is stored on it to a file. PurpleMonkey stores nothing and cannot take that backup: keep the file for when you go back.</p>
     <p>On the command line, from the source: <code class="cmd">pip3 install mido python-rtmidi</code>, then <code class="cmd">python3 tools/fm1_install.py <span class="nw">{{PKG}}</span></code>. <code>--info</code> prints the connected FM-1's identity.</p>
     <nav class="toc" aria-label="Sections">
-      <a href="#playing">Playing</a>
+      <a href="#playing">Buttons and knobs</a>
       <a href="#friends">Friends, sounds and worlds</a>
       <a href="#midi">MIDI and audio</a>
-      <a href="#recovery">Recovery</a>
+      <a href="#recovery">How to get back</a>
       <a href="#credits">Credits and licence</a>
     </nav>
   </div>
 </section>
 
-<section class="playing" aria-labelledby="playing">
+<section class="grown" aria-labelledby="playing">
   <div class="wrap">
-    <h2 id="playing">Playing</h2>
-    <p class="intro">It powers on as the Cat in SYNTH with the beat stopped. The 27 keys are the only things that play; the buttons and knobs change what they play.</p>
+    <h2 id="playing">The grown-up page <small>It powers on as the Cat in SYNTH with the beat stopped. The 27 keys are the only things that play; the buttons and knobs change what they play.</small></h2>
 
     <h3>Buttons</h3>
     <p class="rule">A lit button is on. A button that does nothing stays dark.</p>
+    <div class="card">
     <table class="grid">
       <thead><tr><th>Printed</th><th>PurpleMonkey</th><th>Does</th><th>More</th></tr></thead>
       <tbody>
-        <tr><td data-l="Printed">SEL</td><td data-l="PurpleMonkey">SYNTH</td><td data-l="Does">the keys play notes</td><td data-l="More">the white keys climb a five-note scale over three octaves; a black key plays the note of the white key on its left. No key is a wrong note</td></tr>
-        <tr><td data-l="Printed">FX</td><td data-l="PurpleMonkey"><span class="c-red">DRUMS</span></td><td data-l="Does">the keys play drums</td><td data-l="More">nine sounds, three times over. A held key repeats in its sound's own rhythm, so a few held keys make a groove</td></tr>
-        <tr><td data-l="Printed">PLAY</td><td data-l="PurpleMonkey"><span class="c-green">BEAT</span></td><td data-l="Does">the backing beat on and off</td><td data-l="More">a two-bar pattern, the pet's own; in SYNTH a bass and a round of four chords join it</td></tr>
+        <tr><td data-l="Printed">SEL</td><td data-l="PurpleMonkey"><span class="k-teal">SYNTH</span></td><td data-l="Does">the keys play notes</td><td data-l="More">the white keys climb a five-note scale over three octaves; a black key plays the note of the white key on its left. No key is a wrong note</td></tr>
+        <tr><td data-l="Printed">FX</td><td data-l="PurpleMonkey"><span class="k-pink">DRUMS</span></td><td data-l="Does">the keys play drums</td><td data-l="More">nine sounds, three times over. A held key repeats in its sound's own rhythm, so a few held keys make a groove</td></tr>
+        <tr><td data-l="Printed">PLAY</td><td data-l="PurpleMonkey"><span class="k-green">BEAT</span></td><td data-l="Does">the backing beat on and off</td><td data-l="More">a two-bar pattern, the pet's own; in SYNTH a bass and a round of four chords join it</td></tr>
         <tr><td data-l="Printed">ENV</td><td data-l="PurpleMonkey">KEYS</td><td data-l="Does">in SYNTH: the scale</td><td data-l="More">the pet sings a tapped note back a bar later; two keys held grow a phrase; three quick keys start a run</td></tr>
         <tr><td data-l="Printed">LFO</td><td data-l="PurpleMonkey">TUNE</td><td data-l="Does">in SYNTH: a nursery tune</td><td data-l="More">any key plays the tune's next note, so mashing one key plays the whole melody; a held key plays it on by itself. Pressed again: the next tune</td></tr>
-        <tr><td data-l="Printed">EDIT</td><td data-l="PurpleMonkey"><span class="c-yellow">TALK</span></td><td data-l="Does">in SYNTH: the alphabet</td><td data-l="More">the keys say A to Z from the lowest up and show the letter big; the last key says "yay"</td></tr>
+        <tr><td data-l="Printed">EDIT</td><td data-l="PurpleMonkey"><span class="k-yellow">TALK</span></td><td data-l="Does">in SYNTH: the alphabet</td><td data-l="More">the keys say A to Z from the lowest up and show the letter big; the last key says "yay"</td></tr>
         <tr><td data-l="Printed">HOME</td><td data-l="PurpleMonkey">HOME</td><td data-l="Does">the knobs back to normal</td><td data-l="More">after a small hand has turned everything: the pet, the mode, the beat and the world stay</td></tr>
       </tbody>
     </table>
+    </div>
     <p>GLO, SAVE, ARP, SEQ, REC and the two OCT buttons do nothing.</p>
 
     <h3>Knobs</h3>
+    <div class="card">
     <table class="grid">
       <thead><tr><th>Printed</th><th>PurpleMonkey</th><th>In SYNTH</th><th>In DRUMS</th></tr></thead>
       <tbody>
-        <tr><td data-l="Printed">SELECT</td><td data-l="PurpleMonkey"><span class="c-orange">PET</span></td><td data-l="In SYNTH">Monkey, Cat, Dog, Llama, round and round</td><td data-l="In DRUMS">the same; the pet says its name</td></tr>
+        <tr><td data-l="Printed">SELECT</td><td data-l="PurpleMonkey"><span class="k-purple">PET</span></td><td data-l="In SYNTH">Monkey, Cat, Dog, Llama, round and round</td><td data-l="In DRUMS">the same; the pet says its name</td></tr>
         <tr><td data-l="Printed">PRESETS</td><td data-l="PurpleMonkey">SOUND</td><td data-l="In SYNTH">sixteen sounds, four a pet</td><td data-l="In DRUMS">the same</td></tr>
         <tr><td data-l="Printed">ALGORITHM</td><td data-l="PurpleMonkey">WORLD</td><td data-l="In SYNTH">night, sea, balloons, space, meadow, snow</td><td data-l="In DRUMS">the same</td></tr>
         <tr><td data-l="Printed">KNOB 1</td><td data-l="PurpleMonkey">TONE · SPEED</td><td data-l="In SYNTH">soft to bright (TUNE: its speed)</td><td data-l="In DRUMS">72 to 136 beats a minute</td></tr>
@@ -123,55 +158,48 @@
         <tr><td data-l="Printed">MASTER</td><td data-l="PurpleMonkey">VOLUME</td><td data-l="In SYNTH">volume</td><td data-l="In DRUMS">volume</td></tr>
       </tbody>
     </table>
+    </div>
     <p>Every knob is bounded: at either end the sound is still the sound and the beat is still a beat.</p>
   </div>
 </section>
 
-<section class="sounds" aria-labelledby="friends">
+<section class="grown" aria-labelledby="friends">
   <div class="wrap">
     <h2 id="friends">Friends</h2>
-    <p class="intro">Each pet has its own sound, drum kit, beat, chords and tunes. A new pet says its name.</p>
-    <figure class="shot shot-side">
-      <img src="img/screen-llama.png" width="240" height="240" alt="the Llama, its name LLAMA across the top of the screen">
-    </figure>
+    <p class="say">Each pet has its own sound, drum kit, beat, chords and tunes. A new pet says its name.</p>
+    <div class="card">
     <table class="grid">
       <thead><tr><th>No.</th><th>Pet</th><th>Sounds</th><th>Drum kit</th></tr></thead>
       <tbody>
-        <tr><td data-l="No.">1</td><td data-l="Pet">Monkey</td><td data-l="Sounds">a kalimba; a marimba, a toy piano, a steel pan</td><td data-l="Drum kit">Latin</td></tr>
+        <tr><td data-l="No.">1</td><td data-l="Pet"><span class="k-purple">Monkey</span></td><td data-l="Sounds">a kalimba; a marimba, a toy piano, a steel pan</td><td data-l="Drum kit">Latin</td></tr>
         <tr><td data-l="No.">2</td><td data-l="Pet">Cat</td><td data-l="Sounds">a xylophone; a glockenspiel, a toy organ, a harp</td><td data-l="Drum kit">a vintage rhythm box</td></tr>
-        <tr><td data-l="No.">3</td><td data-l="Pet">Dog</td><td data-l="Sounds">a music box; wind chimes, vibes, a rubbery bass</td><td data-l="Drum kit">808</td></tr>
-        <tr><td data-l="No.">4</td><td data-l="Pet">Llama</td><td data-l="Sounds">pipes; a soft pad, a flute, a small choir</td><td data-l="Drum kit">jazz</td></tr>
+        <tr><td data-l="No.">3</td><td data-l="Pet"><span class="k-teal">Dog</span></td><td data-l="Sounds">a music box; wind chimes, vibes, a rubbery bass</td><td data-l="Drum kit">808</td></tr>
+        <tr><td data-l="No.">4</td><td data-l="Pet"><span class="k-yellow">Llama</span></td><td data-l="Sounds">pipes; a soft pad, a flute, a small choir</td><td data-l="Drum kit">jazz</td></tr>
       </tbody>
     </table>
-    <h3>Worlds</h3>
-    <p>WORLD changes where the pet is: a night of fireflies, the sea floor, green hills with balloons, the moon, a meadow, snow. A note is a bubble, a balloon, a star, a flower or a puff of snow; a kick is a ripple under the pet's feet.</p>
-    <h3>Tunes</h3>
-    <p>Twinkle Twinkle, Mary Had a Little Lamb, Row Your Boat, Frère Jacques, Old MacDonald, London Bridge, Hot Cross Buns, Itsy Bitsy Spider, Three Blind Mice, Ode to Joy, Jingle Bells and Skip to My Lou. Each pet has three in each world.</p>
-    <h3>The voice</h3>
-    <p>The letters, "yay" and the pets' names are spoken the way the talking toys of 1978 spoke: each word analysed into a few numbers every 12.5 ms and played back through a small filter, about 7 KB for all 33 words. No recording is in the firmware.</p>
-  </div>
-</section>
-
-<section class="midi" aria-labelledby="midi">
-  <div class="wrap">
-    <h2 id="midi">MIDI</h2>
+    </div>
     <div class="cols">
       <div>
-        <h3>In</h3>
-        <p>A MIDI keyboard on USB or the TRS jack plays the pet's synth sound on every note, not only the scale. Channel 10 plays the pet's drum kit (the General MIDI map). CC 120 and CC 123 let every note go.</p>
+        <h3>Worlds</h3>
+        <p>WORLD changes where the pet is: a night of fireflies, the sea floor, green hills with balloons, the moon, a meadow, snow. A note is a bubble, a balloon, a star, a flower or a puff of snow; a kick is a ripple under the pet's feet.</p>
+        <h3>Tunes</h3>
+        <p>Twinkle Twinkle, Mary Had a Little Lamb, Row Your Boat, Frère Jacques, Old MacDonald, London Bridge, Hot Cross Buns, Itsy Bitsy Spider, Three Blind Mice, Ode to Joy, Jingle Bells and Skip to My Lou. Each pet has three in each world.</p>
       </div>
       <div>
-        <h3>USB audio</h3>
-        <p>The FM-1 is a recording device on the computer: channels 1 and 2 are everything, 3 and 4 the synth alone. It still carries ChoralRoot's name there ("ChoralRoot In").</p>
+        <h3>The voice</h3>
+        <p>The letters, "yay" and the pets' names are spoken the way the talking toys of 1978 spoke: each word analysed into a few numbers every 12.5 ms and played back through a small filter, about 7 KB for all 33 words. No recording is in the firmware.</p>
+        <h3 id="midi">MIDI and audio</h3>
+        <p>A MIDI keyboard on USB or the TRS jack plays the pet's synth sound on every note, not only the scale. Channel 10 plays the pet's drum kit (the General MIDI map). CC 120 and CC 123 let every note go.</p>
+        <p>On a computer the FM-1 is a recording device: channels 1 and 2 are everything, 3 and 4 the synth alone. It still carries ChoralRoot's name there ("ChoralRoot In").</p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="recovery" aria-labelledby="recovery">
+<section class="grown" aria-labelledby="recovery">
   <div class="wrap">
-    <h2 id="recovery">Recovery</h2>
-    <p class="intro">To go back to the stock firmware, or on to another one, the FM-1 has to be in update mode.</p>
+    <h2 id="recovery">How to get back</h2>
+    <p class="say">To go back to the stock firmware, or on to another one, the FM-1 has to be in update mode.</p>
     <p class="rule">OCT− + OCT+ + HOME held for 5 seconds.</p>
     <p>Three buttons, so that a small hand does not find it. A countdown shows after two seconds; letting go cancels. The <a href="webapp/installer/">installer</a> also starts update mode by itself while PurpleMonkey runs.</p>
     <p>For the stock firmware, download the official FM-1 V15 (<code>FM-1.fwsc</code>) yourself from <a href="https://www.m-vave.com/download">M-VAVE's downloads page</a> and select it under "Return to official V15" in the installer. The browser checks the file; it is not sent anywhere.</p>
@@ -179,10 +207,10 @@
   </div>
 </section>
 
-<section class="credits" aria-labelledby="credits">
+<section class="grown" aria-labelledby="credits">
   <div class="wrap">
-    <h2 id="credits">Credits and licence</h2>
-    <p class="intro">PurpleMonkey was made by Quixotic7 with Claude. It is free software under the GPL-3.0: change it, and share what you change.</p>
+    <h2 id="credits">Thank you</h2>
+    <p class="say">PurpleMonkey was made by Quixotic7 with Claude. It is free software under the GPL-3.0: change it, and share what you change.</p>
     <ul class="credit-list">
       <li><b>ChoralRoot FM-1</b> by Quixotic7: the tree this was forked from. <a href="https://github.com/Quixotic7/ChoralRootFM1">github.com/Quixotic7/ChoralRootFM1</a></li>
       <li><b>Felucca</b> by Leo Kuroshita (@kurogedelic), <a href="https://hugelton.com">Hügelton Instruments</a>: the platform, the engines, the installer, the update loader. <a href="https://github.com/hugelton/Felucca">github.com/hugelton/Felucca</a></li>
@@ -190,6 +218,7 @@
       <li><b>FM6</b>: msfa from Dexed (Google, Pascal Gauthier), Apache-2.0.</li>
       <li><b>Inter Tight</b> by The Inter Project Authors (SIL OFL 1.1, <a href="OFL.txt">OFL.txt</a>): the UI font, and this page's.</li>
       <li><b>JieLi AC79 SDK</b>: three files in the package (uboot.boot, cfg_tool.bin, eq_cfg_hw.bin), Apache-2.0.</li>
+      <li><b>The pets</b>: Quixotic7's artwork, generated with ChatGPT.</li>
     </ul>
     <p>Every licence: <a href="firmware/LICENSING.md">LICENSING.md</a>, <a href="firmware/LICENSE">GPL-3.0</a>, <a href="firmware/LICENSES/">all texts</a>.</p>
   </div>
@@ -198,7 +227,7 @@
 </main>
 
 <footer class="foot">
-  <div class="stripes stripes-thin" aria-hidden="true"><i class="s-orange"></i><i class="s-red"></i><i class="s-cream"></i></div>
+  <div class="candy" aria-hidden="true"></div>
   <div class="wrap">
     <p>PurpleMonkey FM-1 is independent of and not affiliated with M-VAVE or Cuvave. M-VAVE and FM-1 are trademarks of their respective owners.</p>
     <p><b>Installing this firmware is entirely at your own risk. Quixotic7 is not responsible for any damage to your M-VAVE FM-1.</b></p>
