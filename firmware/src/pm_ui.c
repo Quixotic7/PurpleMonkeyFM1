@@ -620,7 +620,8 @@ static void pm_pet_move(uint32_t now)
          * flicks on the side that just played, the nose scrunches at a snare */
         e = pm_face(now, party, playing) % PM_RIG_NEXPR;
         {   /* the expression's own animation, on its own clock from when the face was put on: its key's picture
-             * for each layer, the ears turned (blended towards the next key) on top of what the body gives them */
+             * for each layer, the ears turned and moved (blended towards the next key) on top of what the body
+             * gives them */
             const pm_rfkey_t *K = R->face[e].key, *k0, *k1;
             uint32_t n = R->face[e].n, total = 0, t, i, f;
             for (i = 0; i < n; i++)
@@ -638,6 +639,8 @@ static void pm_pet_move(uint32_t now)
                 if (R->layer[PM_RL_EAR_L + k] >= 0) {
                     int32_t p = R->layer[PM_RL_EAR_L + k];
                     add[p] = (int8_t)clamp(add[p] + k0->ear[k] + (((int8_t)(k1->ear[k] - k0->ear[k]) * (int32_t)f) >> 8), -127, 127);
+                    addx[p] = (int8_t)clamp(addx[p] + k0->earx[k] + (((k1->earx[k] - k0->earx[k]) * (int32_t)f) >> 8), -127, 127);
+                    addy[p] = (int8_t)clamp(addy[p] + k0->eary[k] + (((k1->eary[k] - k0->eary[k]) * (int32_t)f) >> 8), -127, 127);
                 }
         }
         if (hop > 0)
@@ -1094,7 +1097,7 @@ static void pm_ui_frame(void)
             pm_dirty(60, PM_LETTER_Y - 2, 120, 64);
         }
     }
-    if (pu.say_ch && now - pu.say_t0 >= PM_LETTER_MS) {
+    if (pu.say_ch && (int32_t)(now - pu.say_t0) >= (int32_t)PM_LETTER_MS) {   /* (signed: say_t0 may be now + 1, the | 1 above) */
         pu.say_ch = 0;
         pm_dirty(60, PM_LETTER_Y - 2, 120, 64);
     }

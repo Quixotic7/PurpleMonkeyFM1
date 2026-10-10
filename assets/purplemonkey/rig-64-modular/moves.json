@@ -492,7 +492,7 @@
       "upper_arm_r": -30,
       "forearm_r": 22,
       "hand_r": 78,
-      "ear_r": 86
+      "ear_r": -4
      },
      "t": {
       "xylophone": [
@@ -516,7 +516,7 @@
       "upper_arm_r": -30,
       "forearm_r": 22,
       "hand_r": 78,
-      "ear_r": 89,
+      "ear_r": -1,
       "foot_r": -31
      },
      "t": {
@@ -551,7 +551,6 @@
       "upper_arm_r": -69,
       "forearm_r": 42,
       "hand_r": 13,
-      "ear_r": 90,
       "ear_l": -16,
       "hand_l": -9
      },
@@ -576,7 +575,7 @@
       "hand_l": -42,
       "upper_arm_r": -69,
       "forearm_r": 41,
-      "ear_r": 109,
+      "ear_r": 19,
       "ear_l": -33,
       "hand_r": 64,
       "foot_r": -23,
@@ -610,7 +609,7 @@
       "upper_arm_r": -79,
       "forearm_r": 67,
       "hand_r": 68,
-      "ear_r": 91
+      "ear_r": 1
      },
      "t": {
       "xylophone": [
@@ -632,7 +631,7 @@
       "hand_l": -39,
       "forearm_r": 37,
       "hand_r": 50,
-      "ear_r": 115,
+      "ear_r": 25,
       "foot_l": 28,
       "head_shape": 26,
       "upper_arm_r": -40,
@@ -673,7 +672,7 @@
       "hand_l": 47,
       "hand_r": -20,
       "head_shape": -4,
-      "ear_r": 92
+      "ear_r": 2
      },
      "t": {
       "xylophone": [
@@ -702,7 +701,7 @@
       "head_shape": 7,
       "body": -12,
       "hand_r": -4,
-      "ear_r": 85
+      "ear_r": -5
      },
      "t": {
       "xylophone": [
@@ -731,7 +730,7 @@
       "body": 4,
       "hand_l": 47,
       "hand_r": -20,
-      "ear_r": 87
+      "ear_r": -3
      },
      "t": {
       "xylophone": [
@@ -760,7 +759,7 @@
       "head_shape": 7,
       "body": -12,
       "hand_r": -4,
-      "ear_r": 83
+      "ear_r": -7
      },
      "t": {
       "xylophone": [
@@ -787,7 +786,7 @@
       "upper_arm_l": 40,
       "body": 4,
       "hand_l": 37,
-      "ear_r": 87,
+      "ear_r": -3,
       "head_shape": -21,
       "hand_r": -24
      },
@@ -816,7 +815,7 @@
       "upper_arm_l": 46,
       "body": 4,
       "hand_l": 25,
-      "ear_r": 87,
+      "ear_r": -3,
       "hand_r": 16,
       "head_shape": -3
      },
@@ -845,7 +844,7 @@
       "upper_arm_l": 40,
       "body": 4,
       "hand_l": 37,
-      "ear_r": 87,
+      "ear_r": -3,
       "head_shape": -21,
       "hand_r": -24
      },
@@ -874,7 +873,7 @@
       "upper_arm_l": 46,
       "body": 4,
       "hand_l": 25,
-      "ear_r": 87,
+      "ear_r": -3,
       "hand_r": 16,
       "head_shape": -3
      },
@@ -902,7 +901,7 @@
       "upper_arm_r": -38,
       "upper_arm_l": 44,
       "body": 4,
-      "ear_r": 87,
+      "ear_r": -3,
       "head_shape": -3,
       "hand_r": 15,
       "hand_l": 23
@@ -1091,6 +1090,107 @@
       0
      ]
     }
+   }
+  }
+ },
+ "faces": {
+  "cat": {
+   "happy": {
+    "keys": [
+     {
+      "ms": 1000,
+      "layers": {
+       "eyes": "happy",
+       "mouth": "happy",
+       "nose": "scrunch",
+       "ear_l": "perk",
+       "ear_r": "perk"
+      },
+      "a": {
+       "ear_r": 29
+      },
+      "t": {
+       "ear_r": [
+        0,
+        4
+       ]
+      }
+     }
+    ]
+   },
+   "sing": {
+    "keys": [
+     {
+      "ms": 1000,
+      "layers": {
+       "eyes": "open",
+       "mouth": "sing",
+       "nose": "neutral",
+       "ear_l": "flick",
+       "ear_r": "flick"
+      },
+      "a": {
+       "ear_l": -16,
+       "ear_r": -3
+      },
+      "t": {
+       "ear_l": [
+        -2,
+        -3
+       ],
+       "ear_r": [
+        1,
+        1
+       ]
+      }
+     }
+    ]
+   },
+   "surprised": {
+    "keys": [
+     {
+      "ms": 1000,
+      "layers": {
+       "eyes": "surprised",
+       "mouth": "sing",
+       "nose": "tilt",
+       "ear_l": "perk",
+       "ear_r": "perk"
+      },
+      "a": {
+       "ear_r": 26
+      },
+      "t": {
+       "ear_r": [
+        -1,
+        4
+       ]
+      }
+     }
+    ]
+   },
+   "sleepy": {
+    "keys": [
+     {
+      "ms": 1000,
+      "layers": {
+       "eyes": "blink",
+       "mouth": "sleepy",
+       "nose": "neutral",
+       "ear_l": "droop",
+       "ear_r": "droop"
+      },
+      "a": {
+       "ear_r": 9
+      },
+      "t": {
+       "ear_r": [
+        0,
+        3
+       ]
+      }
+     }
+    ]
    }
   }
  }

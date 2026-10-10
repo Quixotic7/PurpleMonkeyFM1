@@ -86,6 +86,7 @@ class H(BaseHTTPRequestHandler):
             for pet, f in moves.get("faces", {}).items():
                 for e, a in f.items():
                     assert a["keys"] and all(k["ms"] >= 20 and isinstance(k.get("layers", {}), dict) for k in a["keys"]), f"{pet} face {e}"
+                    assert all(len(o) == 2 and max(map(abs, o)) <= 127 for k in a["keys"] for o in k.get("t", {}).values()), f"{pet} face {e}: t"
             for pet, r in moves.get("reactions", {}).items():
                 for n in ("note_l", "note_r", "snare"):
                     assert isinstance(r[n].get("a", {}), dict) and abs(r[n].get("dip", 0)) <= 127, f"{pet} reaction {n}"

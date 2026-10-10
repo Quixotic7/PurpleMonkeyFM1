@@ -52,7 +52,8 @@ slid off its joint (the head), and the reactions the firmware adds at a note or 
 slid off its joint, the body dipped) and the head's bob with the beat (per animation: the head's and neck's turn,
 the head pushed sideways and up and down, each beat and over the bar) are edited in the Reactions tab (fire one
 with L, R or S to see it; values are held on the stage while you adjust them). The face layers (eyes, nose,
-mouth) are the Face editor's alone: the Body editor neither picks nor turns them; the ears take their picture
+mouth) are the Face editor's alone: the Body editor neither picks nor turns them; the ears take their picture, and in each face key a turn and a
+place of their own (x and y in px: an ear's pictures were drawn one by one and do not all sit alike),
 from the Face editor and can be turned in both (the face's turn adds to the body's). With the Pose tool, a
 ring past each hand and foot and above the head turns that part in place, and dragging the head or a prop (the
 drum, the xylophone) moves it.

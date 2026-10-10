@@ -45,10 +45,12 @@ set in SETS that has the pet (moves_of()):
           dy]} moves such a foot from its rest spot for that pose (a step, a kick: blended like the angles), and
           the foot part's own angle in the key turns it
   order   the parts back to front, in place of rig.json's
-  faces   {expression: {keys [{ms, layers {eyes, mouth, nose, ear_l, ear_r: variant}, a {ear_l, ear_r: degrees}}]}}:
+  faces   {expression: {keys [{ms, layers {eyes, mouth, nose, ear_l, ear_r: variant}, a {ear_l, ear_r: degrees},
+          t {ear_l, ear_r: [dx, dy] px}}]}}:
           the face's own animation for neutral, blink, happy, sing, surprised, sleepy, played apart from the body's:
-          each key's pictures show for its ms (a swap, not a blend), the ears' angles blend to the next key's. Not
-          given: one key, the expression as face-variants.json has it
+          each key's pictures show for its ms (a swap, not a blend), the ears' angles and places (t: screen px each
+          ear is moved, x right, y down: an ear's pictures were drawn one by one and do not all sit alike) blend to
+          the next key's. Not given: one key, the expression as face-variants.json has it
   reactions  {note_l, note_r, snare: {a {part: degrees}, t {part: [dx, dy] px}, dip px, rise, hold, fade ms},
           bob {idle, play, dance: {on, head [beat, bar] degrees, neck [beat, bar] degrees, x [beat, bar] px,
           y [beat, bar] px}}}: what the firmware adds on top of the animation when a note is played by the left or
@@ -268,7 +270,7 @@ def main(out, dirs):
          "                 int8_t tx[PM_RIG_MAXP], ty[PM_RIG_MAXP];   /* each part slid off its joint, px in its parent's frame */",
          "               } pm_rkey_t;",
          "typedef struct { uint16_t ms; uint8_t var[PM_RIG_NLAYER];   /* a face key: each layer's picture for this long, */",
-         "                 int8_t ear[2]; } pm_rfkey_t;               /* and the ears turned (left, right), blended to the next */",
+         "                 int8_t ear[2], earx[2], eary[2]; } pm_rfkey_t;   /* and the ears (left, right) turned and moved (px), blended to the next */",
          "typedef struct { uint8_t npart, feet; const pm_rpart_t *part; const uint8_t *order; const uint16_t *pal;",
          "                 struct { uint8_t n, beats; const pm_rkey_t *key; } anim[PM_RIG_NANIM];   /* beats: a loop's, on the beat */",
          "                 int8_t arm[2], fore[2], hand[2], neck, head;   /* parts by role (viewer's left, right): -1 = none */",
@@ -365,7 +367,7 @@ def main(out, dirs):
             for ei, e in enumerate(EXPRS):
                 ex[ei][li] = ei if LAYERS[li][0] == "head" else LAYERS[li][1].index(expr[e][LAYERS[li][0]])
         # each expression's face animation: moves.json "faces" {pet: {expression: {keys [{ms, layers {layer: variant},
-        # a {ear_l, ear_r: degrees}}]}}}, else one key: the expression's pictures as the art gives them
+        # a {ear_l, ear_r: degrees}, t {ear_l, ear_r: [dx, dy]}}]}}}, else one key: the expression's pictures as the art gives them
         frows = []
         faces = moves.get("faces", {}).get(d.name, {})
         for ei, e in enumerate(EXPRS):
@@ -378,7 +380,9 @@ def main(out, dirs):
                     assert lpart[li] >= 0 and v in LAYERS[li][1], f"{d.name}: face {e}: {ln} has no picture {v}"
                     var[li] = LAYERS[li][1].index(v)
                 ear = [max(-127, min(127, round(k.get("a", {}).get(n, 0) * 256 / 360))) for n in ("ear_l", "ear_r")]
-                L.append(f"    {{{max(20, int(k['ms']))}, {{" + ", ".join(map(str, var)) + "}, {" + ", ".join(map(str, ear)) + "}},")
+                sl = [[max(-127, min(127, round(k.get("t", {}).get(n, [0, 0])[i]))) for n in ("ear_l", "ear_r")] for i in (0, 1)]
+                L.append(f"    {{{max(20, int(k['ms']))}, {{" + ", ".join(map(str, var)) + "}, {" + ", ".join(map(str, ear)) + "}, {"
+                         + ", ".join(map(str, sl[0])) + "}, {" + ", ".join(map(str, sl[1])) + "}},")
             L.append("};")
             frows.append(f"{{{len(keys)}, {T}_F{ei}}}")
         rx = default_reactions(set(idx), bool(chains))

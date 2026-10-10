@@ -220,9 +220,14 @@
     <div class="pb v-face">
       <details class="sec" open><summary>Timing</summary><div style="padding:2px 4px 6px"><div class="prow" style="cursor:default"><span class="pn">Shows for (ms)</span><input id="fms" type="number" min="20" max="10000" step="10"></div></div></details>
       <details class="sec" open><summary>Pictures</summary><div id="flayers" style="padding:0 0 4px"></div></details>
-      <details class="sec" open><summary>Ears turned <small style="font-weight:400;margin-left:4px">degrees, clockwise</small></summary><div style="padding:2px 4px 6px">
-        <div class="prow" style="cursor:default"><span class="pn">ear_l</span><input id="fel" type="number" min="-90" max="90"></div>
-        <div class="prow" style="cursor:default"><span class="pn">ear_r</span><input id="fer" type="number" min="-90" max="90"></div>
+      <details class="sec" open><summary>Ears <small style="font-weight:400;margin-left:4px">turned (degrees, clockwise), moved (px: x right, y down)</small></summary><div style="padding:2px 4px 6px">
+        <div class="prow" style="cursor:default"><span class="pn">ear_l turn</span><input id="fel" type="number" min="-90" max="90"></div>
+        <div class="prow" style="cursor:default"><span class="pn">ear_l x</span><input id="felx" type="number" min="-32" max="32"></div>
+        <div class="prow" style="cursor:default"><span class="pn">ear_l y</span><input id="fely" type="number" min="-32" max="32"></div>
+        <div class="prow" style="cursor:default"><span class="pn">ear_r turn</span><input id="fer" type="number" min="-90" max="90"></div>
+        <div class="prow" style="cursor:default"><span class="pn">ear_r x</span><input id="ferx" type="number" min="-32" max="32"></div>
+        <div class="prow" style="cursor:default"><span class="pn">ear_r y</span><input id="fery" type="number" min="-32" max="32"></div>
+        <small class="note">Each picture of an ear was drawn on its own: turn and move it here until it sits right in this face. The body's keys add their own turn on top.</small>
       </div></details>
     </div>
   </div>
@@ -477,20 +482,25 @@ function texOf(name, face) { const l = S.layers[name]; if (!l) return S.img[name
 
 /* ---- the face: each expression has its own animation, apart from the body's (moves.json "faces") ---- */
 const EXPRS = ["neutral", "blink", "happy", "sing", "surprised", "sleepy"];
+const EARXY = [["felx", "ear_l", 0], ["fely", "ear_l", 1], ["ferx", "ear_r", 0], ["fery", "ear_r", 1]];   /* the inputs of an ear's place: id, part, x / y */
 const WHEN = { neutral: "at rest", blink: "150 ms every 3.9 s (not if neutral has keys of its own)", happy: "three keys held", sing: "a note held", surprised: "the pet arrives", sleepy: "20 s of nothing" };
-function faceDefault(e) { const ex = S.fv ? (S.fv.expressions[e] || S.fv.expressions.neutral) : {}; return { keys: [{ ms: 1000, layers: Object.assign({}, ex), a: {} }] }; }
+function faceDefault(e) { const ex = S.fv ? (S.fv.expressions[e] || S.fv.expressions.neutral) : {}; return { keys: [{ ms: 1000, layers: Object.assign({}, ex), a: {}, t: {} }] }; }
 function curFace(make) { const m = moves(), own = ((m.faces || {})[S.pet] || {})[S.expr]; if (own) return own;
   const d = faceDefault(S.expr); if (make) { m.faces = m.faces || {}; (m.faces[S.pet] = m.faces[S.pet] || {})[S.expr] = d; } return d; }
 function editFace(fn) { snap(); fn(curFace(true)); touch(); refresh(); }
-function faceAt(t) {                /* pictures of the key the time is in; the ears blended towards the next */
+function faceAt(t) {                /* pictures of the key the time is in; the ears (turn and place) blended towards the next */
   const K = curFace(false).keys, total = K.reduce((x, k) => x + k.ms, 0); t = ((t % total) + total) % total;
   let i = 0; while (i + 1 < K.length && t >= K[i].ms) { t -= K[i].ms; i++; }
-  const k0 = K[i], k1 = K[(i + 1) % K.length]; let f = t / k0.ms; f = f * f * (3 - 2 * f); const a = {};
-  for (const n of ["ear_l", "ear_r"]) a[n] = lerp((k0.a || {})[n] || 0, (k1.a || {})[n] || 0, f);
-  return { layers: k0.layers || {}, a };
+  const k0 = K[i], k1 = K[(i + 1) % K.length]; let f = t / k0.ms; f = f * f * (3 - 2 * f); const a = {}, tt = {};
+  for (const n of ["ear_l", "ear_r"]) { a[n] = lerp((k0.a || {})[n] || 0, (k1.a || {})[n] || 0, f);
+    const p = (k0.t || {})[n] || [0, 0], q = (k1.t || {})[n] || [0, 0]; tt[n] = [lerp(p[0], q[0], f), lerp(p[1], q[1], f)]; }
+  return { layers: k0.layers || {}, a, t: tt };
 }
-function bodyFace() { const k = curFace(false).keys[0]; return { layers: k.layers || {}, a: k.a || {} }; }   /* the Body editor: the chosen expression's first key, still */
+function bodyFace() { const k = curFace(false).keys[0]; return { layers: k.layers || {}, a: k.a || {}, t: k.t || {} }; }   /* the Body editor: the chosen expression's first key, still */
 function earsExtra(face, extra) { for (const n of ["ear_l", "ear_r"]) if (face.a[n]) extra[n] = (extra[n] || 0) + face.a[n]; return extra; }
+function earsSlide(face, xt) {      /* the face key's own place for each ear: screen px on top (solve's xt), as pm_ui.c adds them */
+  for (const n of ["ear_l", "ear_r"]) { const o = (face.t || {})[n]; if (o && (o[0] || o[1])) { const p = xt[n] || [0, 0]; xt[n] = [p[0] + o[0], p[1] + o[1]]; } }
+  return xt; }
 
 /* ---- reactions: what the firmware adds on top (pm_ui.c), from moves.json "reactions" or these defaults
  * (tools/gen_pm_rig.py default_reactions is the same) ---- */
@@ -599,8 +609,8 @@ function render(now) {
   if (S.view === "face") {           /* the Face editor: the pet stands still in its rest pose, only the face plays */
     const fk = curFace(false).keys, k = fk[Math.min(S.fkey, fk.length - 1)], T = fk.reduce((s, q) => s + q.ms, 0);
     const t = S.playing ? (now - S.t0) % T : S.fscrub;
-    S.faceNow = t != null ? faceAt(t) : { layers: k.layers || {}, a: k.a || {} }; ftl.head(t);
-    lastP = solve({ root: [0, 0], a: {} }, earsExtra(S.faceNow, {}), 0);
+    S.faceNow = t != null ? faceAt(t) : { layers: k.layers || {}, a: k.a || {}, t: k.t || {} }; ftl.head(t);
+    lastP = solve({ root: [0, 0], a: {} }, earsExtra(S.faceNow, {}), 0, earsSlide(S.faceNow, {}));
     const h = lastP[headName()], z = $("fzoom").checked && h ? 2.4 : 1;
     cx.save(); if (z > 1) cx.setTransform(z, 0, 0, z, 120 - h.x * z, 138 - h.y * z);
     draw(lastP, 1); cx.restore();
@@ -620,7 +630,7 @@ function render(now) {
   }
   tl.head(tlT);
   const [extra, dip, xt] = overlays(now, bar, S.playing);
-  S.faceNow = bodyFace(); earsExtra(S.faceNow, extra);
+  S.faceNow = bodyFace(); earsExtra(S.faceNow, extra); earsSlide(S.faceNow, xt);
   lastP = solve(pose, extra, dip, xt);
   draw(lastP, 1);
   if (!S.playing) {
@@ -690,7 +700,7 @@ function refresh() {
 function fillKeys() {
   const an = curAnim(false), face = bodyFace(), box = $("keys"); box.innerHTML = "";
   an.keys.forEach((q, i) => { const d = document.createElement("div"); d.className = "key" + (S.sel.includes(i) ? " sel" : "") + (i === S.key ? " cur" : "");
-    d.appendChild(poseThumb(solve({ root: q.root, a: q.a, feet: q.feet, t: q.t }, earsExtra(face, {}), 0), face, 56, false));
+    d.appendChild(poseThumb(solve({ root: q.root, a: q.a, feet: q.feet, t: q.t }, earsExtra(face, {}), 0, earsSlide(face, {})), face, 56, false));
     const s = document.createElement("span"); s.textContent = `${i + 1}`; d.appendChild(s); d.title = `Key ${i + 1}: ${q.ms} ms`;
     d.onclick = e => selectKey(i, e); box.appendChild(d); });
   const sel = box.querySelector(".key.cur"); if (sel) sel.scrollIntoView({ block: "nearest", inline: "nearest" });
@@ -753,12 +763,13 @@ function fillFace() {
   ftl.build();
   const box0 = $("fkeys"); box0.innerHTML = "";
   S.fsel = S.fsel.filter(i => i < fa.keys.length); if (!S.fsel.includes(S.fkey)) S.fsel = [S.fkey];
-  fa.keys.forEach((q, i) => { const d = document.createElement("div"); d.className = "key" + (S.fsel.includes(i) ? " sel" : "") + (i === S.fkey ? " cur" : ""); const face = { layers: q.layers || {}, a: q.a || {} };
-    d.appendChild(poseThumb(solve({ root: [0, 0], a: {} }, earsExtra(face, {}), 0), face, 56, true));
+  fa.keys.forEach((q, i) => { const d = document.createElement("div"); d.className = "key" + (S.fsel.includes(i) ? " sel" : "") + (i === S.fkey ? " cur" : ""); const face = { layers: q.layers || {}, a: q.a || {}, t: q.t || {} };
+    d.appendChild(poseThumb(solve({ root: [0, 0], a: {} }, earsExtra(face, {}), 0, earsSlide(face, {})), face, 56, true));
     const s = document.createElement("span"); s.textContent = `${i + 1}`; d.appendChild(s); d.title = `Key ${i + 1}: ${q.ms} ms, ${Object.values(q.layers || {}).join(", ")}`;
     d.onclick = e => selectFaceKey(i, e); box0.appendChild(d); });
   $("fms").value = k.ms; $("fname").textContent = `${S.pet} · ${S.expr} · key ${S.fkey + 1} of ${fa.keys.length}` + (S.fsel.length > 1 ? ` · ${S.fsel.length} selected` : ""); $("fname2").textContent = `${S.fkey + 1} of ${fa.keys.length}`;
   $("fel").value = Math.round((k.a || {}).ear_l || 0); $("fer").value = Math.round((k.a || {}).ear_r || 0);
+  for (const [id, n, i] of EARXY) $(id).value = Math.round(((k.t || {})[n] || [0, 0])[i]);
   $("expr").value = $("exprb").value = S.expr;
   const box = $("flayers"); box.innerHTML = "";
   for (const l of Object.keys(S.layers)) { const h = document.createElement("div"); h.className = "grp"; h.textContent = l; box.appendChild(h);
@@ -826,7 +837,7 @@ function hoverLabel(e, n) {
 }
 cv.onpointerdown = e => { if (S.view === "face" || !lastP) return;      /* (the face is made of pictures and numbers: nothing to drag) */
   stop(); if (S.scrub != null) { S.key = keyIndexAt(curAnim(false), S.scrub); S.scrub = null; refresh();   /* a scrubbed pose: go to its key first */
-    const [extra, dip, xt] = overlays(performance.now(), 0, false); lastP = solve(stillPose(), earsExtra(bodyFace(), extra), dip, xt); }
+    const [extra, dip, xt] = overlays(performance.now(), 0, false); lastP = solve(stillPose(), earsExtra(bodyFace(), extra), dip, earsSlide(bodyFace(), xt)); }
   const [x, y] = at(e), n = pick(x, y); try { cv.setPointerCapture(e.pointerId); } catch (err) { /* (not a live pointer) */ }
   const k = curAnim(false).keys[S.key]; cv.classList.add("grabbing");
   if (S.mode === "ik") { const h = handles().find(q => Math.hypot(x - q.x, y - q.y) <= 4.5);   /* a rotate handle: the part turns in place */
@@ -939,6 +950,8 @@ $("fdn").onclick = () => editFace(a => { [S.fsel, S.fkey] = KEYOPS.move(a.keys, 
 $("freset").onclick = () => { snap(); const m = moves(); if ((m.faces || {})[S.pet]) delete m.faces[S.pet][S.expr]; S.fkey = 0; S.fscrub = null; touch(); refresh(); };
 live($("fms"), v => { curFace(true).keys[S.fkey].ms = clamp(Math.round(v) || 1000, 20, 10000); ftl.update(); });
 for (const [id, n] of [["fel", "ear_l"], ["fer", "ear_r"]]) live($(id), v => { S.fscrub = null; const q = curFace(true).keys[S.fkey]; q.a = q.a || {}; v = clamp(Math.round(v), -90, 90); if (v) q.a[n] = v; else delete q.a[n]; });
+for (const [id, n, i] of EARXY) live($(id), v => { S.fscrub = null; const q = curFace(true).keys[S.fkey]; q.t = q.t || {};   /* an ear's place in this face key */
+  const o = (q.t[n] || [0, 0]).slice(); o[i] = clamp(Math.round(v) || 0, -32, 32); if (o[0] || o[1]) q.t[n] = o; else delete q.t[n]; });
 function fire(i) { S.rxT[i] = performance.now(); }
 $("hitl").onclick = () => fire(0); $("hitr").onclick = () => fire(1); $("hits").onclick = () => fire(2);
 $("rxfire").onclick = () => { $("rxpose").checked = false; fire(REACTS.indexOf(S.rx)); };
