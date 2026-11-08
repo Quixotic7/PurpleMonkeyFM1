@@ -47,7 +47,9 @@ static int st_prog(uint32_t off, const void *src, uint32_t n)
 }
 static uint32_t irq_save(void) { return 0; }
 static void irq_restore(uint32_t f) { (void)f; }
-static uint32_t fl_jedec_ram(void) { return 0; }
+static uint32_t jedec_id;                         /* what the 0x9F read answers (persist_boot) */
+static uint32_t fl_jedec_ram(void) { return jedec_id; }
+#include "../firmware/hal/fm1_flash_ok.h"
 static void fl_plain_window_init(void) {}
 #define FL_FAR(fn) (fn)
 #include "../firmware/src/storage.c"
@@ -328,6 +330,23 @@ int main(void)
     settings_save();
     bad += check("PLAY consumed before the settings snapshot defers the write",
                   irq_races == 3u && song.playing && !transport_req && persist_pending && erases == before);
+    {
+        /* the boot's chip check (fm1_flash_ok.h): the FM-1's two parts take the stores, anything else stays RAM-only.
+         * persist_boot runs only for the refused ids: an accepted one goes on to read the samples through XIP. */
+        static const struct { uint32_t id; uint8_t ok; } chip[] = {
+            {0x856014u, 1}, {0xB36014u, 1}, {0u, 0}, {0xFFFFFFu, 0}, {0x856015u, 0}, {0xB36015u, 0}, {0xEB6014u, 0}};
+        uint32_t k, wrong = 0;
+        for (k = 0; k < sizeof chip / sizeof chip[0]; k++) {
+            if (fl_jedec_ok(chip[k].id) != chip[k].ok) wrong++;
+            if (chip[k].ok) continue;
+            reset();
+            jedec_id = chip[k].id;
+            persist_boot();
+            if (flash_ok || erases) wrong++;
+        }
+        jedec_id = 0;
+        bad += check("boot: flash 0x856014 and 0xB36014 accepted, other ids RAM-only", !wrong);
+    }
     printf("%s\n", bad ? "PERSISTENCE TEST FAILED" : "persistence test passed");
     return bad != 0;
 }

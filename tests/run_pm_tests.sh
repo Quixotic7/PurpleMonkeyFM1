@@ -30,6 +30,12 @@ bad = [(a, w, c(*a)[0]) for a, w in want if c(*a)[0] != w]
 print("FAIL" if bad else "PASS", "the installer's classifier:", bad or f"{len(want)} firmwares as expected")
 sys.exit(bool(bad))
 PY
+# the boot's flash check: every persist_boot asks fm1_flash_ok.h (0x856014 and the newer FM-1s' 0xB36014), none
+# compares the id itself (a unit with the newer chip would run RAM-only and take no update: INSTALL-COMPAT.md)
+if grep -n '== *0x856014' firmware/src/*.c firmware/src/*.h firmware/loader/*.c 2>/dev/null; then
+    echo "FAIL the flash check: a JEDEC id compared outside fm1_flash_ok.h (above)"; exit 1
+fi
+echo "PASS the flash check: fl_jedec_ok (fm1_flash_ok.h) at every boot"
 if [ -x /opt/homebrew/bin/sdl2-config ] || command -v sdl2-config >/dev/null 2>&1; then
     sh tools/emu/test_pm.sh
 else

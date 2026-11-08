@@ -97,6 +97,32 @@ the observed outcome, not a mechanism.
 - Whether returning to V15 first changes anything. Stock's VM region is 0x93000..0xE9000;
   0xFC000..0xFEFFF lies outside it.
 
+## A second flash chip: 0xB36014 (2026-11-08, from ChoralRoot 0.29.1)
+
+FM-1s sold late 2026 (the M-VAVE logo printed on the front) carry a different maker's 1 MiB SPI NOR: JEDEC id
+**0xB36014**, the same type and capacity bytes (`60 14`) as the Puya P25Q80's **0x856014** of the older units, another
+manufacturer byte. ChoralRoot found it on 2026-11-02 (its HISTORY 3y222, Reddit r/MVaveFM1): a new unit ran ChoralRoot
+0.27 with `no unit ID`, every installer "stopped answering after 0 requests", and MvaveFM1Unbricker `info` read
+`Flash ID 0xB36014 (expected 0x856014)`.
+
+What a build that checks only 0x856014 does on that chip (`persist_boot` in `pm_shim.c`, `cr_shim.c`, `project.c`):
+it runs **RAM-only**. Nothing is read from or written to the flash (no settings, no stores), and `main.c` skips the
+update session (`if (flash_ok) ota_session()`), so an installer sends UPGRADE and the unit never asks for the first
+block: such a unit cannot even take the update that fixes it. The update loader (`firmware/loader`) and the boot stub
+never check the chip.
+
+**Now** every `persist_boot` asks `firmware/hal/fm1_flash_ok.h` `fl_jedec_ok()`, which accepts 0xB36014 beside
+0x856014; `tests/persistence_test.c` checks both ids and that other ids (0, 0xFFFFFF, 0xB36015, ...) stay RAM-only,
+and `tests/run_pm_tests.sh` fails if a source compares the id itself again. The RAM flash driver (`fm1_flash.h`) uses
+only the generic SPI NOR commands (9F, 05/35, 06, 20, 02, 0B), which the SDK firmware those units ship with uses on
+the same chip, so nothing else changed, as in ChoralRoot.
+
+**Not tried on hardware here**: the owner's FM-1s all have the older chip. A unit stuck RAM-only on an older
+PurpleMonkey cannot take the update over USB (the gate above); the way out is the chip's ROM boot (hold OCT- and OCT+
+for 10 s, "If an FM-1 is dark" below), MvaveFM1Unbricker's `restore` of the official V15 (with `--i-know` while the
+Unbricker does not know the id), then the web installer over V15 as on any unit. The web installer and
+`tools/fm1_install.py` do not read the chip id.
+
 ## Mitigation: the boot guard rework (2026-10-07)
 
 `firmware/src/cr_bootguard.h` (`bootguard_step`, used by `main.c` `fm1_cstart`; host test `tests/cr_bootguard_test.c`):

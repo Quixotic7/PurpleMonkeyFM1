@@ -37,7 +37,7 @@ static void persist_boot(void)         /* as cr_shim.c's, without the stores */
 #if FELUCCA_FLASH
     uint32_t f = irq_save();
     CR_STAGE(BS_FLASH);
-    flash_ok = FL_FAR(fl_jedec_ram)() == 0x856014u;       /* the expected 1 MiB part, else no update entry */
+    flash_ok = (uint8_t)fl_jedec_ok(FL_FAR(fl_jedec_ram)()); /* a known part (fm1_flash_ok.h), else no update entry */
     irq_restore(f);
     if (flash_ok)
         fl_plain_window_init();

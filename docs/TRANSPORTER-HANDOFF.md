@@ -79,8 +79,8 @@ against the plug with a multimeter first; swapped D+ / D- damages nothing but no
    identity `FM-1_015` and sha256 `6edf3c37fb5bbbc33607c89375ee024d5477c17914d72221c8c68e58a8255686`.
 4. FM-1 switched **off**. Wire it to the XIAO, XIAO to the Mac. Then switch the FM-1 **on**: the XIAO sends the
    USB_KEY at power-on, so the order matters. `python3 tools/fm1t.py info`: expect chip key 0x980F, flash ID
-   0x856014. If it is not detected: swap D+ / D-, shorten the wires, check the charge, read the console (CDC 0), try
-   `rekey`.
+   0x856014 (0xB36014 on the FM-1s sold late 2026). If it is not detected: swap D+ / D-, shorten the wires, check
+   the charge, read the console (CDC 0), try `rekey`.
 5. `python3 tools/fm1t.py dump backup.bin`, twice into two files, and compare their sha256. **Keep the dump and
    write nothing until it is analysed.**
 6. Analyse the dump against `build/choralroot.fwsc` and the V15 package, and report:

@@ -30,6 +30,7 @@ static int st_prog(uint32_t off, const void *src, uint32_t n) { memcpy(nor + off
 static uint32_t irq_save(void) { return 0; }
 static void irq_restore(uint32_t f) { (void)f; }
 static uint32_t fl_jedec_ram(void) { return 0; }
+#include "../firmware/hal/fm1_flash_ok.h"
 static void fl_plain_window_init(void) {}
 #define FL_FAR(fn) (fn)
 #include "../firmware/src/storage.c"
