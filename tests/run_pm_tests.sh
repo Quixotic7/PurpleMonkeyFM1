@@ -31,10 +31,15 @@ print("FAIL" if bad else "PASS", "the installer's classifier:", bad or f"{len(wa
 sys.exit(bool(bad))
 PY
 # the flash driver's erase / program wait (firmware/hal/fm1_flash_wait.h, felucca-bsp 2d37ec8): never back to XIP
-# while the part is busy, -4 when late, a reset at 2 s / 50 ms (tests/flash_wait_test.c, a host model of the part)
+# while the part is busy, -4 when late (the driver makes it 0: below), a reset at 2 s / 50 ms
+# (tests/flash_wait_test.c, a host model of the part)
 $CC -std=c11 -O1 -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined \
     -o build/host/flash_wait_test tests/flash_wait_test.c
 build/host/flash_wait_test
+# a late finish (past 500 ms / 10 ms, before 2 s / 50 ms) is a success, counted (fm1_flash_late.h fl_wait_done)
+$CC -std=c11 -O1 -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined \
+    -o build/host/flash_late_test tests/flash_late_test.c
+build/host/flash_late_test
 # the boot's flash check: every persist_boot asks fm1_flash_ok.h (0x856014 and the newer FM-1s' 0xB36014), none
 # compares the id itself (a unit with the newer chip would run RAM-only and take no update: INSTALL-COMPAT.md)
 if grep -n '== *0x856014' firmware/src/*.c firmware/src/*.h firmware/loader/*.c 2>/dev/null; then

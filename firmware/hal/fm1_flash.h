@@ -14,8 +14,10 @@
  * An erase or program never returns to XIP while the part still reports BUSY
  * (fl_wait_issued, fm1_flash_wait.h): it polls past the normal bound and, if the
  * part is still busy at the extended bound, resets the part and then the chip,
- * from RAM. Before, a part busy at 500 ms got -4 and XIP came back on under it: a
- * crash on a slower part, such as the newer FM-1s' 0xB36014 may be (fm1_flash_ok.h).
+ * from RAM. A late finish (past the normal bound, before the extended one) is a
+ * success, counted in fl_late (fl_wait_done, fm1_flash_late.h). Before, a part
+ * busy at 500 ms got -4 and XIP came back on under it: a crash on a slower part,
+ * such as the newer FM-1s' 0xB36014 may be (fm1_flash_ok.h).
  */
 #pragma once
 #include <stdint.h>
@@ -168,6 +170,7 @@ RAMINL void fl_reset_busy(void)
     for (;;) ;
 }
 #include "fm1_flash_wait.h"                       /* fl_wait_issued: shared with the host model (tests/) */
+#include "fm1_flash_late.h"                       /* fl_wait_done: a late finish is a success, counted in fl_late */
 
 /* ---- entry points: IRQs OFF, args/buffers in RAM ---- */
 
@@ -203,7 +206,7 @@ static RAMFN int fl_erase4k_ram(uint32_t off, uint32_t *took_us)
         uint32_t issued = T4_CNT;
         fl_cs(0); fl_tx(0x20); fl_addr(off); fl_cs(1);
         fl_inval(off, 4096u);
-        rc = fl_wait_issued(issued, 500000u, 2000000u, took_us);   /* generic NOR max 400 ms */
+        rc = fl_wait_done(issued, 500000u, 2000000u, took_us);     /* generic NOR max 400 ms */
     }
     fl_exit(&s);
     return rc;
@@ -223,7 +226,7 @@ static RAMFN int fl_prog_ram(uint32_t off, const uint8_t *src, uint32_t n, uint3
         for (i = 0; i < n; i++) fl_tx(src[i]);
         fl_cs(1);
         fl_inval(off, n);
-        rc = fl_wait_issued(issued, 10000u, 50000u, took_us);      /* generic NOR max 3 ms */
+        rc = fl_wait_done(issued, 10000u, 50000u, took_us);        /* generic NOR max 3 ms */
     }
     fl_exit(&s);
     return rc;
@@ -258,11 +261,27 @@ static void fl_plain_window_init(void)
 static inline uint32_t irq_save(void) { __asm__ volatile("cli" ::: "memory"); return 0; }
 static inline void irq_restore(uint32_t f) { (void)f; __asm__ volatile("csync\n\tsti" ::: "memory"); }
 
+/* After an erase or program, back on XIP: one that finished late (fl_late, fm1_flash_late.h) may have held the
+ * interrupts for up to 2 s and is now a success, so the caller goes on to the next one. Feed the watchdog (8 s) after
+ * each late one, so a run of them cannot add up to a watchdog reset; a quick one changes nothing. (The feed is XIP
+ * code: it cannot run inside the RAM wait.) Every caller of the fl_*_ram erase / program calls this after it. */
+static uint32_t fl_late_fed;
+static void fl_late_feed(void)
+{
+#ifdef FM1_P3_WDT_CON                              /* fm1_sys.h, included before this header by every unit */
+    if (fl_late != fl_late_fed) {
+        fl_late_fed = fl_late;
+        fm1_wdt_feed();
+    }
+#endif
+}
+
 static int fl_erase4k(uint32_t off, uint32_t *took_us)
 {
     uint32_t f = irq_save();
     int rc = FL_FAR(fl_erase4k_ram)(off, took_us);
     irq_restore(f);
+    fl_late_feed();
     return rc;
 }
 
@@ -277,6 +296,7 @@ static int fl_write(uint32_t off, const uint8_t *src_ram, uint32_t n)
         f = irq_save();
         rc = FL_FAR(fl_prog_ram)(off, src_ram, chunk, &took);
         irq_restore(f);
+        fl_late_feed();
         if (rc) return rc;
         off += chunk; src_ram += chunk; n -= chunk;
     }

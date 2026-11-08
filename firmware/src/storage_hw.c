@@ -37,6 +37,7 @@ static int st_erase(uint32_t off)
     audio_silence();
     rc = FL_FAR(fl_erase4k_ram)(off, &took);
     irq_restore(f);
+    fl_late_feed();                             /* fm1_flash.h: after a late erase */
     return rc;
 }
 static int st_prog(uint32_t off, const void *src, uint32_t n)

@@ -60,12 +60,16 @@ static int ldr_fread(uint32_t off, void *p, uint32_t n) { return fl_read_ram(off
 static int ldr_erase(uint32_t off)
 {
     uint32_t took;
-    return fl_erase4k_ram(off, &took);
+    int rc = fl_erase4k_ram(off, &took);
+    fl_late_feed();                                 /* fm1_flash.h: after a late erase (the loader runs from RAM) */
+    return rc;
 }
 static int ldr_prog(uint32_t off, const void *p, uint32_t n)
 {
     uint32_t took;
-    return fl_prog_ram(off, p, n, &took);
+    int rc = fl_prog_ram(off, p, n, &took);
+    fl_late_feed();
+    return rc;
 }
 static void ldr_record_clear(void)
 {

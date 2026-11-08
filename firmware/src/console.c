@@ -246,6 +246,7 @@ static void con_cpu(void)
     con_kv("voices_shed", (int32_t)shed_count);               /* overload: two halves above 85 % */
 #if FELUCCA_FLASH
     con_kv("flash_erases", (int32_t)st_erases);               /* each: ~45 ms of silence, IRQs off */
+    con_kv("flash_late", (int32_t)fl_late);                   /* erases / page writes past 500 ms / 10 ms (done) */
 #endif
 #ifdef CR_VERSION
     con_kv("settings_saves", (int32_t)crs_saves);
