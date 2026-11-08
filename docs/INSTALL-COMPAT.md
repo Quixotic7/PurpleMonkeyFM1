@@ -111,13 +111,13 @@ update session (`if (flash_ok) ota_session()`), so an installer sends UPGRADE an
 block: such a unit cannot even take the update that fixes it. The update loader (`firmware/loader`) and the boot stub
 never check the chip.
 
-**Now** every `persist_boot` asks `firmware/hal/fm1_flash_ok.h` `fl_jedec_ok()`, which accepts 0xB36014 beside
+**From 0.12** every `persist_boot` asks `firmware/hal/fm1_flash_ok.h` `fl_jedec_ok()`, which accepts 0xB36014 beside
 0x856014; `tests/persistence_test.c` checks both ids and that other ids (0, 0xFFFFFF, 0xB36015, ...) stay RAM-only,
 and `tests/run_pm_tests.sh` fails if a source compares the id itself again. The RAM flash driver (`fm1_flash.h`) uses
 only the generic SPI NOR commands (9F, 05/35, 06, 20, 02, 0B), which the SDK firmware those units ship with uses on
 the same chip, so nothing else changed, as in ChoralRoot.
 
-**A slower erase** (2026-11-08, from felucca-bsp 2d37ec8, as RemoteFM1 0.3.4): the driver waited 500 ms for a sector
+**A slower erase** (0.12, from felucca-bsp 2d37ec8, as RemoteFM1 0.3.4): the driver waited 500 ms for a sector
 erase (10 ms for a page) and, if the part was still busy, returned -4 and switched XIP back on under it; the next code
 fetched from the flash was whatever the bus returned, a crash. RemoteFM1 names the newer chip as such a slower part.
 Now `fm1_flash.h` waits until the part reports idle (`fm1_flash_wait.h fl_wait_issued`, felucca-bsp's, unchanged). A
@@ -135,11 +135,12 @@ and the TIMER4 wrap; `tests/flash_late_test.c` that a late finish answers 0 and 
 and a stuck part is still reset. A core reset within 30 s of boot counts toward the boot guard ("Mitigation" below),
 as any crash does. Not tried on hardware here either.
 
-**Not tried on hardware here**: the owner's FM-1s all have the older chip. A unit stuck RAM-only on an older
-PurpleMonkey cannot take the update over USB (the gate above); the way out is the chip's ROM boot (hold OCT- and OCT+
-for 10 s, "If an FM-1 is dark" below), MvaveFM1Unbricker's `restore` of the official V15 (with `--i-know` while the
-Unbricker does not know the id), then the web installer over V15 as on any unit. The web installer and
-`tools/fm1_install.py` do not read the chip id.
+**Not tried on hardware here**: the owner's FM-1s all have the older chip. A unit stuck RAM-only on PurpleMonkey 0.10
+or 0.11 cannot take the update over USB (the gate above). The way out is the chip's ROM boot, which PurpleMonkey's
+update gesture reaches whatever the chip (OCT-, OCT+ and HOME held 5 s, `main.c` `PM_UBOOT_HOME`; not gated on
+`flash_ok`), MvaveFM1Unbricker's `restore` of the official V15 (with `--i-know` while the Unbricker does not know the
+id), then the web installer over V15 as on any unit. The web installer and `tools/fm1_install.py` do not read the chip
+id.
 
 ## Mitigation: the boot guard rework (2026-10-07)
 

@@ -7,7 +7,9 @@ differs, and what has and has not been checked.
 
 **On hardware:** the 0.10 package was installed on the owner's FM-1 on 2026-10-09 and runs there; the sounds and
 the voice were judged by ear by the owner. Everything else below was verified on the Mac emulator (the same
-firmware sources with a host HAL); nothing has been measured on the device (see "Not verified").
+firmware sources with a host HAL); nothing has been measured on the device (see "Not verified"). 0.12 (the newer
+flash chip 0xB36014, and the flash driver's erase wait: `docs/INSTALL-COMPAT.md`, "A second flash chip") has not
+been installed on a unit; no unit with the newer chip has been available.
 
 ## What it does now (stages 2 and 3 of the brief, with parts of 4 and 5)
 
