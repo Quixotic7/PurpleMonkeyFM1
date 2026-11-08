@@ -117,6 +117,19 @@ and `tests/run_pm_tests.sh` fails if a source compares the id itself again. The 
 only the generic SPI NOR commands (9F, 05/35, 06, 20, 02, 0B), which the SDK firmware those units ship with uses on
 the same chip, so nothing else changed, as in ChoralRoot.
 
+**A slower erase** (2026-11-08, from felucca-bsp 2d37ec8, as RemoteFM1 0.3.4): the driver waited 500 ms for a sector
+erase (10 ms for a page) and, if the part was still busy, returned -4 and switched XIP back on under it; the next code
+fetched from the flash was whatever the bus returned, a crash. RemoteFM1 names the newer chip as such a slower part.
+Now `fm1_flash.h` waits until the part reports idle (`fm1_flash_wait.h fl_wait_issued`): within 500 ms / 10 ms it
+returns 0, later -4 as before (a failed write to the callers; the loader's install fails as it did), and a part still
+busy at 2 s / 50 ms gets Enable Reset + Reset (0x66, 0x99), 20 ms, then a core reset, all from RAM and never back to
+XIP. The wait runs with the interrupts off and the audio silenced, as every erase does; the watchdog (8 s,
+`fm1_wdt_arm(0x0D)` in `main.c` and the loader) is fed between sectors by the erase loops, and the callers that run
+several operations without a feed stop at the first error, so one long operation adds at most 2 s between feeds.
+`tests/flash_wait_test.c` (felucca-bsp's host model of the part and TIMER4) checks the bounds, the codes, the reset
+and the TIMER4 wrap. A core reset within 30 s of boot counts toward the boot guard ("Mitigation" below), as any crash
+does. Not tried on hardware here either.
+
 **Not tried on hardware here**: the owner's FM-1s all have the older chip. A unit stuck RAM-only on an older
 PurpleMonkey cannot take the update over USB (the gate above); the way out is the chip's ROM boot (hold OCT- and OCT+
 for 10 s, "If an FM-1 is dark" below), MvaveFM1Unbricker's `restore` of the official V15 (with `--i-know` while the

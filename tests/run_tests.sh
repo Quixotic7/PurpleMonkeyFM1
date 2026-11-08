@@ -83,6 +83,9 @@ run() { echo "== $1"; shift; "$@" || fail=1; }
 $CC -o "$OUT/storage_test" tests/storage_test.c
 run "flash storage (A/B, torn writes)" "$OUT/storage_test"
 
+$CC -std=c11 -o "$OUT/flash_wait_test" tests/flash_wait_test.c
+run "flash driver wait: never back to XIP while the part is busy, a reset at the extended bound" "$OUT/flash_wait_test"
+
 $CC -o "$OUT/upreset_test" tests/upreset_test.c
 run "user presets (UP_PUT parser, bank round trip, versions, PHYS DRUM -> DRUM, grid records, DIGITAL kept)" "$OUT/upreset_test"
 

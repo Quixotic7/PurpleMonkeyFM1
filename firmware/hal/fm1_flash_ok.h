@@ -7,7 +7,8 @@
  * 0xB36014: another maker's 1 MiB part (same type and capacity bytes, 60 14), in the FM-1s sold late 2026 with the
  *           M-VAVE logo printed on the front. Taken from ChoralRoot 0.29.1 (its HISTORY 3y222). The driver uses only
  *           generic SPI NOR commands (9F, 05/35, 06, 20, 02, 0B), which the SDK firmware those units ship with uses
- *           on the same chip. Not tried on such a unit here.
+ *           on the same chip. Not tried on such a unit here. Its erase may be slower: fm1_flash.h waits it out
+ *           (up to 2 s, fm1_flash_wait.h) instead of going back to XIP under a busy part.
  *
  * A function, not a macro: the id is read once (fl_jedec_ram is an SPI transaction). No device code in this header,
  * so the host tests include it as it is. */
