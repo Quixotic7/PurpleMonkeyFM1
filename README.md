@@ -67,3 +67,5 @@ which is built on [Felucca](https://github.com/hugelton/Felucca) by Leo Kuroshit
 engine of [Melodee](https://github.com/keremimo/melodee) by Kerem Kilic; the drum synthesis is from
 [SLOOP](https://github.com/isod89/sloop-fm1). [LICENSING.md](LICENSING.md) has the whole list. Independent of and
 unaffiliated with M-VAVE; M-VAVE and FM-1 are trademarks of their owners. Installing firmware is at your own risk.
+
+You can also try PurpleMonkey FM-1 in the browser, no flashing needed, in the free community [FM-1 Emulator](https://fm1-emulator.atst.tools/).
